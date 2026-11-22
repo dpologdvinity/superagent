@@ -35,11 +35,17 @@ Drive snapshot. The operator must verify those and record the results (checklist
 | Disk | ~60 GB free: project env, a separate vLLM env, Qwen3-8B-AWQ (~6 GB), Qwen3-Embedding (~1.2 GB), datasets, traces. |
 | GitHub | A **repo-scoped** token with read + contents write, stored as the Colab secret `GITHUB_TOKEN` (notebook access enabled). Used for clone and the optional results branch; never printed. |
 | Hugging Face | Public models; optional `HF_TOKEN` secret for rate limits. |
-| Persistence | Optional Google Drive mount. `PERSIST_TO_DRIVE = True` snapshots results after each shard and restores them on reconnect. |
+| Persistence | Optional Google Drive mount. `PERSIST_TO_DRIVE = True` snapshots results after each shard and restores them on reconnect. The clean notebook uses `PERSIST_DIR = …/superagent-r2-clean`; an older `superagent-r2` snapshot is **not** read. |
 
 The repository token is read through an environment-backed git credential helper, so it does
 not appear in a URL or command. If you cannot use a token, the notebook offers an uploaded
 repository archive fallback; in that case the optional results push is unavailable.
+
+**Clean restart.** Use a new Colab runtime (Runtime → Disconnect and delete runtime) so
+`/content` is empty, then upload this notebook. It uses the new `superagent-r2-clean` Drive
+directory; it does not restore the previous failed run's snapshot. With no snapshot, step 3
+materializes the derived tests from the committed levels and downloads the pinned raw data
+(`repo_type="dataset"`), so no stale `data/derived` from an older task set is reused.
 
 ## 2. Run order and expected wall-clock
 
@@ -50,8 +56,8 @@ actual times in `gpu_time.json`.
 | --- | --- | --- | --- |
 | 0 | Runtime/GPU check | Colab | <1 min |
 | 1 | Token, clone at `main`, record commit | Colab | 1–2 min |
-| 2 | Install `uv`, `uv sync --frozen` (CPU project env) | Colab | 3–8 min |
-| 3 | Drive restore, then verify/materialize derived tests from the **committed** levels (`wishrec.materialize`; downloads raw if missing) | CPU | restore <2 min; materialize ~1–3 min |
+| 2 | Install `uv`, `uv sync --frozen`, then `requirements-validation.txt` into `.venv` (BigCodeBench test libs) | CPU | 5–10 min |
+| 3 | Verify/materialize derived tests from the **committed** levels (`wishrec.materialize --download --clean`; no snapshot on a clean run) | CPU | ~2–5 min including the pinned download |
 | 4 | Install vLLM in `/content/vllm-env`, start server, download model | GPU | 10–30 min including download |
 | 5 | Probe `/v1/models`, native tool calls, text fallback; write `endpoint.json` | GPU | <2 min |
 | 6 | Smooth 500 train + 100 pilot wishes | GPU | 5–20 min |
@@ -176,6 +182,10 @@ macro-F1 / AUROCs to `results/detector/metrics.json`; if they collapse, stop and
 smoothed wishes rather than running 18 GPU-hours against a broken detector.
 
 ### 3.7 Five-task dry run
+
+The cell now refuses to continue if any unit fails with `ModuleNotFoundError` (the project
+venv is missing `requirements-validation.txt`) or if **0/45** units pass. A 0/45 dry run is not
+a model result; fix the environment/transport before starting the pilot.
 
 Every condition runs on the first five pilot tasks with one sample (45 units), using the
 smoothed wishes and the refit detector. The notebook prints each unit's compact trace, token
