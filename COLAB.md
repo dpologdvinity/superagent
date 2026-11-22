@@ -41,6 +41,11 @@ The repository token is read through an environment-backed git credential helper
 not appear in a URL or command. If you cannot use a token, the notebook offers an uploaded
 repository archive fallback; in that case the optional results push is unavailable.
 
+The Colab kernel exports `MPLBACKEND=module://matplotlib_inline.backend_inline`; the
+project venv does not include matplotlib-inline, so importing matplotlib there fails. Cell 0
+forces `MPLBACKEND=Agg` for project subprocesses, and the harness already scrubs the
+evaluation environment to `MPLBACKEND=Agg`.
+
 **Clean restart.** Use a new Colab runtime (Runtime → Disconnect and delete runtime) so
 `/content` is empty, then upload this notebook. It uses the new `superagent-r2-clean` Drive
 directory; it does not restore the previous failed run's snapshot. With no snapshot, step 3

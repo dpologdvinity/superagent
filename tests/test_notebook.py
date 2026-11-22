@@ -52,6 +52,8 @@ def test_notebook_covers_the_r2_pipeline_steps():
         "derived coverage",
         "INSTALL_VALIDATION_REQUIREMENTS",
         "requirements-validation.txt",
+        "MPLBACKEND",
+        "Agg",
         "dry-run passes",
         "ModuleNotFoundError units",
         "CLEAR_CACHE_FOR_DRY_RUN",
