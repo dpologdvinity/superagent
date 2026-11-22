@@ -1,7 +1,7 @@
 # R1 five-label silence detector
 
-- Created: 2026-11-22T03:20:47+00:00
-- Git commit: `5a003211e0c4b035a4fb72d89eebfaefa4552cc9` (dirty)
+- Created: 2026-11-22T03:22:39+00:00
+- Git commit: `48fbb5a5475d4c2d6e21772da31318881a77061e` (dirty)
 - Data: 500 train tasks, split {'train': 500, 'heldout': 300, 'evolution': 200, 'pilot': 100}; held-out used: 0.
 - Encoder: frozen `Qwen/Qwen3-Embedding-0.6B` (revision `97b0c614be4d77ee51c0cef4e5f07c00f9eb65b3`), 1024-d, CPU.
 - Head: linear 1024->5, BCE + L2, 600 full-batch AdamW steps, seed 20261121; deployed L2=0.3.

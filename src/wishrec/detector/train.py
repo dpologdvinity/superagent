@@ -162,7 +162,11 @@ def train_detector(
     raw_encoder = detection_summary(Y, cv_result["raw_oof"]["encoder"])
     h3 = {
         "policy": policy_summary(Y, deployed_oof, threshold=threshold),
-        "threshold_calibration": threshold_calibration,
+        "threshold_calibration": {
+            key: value
+            for key, value in threshold_calibration.items()
+            if key != "grid"
+        },
         "deployed_style_oof": True,
         "selected_categories": {
             "count": int(sum(len(items) for items in selected_questions(deployed_oof, threshold))),
