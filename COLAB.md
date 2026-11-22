@@ -51,7 +51,7 @@ actual times in `gpu_time.json`.
 | 0 | Runtime/GPU check | Colab | <1 min |
 | 1 | Token, clone at `main`, record commit | Colab | 1–2 min |
 | 2 | Install `uv`, `uv sync --frozen` (CPU project env) | Colab | 3–8 min |
-| 3 | Drive restore **or** `make levels` (downloads + canonical validation) | CPU | restore <2 min; fresh `make levels` 15–40 min |
+| 3 | Drive restore, then verify/materialize derived tests from the **committed** levels (`wishrec.materialize`; downloads raw if missing) | CPU | restore <2 min; materialize ~1–3 min |
 | 4 | Install vLLM in `/content/vllm-env`, start server, download model | GPU | 10–30 min including download |
 | 5 | Probe `/v1/models`, native tool calls, text fallback; write `endpoint.json` | GPU | <2 min |
 | 6 | Smooth 500 train + 100 pilot wishes | GPU | 5–20 min |
@@ -76,22 +76,33 @@ The session guard starts no new shard with less than 30 min left.
 - The clone is `--depth 1 --branch main`; the exact commit is printed and included in every
   manifest and the results `COLAB_RUN.md`.
 
-### 3.2 `make levels`
+### 3.2 Levels and derived tests
 
-`make levels` runs `uv sync`, installs `requirements-validation.txt`, downloads the three
-pinned dataset revisions, validates every canonical solution, and writes the committed
-`results/levels/` artifacts plus the gitignored hidden tests under `data/derived/levels/`.
-The notebook requires **1,100 hidden tests** before continuing. If a Drive snapshot is
-restored, `data/` is restored too and this step is skipped.
+The pilot uses the **committed** `results/levels/tasks.jsonl`; its SHA-256 is pinned in the
+notebook (`EXPECTED_LEVELS_SHA256 = b80c7f72…`). It does **not** re-run `make levels` for a
+pilot: `make levels` re-parses, re-validates and re-selects the task set, so a different
+library environment can rebuild a different 1,100-task composition. `make levels` remains the
+development command that rebuilds the R0 artifact; it is not part of the pilot path.
 
-The committed R0 `tasks.jsonl` SHA-256 is pinned in the notebook
-(`EXPECTED_LEVELS_SHA256 = b80c7f72…`). A different library set can rebuild a different
-1,100-task composition; the notebook stops unless `ALLOW_LEVELS_DRIFT = True`. If you set
-it, commit the run's `results/levels/` and `data_provenance.json` with the results, and
-never mix the committed R0 stats with the rebuilt split.
+After a Drive restore the notebook checks **derived coverage**: every committed task must have
+`data/derived/levels/<source>/<task>/hidden_test.py`. A snapshot from a different task set can
+still contain 1,100 hidden tests while missing the committed keys. When coverage is
+incomplete, the notebook runs:
 
-If `make levels` reports a shortfall, do not pad the data: record the shortfall and stop.
-The R0 artifact is deterministic apart from library drift, which the manifest records.
+```bash
+.venv/bin/python -m wishrec.materialize --tasks results/levels/tasks.jsonl --download --clean
+```
+
+This re-parses the pinned raw rows, writes the derived stub/visible/hidden/canonical files for
+the committed tasks, and verifies each file's SHA-256 against the values stored in the
+committed record. It does not validate or re-select, so it cannot change the split. If raw data
+is missing it downloads the pinned revisions first (`repo_type="dataset"`; the SHA-256s are
+checked).
+
+If the levels SHA itself does not match (a rebuilt `results/levels/` rather than a stale
+snapshot), the notebook stops unless `ALLOW_LEVELS_DRIFT = True`; in that case commit the run's
+`results/levels/` and `data_provenance.json` with the results, and never mix the committed R0
+stats with the rebuilt split.
 
 ### 3.3 vLLM server
 

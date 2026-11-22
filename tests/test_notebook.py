@@ -33,7 +33,7 @@ def test_notebook_covers_the_r2_pipeline_steps():
     for marker in (
         "ENABLE_NATIVE_TOOL_CALLS",
         "PERSIST_TO_DRIVE",
-        "make levels",
+        "wishrec.materialize",
         "vllm serve",
         "Qwen/Qwen3-8B-AWQ",
         "Qwen/Qwen3-Embedding-0.6B",
@@ -49,6 +49,7 @@ def test_notebook_covers_the_r2_pipeline_steps():
         "EXPECTED_LEVELS_SHA256",
         "ALLOW_LEVELS_DRIFT",
         "levels tasks.jsonl sha256",
+        "derived coverage",
         "CLEAR_CACHE_FOR_DRY_RUN",
         "dry run finished in",
         "data_provenance.json",
