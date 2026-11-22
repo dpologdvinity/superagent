@@ -64,7 +64,7 @@ def build_model_dict(
 ) -> dict:
     return {
         "format_version": 1,
-        "name": "five-label-silence-detector/r1",
+        "name": f"five-label-silence-detector/{training.get('run_id', 'r1')}",
         "created_at": utc_now_iso(),
         "labels": list(head.labels),
         "encoder": {
@@ -130,8 +130,10 @@ def train_detector(
     embeddings: np.ndarray | None = None,
     folds: int = CV_FOLDS,
     seed: int = DETECTOR_SEED,
+    smoothing_path: Path | None = None,
+    run_id: str = "r1",
 ) -> dict:
-    data = train_dataset(tasks_path)
+    data = train_dataset(tasks_path, smoothing_path=smoothing_path)
     Y = np.asarray(data["labels"], dtype=np.float64)
     texts = data["texts"]
     X = np.asarray(embeddings, dtype=np.float64) if embeddings is not None else np.asarray(
@@ -181,8 +183,10 @@ def train_detector(
             ],
         },
     }
+    smoothing = data.get("smoothing")
+    run_label = run_id.upper()
     metrics = {
-        "run_id": "r1",
+        "run_id": run_id,
         "created_at": utc_now_iso(),
         "git": git_info(),
         "environment": environment_info(),
@@ -200,6 +204,7 @@ def train_detector(
                 for source in sorted(set(data["sources"]))
             },
             "heldout_tasks_used": 0,
+            "smoothing": smoothing,
         },
         "encoder": {
             "model": ENCODER_NAME,
@@ -211,6 +216,11 @@ def train_detector(
         "training": {
             "seed": seed,
             "folds": folds,
+            "l3": (
+                "Qwen3-8B smoothed wishes (R2 artifact)" if smoothing else
+                "raw first-sentence L3; R2 smoothing not applied"
+            ),
+            "smoothing": smoothing,
             "head": {
                 "epochs": HEAD_EPOCHS,
                 "learning_rate": HEAD_LEARNING_RATE,
@@ -231,21 +241,27 @@ def train_detector(
     }
     output = Path(output_dir) if output_dir else DETECTOR_DIR
     output.mkdir(parents=True, exist_ok=True)
+    l3_training = {
+        "run_id": run_id,
+        "split": "train",
+        "seed": seed,
+        "folds": folds,
+        "l2": deployed_selection["selected"],
+        "epochs": HEAD_EPOCHS,
+        "learning_rate": HEAD_LEARNING_RATE,
+        "l3": (
+            "Qwen3-8B smoothed wishes (R2 artifact)" if smoothing else
+            "raw first-sentence L3; R2 smoothing not applied"
+        ),
+        "smoothing": smoothing,
+    }
     model = build_model_dict(
         head,
         calibrators,
         threshold=threshold,
         threshold_calibration=threshold_calibration,
         data=data,
-        training={
-            "split": "train",
-            "seed": seed,
-            "folds": folds,
-            "l2": deployed_selection["selected"],
-            "epochs": HEAD_EPOCHS,
-            "learning_rate": HEAD_LEARNING_RATE,
-            "l3": "raw first-sentence L3; R2 smoothing not applied in R1",
-        },
+        training=l3_training,
     )
     (output / "model.json").write_text(
         json.dumps(model, indent=2, sort_keys=True, ensure_ascii=False) + "\n",
@@ -254,22 +270,26 @@ def train_detector(
     metrics["artifacts"] = {
         "model_sha256": _sha256_file(output / "model.json"),
     }
-    metrics["report"] = render_report(metrics)
+    metrics["report"] = render_report(metrics, run_label=run_label)
     atomic_write_json(output / "metrics.json", metrics)
     write_jsonl(
         output / "cv_predictions.jsonl",
         _cv_rows(data, cv_result, deployed_oof, threshold),
     )
     atomic_write_text(output / "report.md", metrics["report"])
+    command = "PYTHONPATH=src uv run python -m wishrec.detector.train"
+    if smoothing_path is not None:
+        command += f" --run-id {run_id} --smoothed-wishes {smoothing_path}"
     manifest = {
-        "run_id": "r1",
+        "run_id": run_id,
         "created_at": utc_now_iso(),
         "git": git_info(),
         "environment": environment_info(),
-        "command": "PYTHONPATH=src uv run python -m wishrec.detector.train",
+        "command": command,
         "data": metrics["data"],
         "encoder": metrics["encoder"],
         "training": metrics["training"],
+        "smoothing": smoothing,
         "threshold": threshold,
         "artifacts": {
             "model": "model.json",
@@ -331,11 +351,12 @@ def _sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def render_report(metrics: dict) -> str:
+def render_report(metrics: dict, *, run_label: str | None = None) -> str:
     """Human-readable detector report with every headline number traceable to JSON."""
     detection = metrics["detection"]
+    header = run_label or str(metrics.get("run_id", "r1")).upper()
     lines = [
-        "# R1 five-label silence detector",
+        f"# {header} five-label silence detector",
         "",
         f"- Created: {metrics['created_at']}",
         f"- Git commit: `{metrics['git'].get('commit')}`"
@@ -415,13 +436,11 @@ def render_report(metrics: dict) -> str:
                 for label, rate in policy["selection_rate_by_category"].items()
             ),
             "",
-            "## R1 limitations",
+            f"## {header} limitations",
             "",
             "- The encoder is frozen and the head is a single linear layer; there is no",
             "  fine-tuning. The reported OOF numbers are the detector evidence, not a pilot",
             "  result.",
-            "- R1 trains on the raw first-sentence L3. R2 will smooth the 500 train wishes with",
-            "  the generator endpoint and refit the detector before the pilot.",
             "- The `error_behaviour` F1 at the default 0.5 threshold is 0 because its",
             "  calibrated probability stays near the 12.6% base rate; AUROC and average",
             "  precision are the informative ranking metrics for that label.",
@@ -430,6 +449,20 @@ def render_report(metrics: dict) -> str:
             "",
         ]
     )
+    if metrics["data"].get("smoothing"):
+        lines.extend(
+            [
+                "- This artifact is the R2 refit: the 500 train wishes were smoothed by the",
+                "  generator endpoint and the frozen encoder/training recipe are unchanged.",
+            ]
+        )
+    else:
+        lines.extend(
+            [
+                "- R1 trains on the raw first-sentence L3. R2 will smooth the 500 train wishes",
+                "  with the generator endpoint and refit the detector before the pilot.",
+            ]
+        )
     return "\n".join(lines)
 
 
@@ -440,9 +473,19 @@ def _fmt(value, digits: int = 3) -> str:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Train the R1 five-label silence detector")
+    parser = argparse.ArgumentParser(
+        description="Train the five-label silence detector (raw or R2-smoothed L3)"
+    )
     parser.add_argument("--tasks", type=Path, default=None)
     parser.add_argument("--output", type=Path, default=None)
+    parser.add_argument(
+        "--smoothed-wishes",
+        type=Path,
+        default=None,
+        metavar="WISHES_JSONL",
+        help="R2 smoothed-wish artifact; without it the raw R0 L3 is used",
+    )
+    parser.add_argument("--run-id", default="r1", help="artifact label, e.g. r2")
     parser.add_argument("--folds", type=int, default=CV_FOLDS)
     parser.add_argument("--seed", type=int, default=DETECTOR_SEED)
     args = parser.parse_args(argv)
@@ -451,6 +494,8 @@ def main(argv: list[str] | None = None) -> int:
         output_dir=args.output,
         folds=args.folds,
         seed=args.seed,
+        smoothing_path=args.smoothed_wishes,
+        run_id=args.run_id,
     )
     print(result["metrics"]["report"])
     print(f"wrote artifacts to {result['output_dir']}")

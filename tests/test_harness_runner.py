@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -173,3 +174,26 @@ def test_heldout_split_is_refused_for_a_pilot():
 
     with pytest.raises(SystemExit, match="held-out"):
         runner._task_selection(Args())
+
+
+def test_detector_identity_is_semantic_not_a_file_timestamp(tmp_path):
+    model = json.loads(
+        (Path(__file__).resolve().parents[1] / "results/detector/model.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    first = tmp_path / "first.json"
+    first.write_text(json.dumps(model), encoding="utf-8")
+    identity = runner.detector_identity(first)
+
+    model["created_at"] = "2099-01-01T00:00:00+00:00"
+    second = tmp_path / "second.json"
+    second.write_text(json.dumps(model), encoding="utf-8")
+    rerun = runner.detector_identity(second)
+    assert rerun["sha256"] == identity["sha256"]
+    assert rerun["file_sha256"] != identity["file_sha256"]
+
+    model["threshold"] = float(model["threshold"]) + 0.1
+    changed = tmp_path / "changed.json"
+    changed.write_text(json.dumps(model), encoding="utf-8")
+    assert runner.detector_identity(changed)["sha256"] != identity["sha256"]

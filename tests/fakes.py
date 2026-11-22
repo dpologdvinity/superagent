@@ -226,15 +226,43 @@ def generic_response(request: dict) -> dict:
 class FakeEndpoint:
     """Minimal OpenAI-compatible HTTP server used by the transport/loop tests."""
 
-    def __init__(self, responses=None, handler=None):
+    def __init__(self, responses=None, handler=None, model: str = "fake"):
         self.responses = list(responses or [])
         self.handler = handler
+        self.model = model
         self.requests: list[dict] = []
         self._server = None
         self._thread = None
         endpoint = self
 
         class Handler(BaseHTTPRequestHandler):
+            def _send_json(self, payload: dict) -> None:
+                body = json.dumps(payload).encode("utf-8")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def do_GET(self):  # noqa: N802
+                if self.path.rstrip("/").endswith("/models"):
+                    self._send_json(
+                        {
+                            "object": "list",
+                            "data": [
+                                {
+                                    "id": endpoint.model,
+                                    "object": "model",
+                                    "created": 1,
+                                    "owned_by": "fake",
+                                }
+                            ],
+                        }
+                    )
+                    return
+                self.send_response(404)
+                self.end_headers()
+
             def do_POST(self):  # noqa: N802
                 length = int(self.headers.get("Content-Length", "0") or 0)
                 payload = json.loads(self.rfile.read(length) or b"{}")
@@ -247,12 +275,7 @@ class FakeEndpoint:
                         response = response(payload)
                 else:
                     response = text_response("done")
-                body = json.dumps(response).encode("utf-8")
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.send_header("Content-Length", str(len(body)))
-                self.end_headers()
-                self.wfile.write(body)
+                self._send_json(response)
 
             def log_message(self, *args):  # noqa: A003
                 return

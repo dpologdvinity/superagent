@@ -65,6 +65,7 @@ __all__ = [
     "CategoryScore",
     "TrainedDetector",
     "load_default_detector",
+    "load_detector",
     "model_path",
     "questions_for",
 ]

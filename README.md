@@ -12,12 +12,15 @@ scratch to that design:
   disjoint 100-task pilot;
 - pilot: 100 development tasks, three samples.
 
-R0 (scaffold and data foundation) and R1 (ReAct harness + detector) are complete; R2-R3
-follow. The design is in [`PROJECT.md`](PROJECT.md), the rebuild plan is in
-[`PLAN.md`](PLAN.md), the R0 data artifact is in [`results/levels/`](results/levels/), and
-the R1 detector artifact is in [`results/detector/`](results/detector/).
+R0 (scaffold and data foundation) and R1 (ReAct harness + detector) are complete. R2 (Colab
+A100 pilot) is prepared: [`notebooks/colab_a100_vllm.ipynb`](notebooks/colab_a100_vllm.ipynb)
+and [`COLAB.md`](COLAB.md) run L3 smoothing, the smoothed detector refit and the sharded
+100-task pilot; the GPU execution itself is the operator's step. R3 follows. The design is in
+[`PROJECT.md`](PROJECT.md), the rebuild plan is in [`PLAN.md`](PLAN.md), the R0 data artifact
+is in [`results/levels/`](results/levels/), and the R1 detector artifact is in
+[`results/detector/`](results/detector/).
 
-## Current state: R0 + R1
+## Current state: R0 + R1, R2 preparation
 
 R0:
 
@@ -45,12 +48,27 @@ R1:
   constraints AUROC 0.947 and `error_behaviour` AUROC 0.736 (63 train positives);
 - unit and end-to-end tests with a local fake vLLM endpoint; `make test` needs no network.
 
+R2 preparation (GPU execution pending):
+
+- [`notebooks/colab_a100_vllm.ipynb`](notebooks/colab_a100_vllm.ipynb) and
+  [`COLAB.md`](COLAB.md): clone/materialize/start vLLM, probe native and text tool transports,
+  smooth the 500 train + 100 pilot wishes, refit the detector, dry-run 5 tasks × 9
+  conditions, run the 100 × 3 × 9 pilot in config-stable shards, report and bundle;
+- runner `--smoothed` / `--detector` / `--shard/--shards`, API-error retry on resume and the
+  new `wishrec.harness.report` pass@1/recovery/per-category/failure-bucket aggregation;
+- `scripts/local_fake_dry_run.py`: the same path against a fake endpoint with the real
+  committed levels and CPU encoder (no GPU, no paid API). The vLLM/A100 path itself is what
+  the operator verifies.
+
 ## Commands
 
 ```bash
 make test        # unit tests and committed-artifact checks; no network or GPU
 make detector    # fit/calibrate the five-label detector on the 500 train tasks (CPU)
 make levels      # pinned download, parse, validation, split and data artifacts
+
+# R2 local path with a fake endpoint (no GPU, no paid API):
+uv run python scripts/local_fake_dry_run.py
 ```
 
 The generator is a local OpenAI-compatible vLLM endpoint. Copy the example and source it
@@ -66,18 +84,37 @@ vllm serve Qwen/Qwen3-8B-AWQ --max-model-len 16384 --gpu-memory-utilization 0.90
 used to validate BigCodeBench canonical solutions, and materializes the gitignored hidden
 tests under `data/derived/levels/`. The harness needs those files; `make test` does not.
 
-### R2 command (not run in R1)
+### R2 command (GPU execution is the operator's step)
 
-`make levels` and `make detector` must complete first. Then, with the vLLM server running:
+`make levels` must complete first. Then, with the vLLM server running:
 
 ```bash
+# Smooth the 500 train + 100 pilot wishes and refit the detector on them.
+PYTHONPATH=src uv run python -m wishrec.harness.smoothing --run-id r2-pilot \
+  --splits train pilot
+PYTHONPATH=src uv run python -m wishrec.detector.train --run-id r2 \
+  --smoothed-wishes results/runs/r2-pilot/smoothing/wishes.jsonl \
+  --output results/detector-smoothed
+
+# 100-task pilot, config-stable shards; rerun a shard to resume.
 PYTHONPATH=src uv run python -m wishrec.harness.runner pilot \
-  --run-id r2-pilot --samples 3 --workers 2
+  --run-id r2-pilot --samples 3 --workers 2 --shards 2 --shard 0 \
+  --smoothed results/runs/r2-pilot/smoothing/wishes.jsonl \
+  --detector results/detector-smoothed/model.json
+
+# pass@1, recovery, per-category recovery and failure buckets.
+PYTHONPATH=src uv run python -m wishrec.harness.report results/runs/r2-pilot
 ```
 
-The pilot uses only the disjoint 100-task development split; the 300 held-out tasks are
-refused. `--samples` repeats each condition unit; B2 itself expands to five direct samples
-per unit. Per-unit traces are written under `results/runs/r2-pilot/` and an interrupted
-run resumes from completed units. The Colab notebook must provide one 24 GB GPU, vLLM and the
-pinned `Qwen/Qwen3-8B-AWQ` revision, a CPU Python environment for `make levels` /
-`make detector`, and about 18 GPU-hours; no paid API key is used.
+The [Colab notebook](notebooks/colab_a100_vllm.ipynb) and [runbook](COLAB.md) wrap these
+steps, probe the endpoint's native vs text tool transport, record the `$0` cost/GPU time and
+bundle the artifacts. The pilot uses only the disjoint 100-task development split; the 300
+held-out tasks are refused. `--samples` repeats each condition unit; B2 expands each unit to
+five direct samples. Per-unit traces are written under `results/runs/r2-pilot/`; completed
+units are skipped and API-error units are retried on resume. The notebook expects one A100,
+vLLM and the pinned `Qwen/Qwen3-8B-AWQ`, a CPU Python environment for `make levels` /
+the detector, and about 18 GPU-hours; no paid API key is used.
+
+`scripts/local_fake_dry_run.py` verifies the harness path locally with a fake OpenAI-compatible
+endpoint over the real committed levels and CPU encoder. It does not test vLLM or Colab; the
+runbook lists exactly what the operator must verify.

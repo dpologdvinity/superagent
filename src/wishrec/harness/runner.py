@@ -29,13 +29,15 @@ from .config import (
     generator_config,
     git_info,
     harness_source_hash,
+    sha256_file,
     sha256_text,
     utc_now_iso,
 )
-from .detector import load_default_detector
+from .detector import load_default_detector, load_detector, model_path
 from .llm import LLMClient
 from .loop import run_unit
 from .models import Task, load_manifest, load_tasks
+from ..smoothing import SmoothingArtifact, load_smoothing
 
 DEFAULT_OUTPUT_DIR = Path("results/runs")
 CONDITION_SPLIT_NOTE = {"B1": "L0", "B2": "direct 5 samples", "B3": "direct frontier"}
@@ -104,6 +106,52 @@ def _config_hash(config: dict) -> str:
     return sha256_text(json.dumps(config, sort_keys=True, ensure_ascii=False))
 
 
+#: Detector fields that define the questions a run will ask.  Timestamps, git metadata
+#: and absolute paths are deliberately excluded so a deterministic refit on a new session
+#: keeps the same identity (and a resumed shard is not rejected for a new created_at).
+DETECTOR_IDENTITY_FIELDS = (
+    "labels",
+    "head",
+    "calibrators",
+    "threshold",
+)
+
+
+def detector_identity(detector_path: Path | None = None) -> dict:
+    """The detector artifact a run will use, identified by its learned content."""
+    path = Path(detector_path) if detector_path is not None else model_path()
+    identity: dict = {"path": str(path), "sha256": None, "present": path.is_file()}
+    if not path.is_file():
+        return identity
+    try:
+        model = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return identity
+    encoder = model.get("encoder") or {}
+    policy = model.get("policy") or {}
+    training = model.get("training") or {}
+    data = model.get("data") or {}
+    smoothing = data.get("smoothing") or {}
+    semantic = {field: model.get(field) for field in DETECTOR_IDENTITY_FIELDS}
+    semantic["encoder"] = {
+        field: encoder.get(field) for field in ("model", "revision", "dimension")
+    }
+    semantic["policy"] = {
+        field: policy.get(field) for field in ("utility", "threshold_calibration")
+    }
+    semantic["training"] = {
+        field: training.get(field)
+        for field in ("seed", "folds", "l2", "epochs", "learning_rate")
+    }
+    semantic["smoothing_sha256"] = smoothing.get("sha256")
+    semantic["tasks_sha256"] = data.get("tasks_sha256")
+    identity["sha256"] = sha256_text(
+        json.dumps(semantic, sort_keys=True, ensure_ascii=False)
+    )
+    identity["file_sha256"] = sha256_file(path)
+    return identity
+
+
 def build_config(
     tasks: list[Task],
     conditions: list[Condition],
@@ -111,6 +159,8 @@ def build_config(
     *,
     run_id: str,
     seed: int = GENERATOR_SEED,
+    smoothing: SmoothingArtifact | None = None,
+    detector_path: Path | None = None,
 ) -> dict:
     return {
         "run_id": run_id,
@@ -123,6 +173,12 @@ def build_config(
         "generator": generator_config().safe_identity,
         "frontier": frontier_config().safe_identity,
         "harness_source_hash": harness_source_hash(),
+        "smoothing": smoothing.identity() if smoothing is not None else None,
+        "detector": {
+            key: value
+            for key, value in detector_identity(detector_path).items()
+            if key != "file_sha256"
+        },
         "condition_descriptions": {
             condition.name: condition.description for condition in conditions
         },
@@ -146,7 +202,9 @@ def _compact(result: dict) -> dict:
     }
 
 
-def summarise(run_dir: Path, config: dict) -> tuple[dict, str]:
+def summarise(
+    run_dir: Path, config: dict, *, planned_units: int | None = None
+) -> tuple[dict, str]:
     conditions = config["conditions"]
     summaries = {}
     total_units = 0
@@ -204,12 +262,24 @@ def summarise(run_dir: Path, config: dict) -> tuple[dict, str]:
             "buckets": buckets,
             "tokens": tokens,
         }
+    expected = (
+        int(planned_units)
+        if planned_units is not None
+        else len(config.get("task_keys", []))
+        * len(conditions)
+        * len(config.get("sample_indices", [0]))
+    )
     summary = {
         "run_id": config.get("run_id"),
         "generated_at": utc_now_iso(),
         "config_hash": _config_hash(config),
         "conditions": summaries,
         "units": total_units,
+        "planned_units": expected,
+        "missing_units": max(0, expected - total_units),
+        "complete": total_units >= expected,
+        "smoothing": config.get("smoothing"),
+        "detector": config.get("detector"),
         "task_keys": config.get("task_keys", []),
     }
     lines = [
@@ -218,7 +288,14 @@ def summarise(run_dir: Path, config: dict) -> tuple[dict, str]:
         f"- Run: `{config.get('run_id')}`",
         f"- Tasks: {len(config.get('task_keys', []))}",
         f"- Conditions: {', '.join(conditions)}",
-        f"- Units: {total_units}",
+        f"- Units: {total_units}/{expected}"
+        + (" (complete)" if total_units >= expected else " (partial)"),
+        f"- Smoothed wishes: "
+        + (
+            f"`{(config.get('smoothing') or {}).get('sha256')}`"
+            if config.get("smoothing")
+            else "none (raw L3)"
+        ),
         "",
         "| condition | passed | pass@1 | avg turns | avg questions | cap hits | buckets |",
         "| --- | --- | --- | --- | --- | --- | --- |",
@@ -307,6 +384,45 @@ def execute_unit(
     return result
 
 
+def _stored_unit_records(output_dir: Path, config: dict, digest: str) -> list[dict]:
+    """Completed units on disk that belong to this exact configuration.
+
+    Rebuilt from disk after every invocation so ``results.jsonl`` covers the whole run
+    (all shards), not just the units executed in this session.
+    """
+    allowed_tasks = set(config.get("task_keys", []))
+    allowed_samples = set(config.get("sample_indices", []))
+    records: list[dict] = []
+    for condition_name in config["conditions"]:
+        directory = Path(output_dir) / "units" / condition_name
+        if not directory.exists():
+            continue
+        for path in directory.rglob("*.json"):
+            try:
+                unit = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                continue
+            if unit.get("status") != "complete" or unit.get("config_hash") != digest:
+                continue
+            if allowed_tasks and unit.get("task_key") not in allowed_tasks:
+                continue
+            if allowed_samples and unit.get("sample_index", 0) not in allowed_samples:
+                continue
+            records.append(unit)
+    records.sort(
+        key=lambda unit: (
+            str(unit.get("condition", "")),
+            int(unit.get("sample_index", 0) or 0),
+            str(unit.get("task_key", "")),
+        )
+    )
+    return records
+
+
+def _stored_units(output_dir: Path, config: dict, digest: str) -> int:
+    return len(_stored_unit_records(output_dir, config, digest))
+
+
 def run_units(
     *,
     tasks: list[Task],
@@ -317,43 +433,88 @@ def run_units(
     workers: int = 1,
     seed: int = GENERATOR_SEED,
     force: bool = False,
+    smoothing_path: Path | None = None,
+    detector_path: Path | None = None,
+    shard: int = 0,
+    shards: int = 1,
     progress=print,
 ) -> dict:
+    """Execute the planned units, skipping completed ones.
+
+    ``shard``/``shards`` split the *same* full plan into deterministic round-robin
+    chunks without changing the config hash, so a 12-hour Colab session can run one
+    chunk and a later session can run the next while still resuming per unit.  Every
+    invocation rewrites the aggregate summary/report from all units already on disk.
+    """
     if not tasks:
         raise ValueError("no tasks selected")
     if not conditions:
         raise ValueError("no conditions selected")
-    config = build_config(tasks, conditions, samples, run_id=run_id, seed=seed)
+    if shards < 1:
+        raise ValueError("shards must be at least 1")
+    if not 0 <= shard < shards:
+        raise ValueError(f"shard must be in [0, {shards - 1}], got {shard}")
+
+    artifact = None
+    if smoothing_path is not None:
+        artifact = load_smoothing(smoothing_path)
+        changed = artifact.apply_to_tasks(tasks, require_all=True)
+        if changed != len(tasks):
+            raise RuntimeError(
+                f"smoothed wishes cover {changed}/{len(tasks)} selected tasks"
+            )
+
+    config = build_config(
+        tasks,
+        conditions,
+        samples,
+        run_id=run_id,
+        seed=seed,
+        smoothing=artifact,
+        detector_path=detector_path,
+    )
     digest = _config_hash(config)
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
     manifest_path = output_dir / "manifest.json"
-    if manifest_path.exists() and not force:
-        old = json.loads(manifest_path.read_text(encoding="utf-8"))
-        if old.get("config_hash") != digest:
+    previous: dict = {}
+    if manifest_path.exists():
+        previous = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if previous.get("config_hash") != digest and not force:
             raise RuntimeError(
-                f"run {run_id!r} exists with config {old.get('config_hash')} != {digest}; "
+                f"run {run_id!r} exists with config {previous.get('config_hash')} != {digest}; "
                 "rerun with --force"
             )
+    shards_done = [
+        entry for entry in (previous.get("shards") or []) if isinstance(entry, dict)
+    ]
 
     level_manifest = load_manifest()
     detector = None
     if any(condition.targeted for condition in conditions):
-        detector = load_default_detector()
+        if detector_path is not None:
+            detector = load_detector(Path(detector_path))
+        else:
+            detector = load_default_detector()
     sibling_map = (
         sibling_contexts(tasks) if any(condition.siblings for condition in conditions) else {}
     )
 
-    planned = [
+    planned_all = [
         (condition, task, sample_index)
         for condition in conditions
         for task in tasks
         for sample_index in range(max(1, samples))
     ]
+    planned = [
+        unit
+        for index, unit in enumerate(planned_all)
+        if index % shards == shard
+    ]
     manifest = {
         "run_id": run_id,
-        "created_at": utc_now_iso(),
+        "created_at": previous.get("created_at") or utc_now_iso(),
         "git": git_info(),
         "environment": environment_info(),
         "level_manifest_sha256": sha256_text(
@@ -361,17 +522,19 @@ def run_units(
         ),
         "config": config,
         "config_hash": digest,
-        "planned_units": len(planned),
+        "planned_units": len(planned_all),
+        "shard": {"index": shard, "count": shards, "units": len(planned)},
+        "shards": shards_done,
         "level": level_manifest.get("phase", "R0"),
         "status": "running",
     }
     atomic_write_json(manifest_path, manifest)
 
     started = time.monotonic()
+    run_started_at = utc_now_iso()
     completed = 0
     skipped = 0
     errors: list[str] = []
-    results: list[dict] = []
 
     def job(condition: Condition, task: Task, sample_index: int):
         path = unit_path(output_dir, condition, task, sample_index)
@@ -381,6 +544,7 @@ def run_units(
                 if (
                     existing.get("status") == "complete"
                     and existing.get("config_hash") == digest
+                    and not existing.get("api_error")
                 ):
                     return "skipped", existing
             except (OSError, json.JSONDecodeError):
@@ -427,7 +591,6 @@ def run_units(
             if result is None:
                 progress(f"[{completed}/{len(planned)}] ERROR {condition.name} {task.key}")
                 continue
-            results.append(result)
             if result.get("api_error"):
                 errors.append(
                     f"{condition.name}/{task.key}/{sample_index}: {result['api_error']}"
@@ -438,28 +601,57 @@ def run_units(
                 f"turns={result.get('turns')} q={result.get('questions')}"
             )
 
-    summary, report = summarise(output_dir, config)
+    stored_records = _stored_unit_records(output_dir, config, digest)
+    stored = len(stored_records)
+    summary, report = summarise(
+        output_dir, config, planned_units=len(planned_all)
+    )
+    summary["status"] = "complete" if stored >= len(planned_all) else "partial"
     atomic_write_json(output_dir / "summary.json", summary)
     atomic_write_text(output_dir / "report.md", report)
     atomic_write_text(
         output_dir / "results.jsonl",
-        "\n".join(json.dumps(_compact(result), sort_keys=True) for result in results)
-        + ("\n" if results else ""),
+        "\n".join(
+            json.dumps(_compact(result), sort_keys=True) for result in stored_records
+        )
+        + ("\n" if stored_records else ""),
     )
+    shard_entry = {
+        "index": shard,
+        "count": shards,
+        "units": len(planned),
+        "started_at": run_started_at,
+        "finished_at": utc_now_iso(),
+        "duration_s": round(time.monotonic() - started, 1),
+        "errors": len(errors),
+    }
+    shards_done = [
+        entry
+        for entry in shards_done
+        if not (entry.get("index") == shard and entry.get("count") == shards)
+    ]
+    shards_done.append(shard_entry)
+    shards_done.sort(key=lambda entry: (int(entry.get("count", 1)), int(entry.get("index", 0))))
     manifest.update(
         {
             "finished_at": utc_now_iso(),
-            "status": "complete",
-            "units_completed": summary["units"],
+            "status": "complete" if stored >= len(planned_all) else "partial",
+            "units_completed": stored,
+            "units_planned": len(planned_all),
             "units_skipped": skipped,
+            "shards": shards_done,
             "errors": errors[:50],
             "duration_s": round(time.monotonic() - started, 1),
         }
     )
     atomic_write_json(manifest_path, manifest)
     progress(report)
+    if stored < len(planned_all):
+        progress(
+            f"run incomplete: {stored}/{len(planned_all)} units stored; "
+            f"surviving shards are resumable"
+        )
     return {"manifest": manifest, "summary": summary, "output_dir": str(output_dir)}
-
 
 def _task_selection(args) -> list[Task]:
     if args.split == "heldout":
@@ -480,6 +672,27 @@ def _add_common(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--workers", type=int, default=1)
     parser.add_argument("--seed", type=int, default=GENERATOR_SEED)
     parser.add_argument("--output", type=Path, default=None)
+    parser.add_argument(
+        "--smoothed",
+        type=Path,
+        default=None,
+        metavar="WISHES_JSONL",
+        help="apply the R2 smoothed-L3 artifact (wishes.jsonl) before selecting tasks",
+    )
+    parser.add_argument(
+        "--detector",
+        type=Path,
+        default=None,
+        metavar="MODEL_JSON",
+        help="detector artifact for H3/DISCARD (default results/detector/model.json)",
+    )
+    parser.add_argument(
+        "--shard",
+        type=int,
+        default=0,
+        help="zero-based shard index of the plan (config-stable chunking)",
+    )
+    parser.add_argument("--shards", type=int, default=1, help="number of shards")
     parser.add_argument("--force", action="store_true")
     parser.add_argument(
         "--dry-run",
@@ -506,10 +719,39 @@ def main(argv: list[str] | None = None) -> int:
     conditions = resolve_conditions(args.conditions)
     if args.command == "pilot" and len(tasks) != 100 and args.tasks is None and args.limit is None:
         raise SystemExit(f"pilot expects 100 tasks, found {len(tasks)}")
+    artifact = None
+    if args.smoothed is not None:
+        artifact = load_smoothing(args.smoothed)
+        artifact.apply_to_tasks(tasks, require_all=True)
     output_dir = args.output or (DEFAULT_OUTPUT_DIR / args.run_id)
-    config = build_config(tasks, conditions, args.samples, run_id=args.run_id, seed=args.seed)
+    config = build_config(
+        tasks,
+        conditions,
+        args.samples,
+        run_id=args.run_id,
+        seed=args.seed,
+        smoothing=artifact,
+        detector_path=args.detector,
+    )
     if args.dry_run:
-        print(json.dumps({"config": config, "units": len(tasks) * len(conditions) * max(1, args.samples)}, indent=2))
+        planned = len(tasks) * len(conditions) * max(1, args.samples)
+        shard_units = len(
+            [
+                index
+                for index in range(planned)
+                if index % max(1, args.shards) == args.shard
+            ]
+        )
+        print(
+            json.dumps(
+                {
+                    "config": config,
+                    "units": planned,
+                    "shard": {"index": args.shard, "count": args.shards, "units": shard_units},
+                },
+                indent=2,
+            )
+        )
         return 0
     run_units(
         tasks=tasks,
@@ -520,6 +762,10 @@ def main(argv: list[str] | None = None) -> int:
         workers=args.workers,
         seed=args.seed,
         force=args.force,
+        smoothing_path=args.smoothed,
+        detector_path=args.detector,
+        shard=args.shard,
+        shards=args.shards,
     )
     return 0
 

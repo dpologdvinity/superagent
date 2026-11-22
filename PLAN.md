@@ -1,8 +1,9 @@
 # Rebuild plan: milestone contract to final report
 
 The milestone contract is [`paper/milestone/main.pdf`](paper/milestone/main.pdf). The rebuild
-runs in four phases. R0 and R1 are complete in this repository state; R2-R3 are not
-started here.
+runs in four phases. R0 and R1 are complete; R2 is prepared here (notebook + runbook,
+local fake-endpoint verification) and awaits the operator's GPU execution; R3 is not
+started.
 
 Budget target: **18 GPU-hours** for the pilot, one 24 GB GPU, and **$0 paid API**. R0 and R1
 use CPU and local network only.
@@ -99,10 +100,22 @@ implemented as a separate endpoint call but deliberately not run in R1: the dete
 on R0's raw first-sentence L3, and R2 will smooth the 500 train wishes, refit and use the
 smoothed wishes for the pilot. No GPU or paid API is used in R1.
 
-## R2: Colab GPU pilot (next)
+## R2: Colab GPU pilot (prepared, GPU execution pending)
 
 **Goal.** Run the 100-task development pilot with Qwen3-8B AWQ on vLLM, three samples per
 condition, within about 18 GPU-hours.
+
+**Preparation delivered here.** The operator-facing path is
+[`notebooks/colab_a100_vllm.ipynb`](notebooks/colab_a100_vllm.ipynb) and
+[`COLAB.md`](COLAB.md). The notebook clones the pinned repository, materializes the data,
+starts vLLM, probes native and text tool transports, smooths the 500 train + 100 pilot wishes,
+refits the detector on the smoothed wishes, runs a 5-task dry run and the sharded 100-task
+pilot, and bundles the artifacts. `scripts/local_fake_dry_run.py` runs the same harness path
+locally against a fake OpenAI-compatible endpoint with the real levels and CPU encoder; no
+GPU or paid API is used. The runner gained `--smoothed`, `--detector`, `--shard/--shards`
+and retries API-error units on resume; the detector gained `--smoothed-wishes`; the new
+`wishrec.harness.report` module computes pass@1, recovery, per-category recovery and failure
+buckets across shards.
 
 **Work.**
 
@@ -113,15 +126,25 @@ condition, within about 18 GPU-hours.
 4. Compute pass@1, recovery, per-category recovery and failure buckets; verify the sample count
    and cost.
 
-**R2 command.** With `configs/vllm.env` sourced and the server running:
+**R2 command.** With `configs/vllm.env` sourced and the server running, the short version
+is the notebook/runbook path; the equivalent manual commands are:
 
 ```bash
-# CPU preparation: materialize derived hidden tests and fit the detector.
+# CPU preparation: materialize derived hidden tests, smooth the wishes and refit.
 make levels
-make detector
-# GPU pilot: only the disjoint 100-task development split.
+PYTHONPATH=src uv run python -m wishrec.harness.smoothing --run-id r2-pilot \
+  --splits train pilot
+PYTHONPATH=src uv run python -m wishrec.detector.train --run-id r2 \
+  --smoothed-wishes results/runs/r2-pilot/smoothing/wishes.jsonl \
+  --output results/detector-smoothed
+# GPU pilot: only the disjoint 100-task development split, sharded/resumable.
 PYTHONPATH=src uv run python -m wishrec.harness.runner pilot \
-  --run-id r2-pilot --samples 3 --workers 2
+  --run-id r2-pilot --samples 3 --workers 2 --shards 2 --shard 0 \
+  --smoothed results/runs/r2-pilot/smoothing/wishes.jsonl \
+  --detector results/detector-smoothed/model.json
+# Aggregate after all shards; --require-complete enforces 2,700 units + no held-out.
+PYTHONPATH=src uv run python -m wishrec.harness.report results/runs/r2-pilot \
+  --require-complete
 ```
 
 The runner refuses the held-out split, writes one trace per (condition, task, sample) under
@@ -132,7 +155,9 @@ environment for `make levels` / `make detector`, and the 18 GPU-hour budget; no 
 is used.
 
 **Acceptance.** All pilot units complete or are reported missing; the main-table metrics are
-computed from measured traces; the held-out split is untouched; the GPU-hour budget is recorded.
+computed from measured traces; the held-out split is untouched; the GPU-hour budget is
+recorded. **Status:** preparation complete and locally verified with a fake endpoint; the
+vLLM/Colab execution is the operator's step and its results are not claimed here.
 
 ## R3: paper
 

@@ -13,6 +13,7 @@ import numpy as np
 
 from ..config import LEVELS_DIR
 from ..harness.config import read_jsonl
+from ..smoothing import SmoothingArtifact, load_smoothing
 from .constants import LABELS
 
 TASKS_PATH = LEVELS_DIR / "tasks.jsonl"
@@ -48,7 +49,16 @@ def label_counts(Y: np.ndarray) -> dict[str, int]:
     }
 
 
-def train_dataset(tasks_path: Path | None = None) -> dict:
+def train_dataset(
+    tasks_path: Path | None = None,
+    smoothing_path: Path | SmoothingArtifact | None = None,
+) -> dict:
+    """The 500 train records, optionally with smoothed L3 wishes.
+
+    ``smoothing_path`` points at the R2 ``wishes.jsonl`` artifact.  The committed R0
+    records are not modified; the overlay is applied in memory and the artifact SHA-256
+    is recorded in the detector manifest.
+    """
     records = load_records(split="train", tasks_path=tasks_path)
     if len(records) != 500:
         raise ValueError(f"expected the 500 detector-train tasks, found {len(records)}")
@@ -58,10 +68,24 @@ def train_dataset(tasks_path: Path | None = None) -> dict:
     if leakage:
         raise RuntimeError(f"held-out tasks in the detector train split: {sorted(leakage)}")
     Y = label_matrix(records)
+    texts = wishes(records)
+    smoothing: dict | None = None
+    if smoothing_path is not None:
+        artifact = (
+            smoothing_path
+            if isinstance(smoothing_path, SmoothingArtifact)
+            else load_smoothing(smoothing_path)
+        )
+        artifact.apply_to_records(records, require_all=True)
+        texts = artifact.texts_for(records)
+        smoothing = {
+            **artifact.identity(),
+            "wishes_sha256": artifact.sha256,
+        }
     return {
         "records": records,
         "keys": [record["key"] for record in records],
-        "texts": wishes(records),
+        "texts": texts,
         "labels": Y,
         "sources": [record["source"] for record in records],
         "label_counts": label_counts(Y),
@@ -71,6 +95,7 @@ def train_dataset(tasks_path: Path | None = None) -> dict:
         },
         "split": "train",
         "tasks_path": str(tasks_path or TASKS_PATH),
+        "smoothing": smoothing,
         "artifact": {
             "tasks_sha256": _sha256_file(tasks_path or TASKS_PATH),
             "count": len(records),
