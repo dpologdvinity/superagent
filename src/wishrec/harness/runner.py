@@ -106,12 +106,49 @@ def _config_hash(config: dict) -> str:
     return sha256_text(json.dumps(config, sort_keys=True, ensure_ascii=False))
 
 
+#: Detector fields that define the questions a run will ask.  Timestamps, git metadata
+#: and absolute paths are deliberately excluded so a deterministic refit on a new session
+#: keeps the same identity (and a resumed shard is not rejected for a new created_at).
+DETECTOR_IDENTITY_FIELDS = (
+    "labels",
+    "head",
+    "calibrators",
+    "threshold",
+)
+
+
 def detector_identity(detector_path: Path | None = None) -> dict:
-    """The detector artifact a run will use, identified by content rather than mtime."""
+    """The detector artifact a run will use, identified by its learned content."""
     path = Path(detector_path) if detector_path is not None else model_path()
     identity: dict = {"path": str(path), "sha256": None, "present": path.is_file()}
-    if path.is_file():
-        identity["sha256"] = sha256_file(path)
+    if not path.is_file():
+        return identity
+    try:
+        model = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return identity
+    encoder = model.get("encoder") or {}
+    policy = model.get("policy") or {}
+    training = model.get("training") or {}
+    data = model.get("data") or {}
+    smoothing = data.get("smoothing") or {}
+    semantic = {field: model.get(field) for field in DETECTOR_IDENTITY_FIELDS}
+    semantic["encoder"] = {
+        field: encoder.get(field) for field in ("model", "revision", "dimension")
+    }
+    semantic["policy"] = {
+        field: policy.get(field) for field in ("utility", "threshold_calibration")
+    }
+    semantic["training"] = {
+        field: training.get(field)
+        for field in ("seed", "folds", "l2", "epochs", "learning_rate")
+    }
+    semantic["smoothing_sha256"] = smoothing.get("sha256")
+    semantic["tasks_sha256"] = data.get("tasks_sha256")
+    identity["sha256"] = sha256_text(
+        json.dumps(semantic, sort_keys=True, ensure_ascii=False)
+    )
+    identity["file_sha256"] = sha256_file(path)
     return identity
 
 
@@ -137,7 +174,11 @@ def build_config(
         "frontier": frontier_config().safe_identity,
         "harness_source_hash": harness_source_hash(),
         "smoothing": smoothing.identity() if smoothing is not None else None,
-        "detector": detector_identity(detector_path),
+        "detector": {
+            key: value
+            for key, value in detector_identity(detector_path).items()
+            if key != "file_sha256"
+        },
         "condition_descriptions": {
             condition.name: condition.description for condition in conditions
         },
@@ -343,11 +384,15 @@ def execute_unit(
     return result
 
 
-def _stored_units(output_dir: Path, config: dict, digest: str) -> int:
-    """Count completed units on disk that belong to this exact configuration."""
+def _stored_unit_records(output_dir: Path, config: dict, digest: str) -> list[dict]:
+    """Completed units on disk that belong to this exact configuration.
+
+    Rebuilt from disk after every invocation so ``results.jsonl`` covers the whole run
+    (all shards), not just the units executed in this session.
+    """
     allowed_tasks = set(config.get("task_keys", []))
     allowed_samples = set(config.get("sample_indices", []))
-    total = 0
+    records: list[dict] = []
     for condition_name in config["conditions"]:
         directory = Path(output_dir) / "units" / condition_name
         if not directory.exists():
@@ -363,8 +408,19 @@ def _stored_units(output_dir: Path, config: dict, digest: str) -> int:
                 continue
             if allowed_samples and unit.get("sample_index", 0) not in allowed_samples:
                 continue
-            total += 1
-    return total
+            records.append(unit)
+    records.sort(
+        key=lambda unit: (
+            str(unit.get("condition", "")),
+            int(unit.get("sample_index", 0) or 0),
+            str(unit.get("task_key", "")),
+        )
+    )
+    return records
+
+
+def _stored_units(output_dir: Path, config: dict, digest: str) -> int:
+    return len(_stored_unit_records(output_dir, config, digest))
 
 
 def run_units(
@@ -475,10 +531,10 @@ def run_units(
     atomic_write_json(manifest_path, manifest)
 
     started = time.monotonic()
+    run_started_at = utc_now_iso()
     completed = 0
     skipped = 0
     errors: list[str] = []
-    results: list[dict] = []
 
     def job(condition: Condition, task: Task, sample_index: int):
         path = unit_path(output_dir, condition, task, sample_index)
@@ -535,7 +591,6 @@ def run_units(
             if result is None:
                 progress(f"[{completed}/{len(planned)}] ERROR {condition.name} {task.key}")
                 continue
-            results.append(result)
             if result.get("api_error"):
                 errors.append(
                     f"{condition.name}/{task.key}/{sample_index}: {result['api_error']}"
@@ -546,7 +601,8 @@ def run_units(
                 f"turns={result.get('turns')} q={result.get('questions')}"
             )
 
-    stored = _stored_units(output_dir, config, digest)
+    stored_records = _stored_unit_records(output_dir, config, digest)
+    stored = len(stored_records)
     summary, report = summarise(
         output_dir, config, planned_units=len(planned_all)
     )
@@ -555,14 +611,16 @@ def run_units(
     atomic_write_text(output_dir / "report.md", report)
     atomic_write_text(
         output_dir / "results.jsonl",
-        "\n".join(json.dumps(_compact(result), sort_keys=True) for result in results)
-        + ("\n" if results else ""),
+        "\n".join(
+            json.dumps(_compact(result), sort_keys=True) for result in stored_records
+        )
+        + ("\n" if stored_records else ""),
     )
     shard_entry = {
         "index": shard,
         "count": shards,
         "units": len(planned),
-        "started_at": manifest["created_at"],
+        "started_at": run_started_at,
         "finished_at": utc_now_iso(),
         "duration_s": round(time.monotonic() - started, 1),
         "errors": len(errors),

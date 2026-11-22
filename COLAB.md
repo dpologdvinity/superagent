@@ -362,7 +362,8 @@ do not add a paid endpoint for this pilot.
 
 Record each answer in the PR/issue thread:
 
-- [ ] A100 GPU name and vLLM version; `/v1/models` returned `Qwen/Qwen3-8B-AWQ`.
+- [ ] A100 GPU name and vLLM version recorded in `environment.json`; `/v1/models`
+      returned `Qwen/Qwen3-8B-AWQ`.
 - [ ] `endpoint.json` records native and text probe results and the selected transport; the
       pilot used that transport throughout.
 - [ ] `make levels` completed with 1,100 hidden tests and the expected 500/200/300 + 100
@@ -393,6 +394,7 @@ Record each answer in the PR/issue thread:
 | `results/runs/r2-pilot/results.jsonl` | compact per-unit results |
 | `results/runs/r2-pilot/summary.json`, `report.md` | aggregate metrics |
 | `results/runs/r2-pilot/gpu_time.json` | shard wall-clock and GPU-hour estimate |
+| `results/runs/r2-pilot/environment.json` | GPU, vLLM, model, transport, hashes, commit |
 | `results/runs/r2-dry/` | 5-task dry run traces, summary, dry_run.json |
 | `r2-artifacts.zip` | downloadable bundle of the above (full traces included) |
 

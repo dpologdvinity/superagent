@@ -140,6 +140,7 @@ def test_shards_are_config_stable_and_resume_per_unit(tmp_path, monkeypatch):
         assert first["summary"]["units"] == 23
         assert first["summary"]["complete"] is False
         assert first["manifest"]["status"] == "partial"
+        assert len((tmp_path / "run" / "results.jsonl").read_text().splitlines()) == 23
         requests_after_first = len(endpoint.requests)
 
         second = runner.run_units(shard=1, shards=2, **kwargs)
@@ -147,12 +148,14 @@ def test_shards_are_config_stable_and_resume_per_unit(tmp_path, monkeypatch):
         assert second["summary"]["complete"] is True
         assert second["manifest"]["status"] == "complete"
         assert len(second["manifest"]["shards"]) == 2
+        assert len((tmp_path / "run" / "results.jsonl").read_text().splitlines()) == 45
 
         requests_after_second = len(endpoint.requests)
         resumed = runner.run_units(shard=0, shards=2, **kwargs)
         assert resumed["summary"]["units"] == 45
         assert resumed["manifest"]["units_skipped"] == 23
         assert len(endpoint.requests) == requests_after_second
+        assert len((tmp_path / "run" / "results.jsonl").read_text().splitlines()) == 45
 
     manifest = json.loads(
         (tmp_path / "run" / "manifest.json").read_text(encoding="utf-8")
