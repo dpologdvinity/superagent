@@ -1,8 +1,8 @@
-# R2 Colab A100 runbook
+# R2 Colab A100/L4 runbook
 
 This runbook covers the R2 GPU pilot for *What Does a Wish Leave Out?*: L3 smoothing with
 Qwen3-8B, a five-label detector refit on the smoothed wishes, a 5-task dry run, and the
-100-task × 3-sample × 9-condition pilot on one Colab A100 runtime. The notebook is
+100-task × 3-sample × 9-condition pilot on one Colab A100 or L4 runtime. The notebook is
 [`notebooks/colab_a100_vllm.ipynb`](notebooks/colab_a100_vllm.ipynb).
 
 **Scope:** prepare and run the pilot. Do not run the 300 held-out tasks here; they belong to
@@ -21,7 +21,7 @@ Verified in the R2 PR by CPU-only local runs with a **fake OpenAI-compatible end
   resumable runs, the report/recovery maths, and the fake-endpoint nine-condition pipeline.
 - The notebook JSON is parsed and every code cell is compiled in `tests/test_notebook.py`.
 
-**Not verified locally:** vLLM serving on a Colab A100, the real Qwen3-8B-AWQ download,
+**Not verified locally:** vLLM serving on a Colab A100 or L4, the real Qwen3-8B-AWQ download,
 native tool-call availability, GPU memory/context limits, Colab session limits and the
 Drive snapshot. The operator must verify those and record the results (checklist at the end).
 
@@ -29,7 +29,7 @@ Drive snapshot. The operator must verify those and record the results (checklist
 
 | Item | Requirement |
 | --- | --- |
-| Runtime | Colab **A100** (40 GB or 80 GB). A T4/L4 is not sufficient for the 16k-context server and is out of scope. |
+| Runtime | Colab **A100** preferred (40/80 GB). An **L4 (24 GB)** works and is accepted by the notebook, but is 2–3× slower; record the actual GPU in `data_provenance.json` and expect more GPU-hours. A T4 is out of scope. |
 | Time | One 12 h session may not fit everything; the notebook runs the pilot in two config-stable shards and resumes. |
 | Budget | Target **~18 GPU-hours** of vLLM time; shards are wall-clock measured and written to `gpu_time.json`. |
 | Disk | ~60 GB free: project env, a separate vLLM env, Qwen3-8B-AWQ (~6 GB), Qwen3-Embedding (~1.2 GB), datasets, traces. |
@@ -57,7 +57,7 @@ actual times in `gpu_time.json`.
 | 6 | Smooth 500 train + 100 pilot wishes | GPU | 5–20 min |
 | 7 | Detector refit on smoothed wishes (frozen encoder, CPU) | CPU | 5–20 min |
 | 8 | 5-task × 9-condition dry run + traces/cost/time | GPU | 10–40 min |
-| 9 | Pilot: 2 shards × (100 tasks × 3 samples × 9 conditions) | GPU | **~6–9 h per shard; target 18 GPU-h total** |
+| 9 | Pilot: 2 shards × (100 tasks × 3 samples × 9 conditions) | GPU | **A100 ~6–9 h per shard (18 GPU-h target); L4 ~2–3× longer** |
 | 10 | Aggregate report and verification | CPU | <1 min |
 | 11 | Zip download and optional results branch/PR | CPU | 1–10 min |
 
@@ -70,7 +70,7 @@ The session guard starts no new shard with less than 30 min left.
 
 ### 3.1 Runtime, secrets, clone
 
-- Runtime → Change runtime type → **A100 GPU**. The notebook refuses to continue otherwise.
+- Runtime → Change runtime type → **A100 GPU** (preferred) or **L4**. The notebook checks for one of the two and records which was used.
 - Runtime → Secrets → add `GITHUB_TOKEN` (repo-scoped: contents read/write) and enable
   notebook access. Optional `HF_TOKEN`.
 - The clone is `--depth 1 --branch main`; the exact commit is printed and included in every
@@ -83,6 +83,12 @@ pinned dataset revisions, validates every canonical solution, and writes the com
 `results/levels/` artifacts plus the gitignored hidden tests under `data/derived/levels/`.
 The notebook requires **1,100 hidden tests** before continuing. If a Drive snapshot is
 restored, `data/` is restored too and this step is skipped.
+
+The committed R0 `tasks.jsonl` SHA-256 is pinned in the notebook
+(`EXPECTED_LEVELS_SHA256 = b80c7f72…`). A different library set can rebuild a different
+1,100-task composition; the notebook stops unless `ALLOW_LEVELS_DRIFT = True`. If you set
+it, commit the run's `results/levels/` and `data_provenance.json` with the results, and
+never mix the committed R0 stats with the rebuilt split.
 
 If `make levels` reports a shortfall, do not pad the data: record the shortfall and stop.
 The R0 artifact is deterministic apart from library drift, which the manifest records.
@@ -162,7 +168,10 @@ smoothed wishes rather than running 18 GPU-hours against a broken detector.
 
 Every condition runs on the first five pilot tasks with one sample (45 units), using the
 smoothed wishes and the refit detector. The notebook prints each unit's compact trace, token
-totals, `$0` paid cost, GPU name and wall time, and requires exactly 45 units. Do not start
+totals, `$0` paid cost, GPU name and wall time, and requires exactly 45 units. A fresh dry run
+is enforced: restored dry-run units and `results/cache` are cleared first, and the cell
+refuses a result completed in under 60 s or with zero tokens (that is a cache/snapshot
+replay, not an endpoint test). Do not start
 the pilot if a condition fails systematically, the transport changes mid-run, or a 400
 context-length error appears (see troubleshooting).
 
@@ -217,7 +226,7 @@ used. The notebook reruns without that flag on a partial run so you can see prog
 
 ## 4. Resume after a disconnect or session end
 
-1. Reconnect with an **A100** runtime and rerun cells 0–7. The notebook mounts Drive,
+1. Reconnect with an **A100** (or L4) runtime and rerun cells 0–7. The notebook mounts Drive,
    restores the latest snapshot (including `data/` and `results/runs/`), and restarts vLLM.
    Re-run the endpoint probe; it should select the same transport.
 2. Rerun the shard cell. `shards.jsonl` skips completed shards; within a shard, completed
