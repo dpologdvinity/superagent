@@ -11,8 +11,10 @@ clarification questions. The milestone contract is
 [`paper/milestone/main.pdf`](paper/milestone/main.pdf); its source is
 [`paper/milestone/main.tex`](paper/milestone/main.tex).
 
-This repository is the clean rebuild of the implementation to that design; earlier work
-survives only in git history and is not part of the rebuild.
+This repository is the clean rebuild of the implementation to that design. R0 (data
+foundation) and R1 (ReAct harness + five-label detector) are complete; R2 (GPU pilot) and
+R3 (paper) follow. Earlier work survives only in git history and is not part of the
+rebuild.
 
 ## Milestone design
 
@@ -160,13 +162,114 @@ to validate BigCodeBench canonical solutions. Python 3.12 is required.
 - **Held-out protection:** the held-out split is materialized as data only; R0 does not train
   or calibrate anything.
 
+## R1: ReAct harness and five-label detector
+
+R1 builds the harness, the stakeholder, the nine conditions and the silence detector, and
+stops before the R2 GPU pilot.  It uses only CPU and a local OpenAI-compatible vLLM
+endpoint; no paid API and no benchmark pilot run are involved.
+
+### Harness
+
+Each task is materialized in a fresh temporary workspace containing `solution.py` (the
+stub) and `visible_test.py` (the derived three-method visible suite).  The agent can call
+exactly four tools:
+
+- `write_file` writes `solution.py`; `acceptance_tests.py` is writable in H1 only, and no
+  test file is writable;
+- `run_visible_tests` executes the derived visible file in a subprocess with a timeout and
+  returns pass/fail;
+- `read_error` returns the traceback of the most recent failed visible run;
+- `ask_stakeholder` asks one question and consumes the condition's dialogue budget.
+
+The loop allows at most 12 assistant turns and has no repository browsing or shell tool.
+The hidden suite is never in the workspace; after the loop, a separate evaluator writes
+`solution.py` and the hidden test into a fresh directory and runs the full suite.  The
+stakeholder is a temperature-0 model whose prompt contains only the L0 specification; it
+answers "That is not specified." when the specification does not contain the answer.
+
+The generator is `Qwen/Qwen3-8B-AWQ` served by vLLM behind an OpenAI-compatible API.  The
+client supports native OpenAI tool calls and a JSON text protocol
+(`{"tool": ..., "arguments": ...}`) for builds that do not return tool calls; `auto` mode
+probes native calls once, retries the turn under the text protocol when the endpoint
+ignores tools, and remembers the working transport.  Endpoint, key, model, timeout,
+transport, thinking mode and an optional B3 frontier endpoint are configured by
+`VLLM_*` environment variables; [`configs/vllm.env.example`](configs/vllm.env.example) is
+the documented example.  No credential is written to an artifact.
+
+### Conditions
+
+All conditions share the same tasks, tools and visible tests.  B1 sees the complete L0
+specification; H0 is the plain wish loop; H1 may write acceptance tests first; H2 asks
+generic stakeholder questions through the tool within a five-question budget; H3 asks the
+detector-selected 2-3 questions before the loop and then runs one self-check-and-repair
+call; H4 adds five sibling functions with doctests; B2 draws five direct samples instead of
+asking; B3 calls the frontier endpoint (the same Qwen3-8B at temperature 0.7 when no
+frontier endpoint is configured) with only the wish and stub; DISCARD asks H3's questions
+but withholds the answers, separating asking from knowing.  H5 is a plan item and is not
+implemented in R1.
+
+### Detector
+
+The detector is the frozen `Qwen/Qwen3-Embedding-0.6B` encoder (1024-d, CPU) plus a
+five-label linear head trained with BCE and an L2 penalty.  Labels are the five fields'
+presence in the full L0 specification, so a positive means the wish omits information the
+stakeholder can supply.  It trains on the 500 `train` tasks only; the 200 evolution, 300
+held-out and 100 pilot tasks are excluded from fitting, calibration, threshold selection
+and model selection.  Five-fold out-of-fold evaluation uses inner-fold L2 selection and
+Platt calibration, and compares against a prior-only predictor and TF-IDF + one-vs-rest
+logistic regression.  Metrics are AUROC, average precision, F1 at 0.5, macro-F1, Brier,
+ECE and log loss per category, including `error_behaviour` (63 positives in the train
+split, 147 across all kept tasks).  The H3 policy ranks calibrated presence x utility
+(intent 0, examples 0.2, signature/types 0.5, constraints 1.0, error_behaviour 1.0) and
+calibrates a threshold to 2-3 questions per task; it never asks about intent.
+
+L3 smoothing is implemented as a separate temperature-0 endpoint call but is not run in
+R1: the detector trains on R0's raw first-sentence L3.  R2 will smooth the 500 train wishes,
+refit the detector and use the smoothed wishes for the pilot.  This is recorded in
+`results/detector/manifest.json`.
+
+### R1 detector results
+
+The committed 5-fold out-of-fold run (`results/detector/metrics.json`) on the 500 train
+tasks:
+
+| method | macro-F1 | macro-F1 (varying labels) | AUROC examples | AUROC constraints | AUROC error | Brier | ECE |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| prior-only | 0.753 | 0.588 | 0.358 | 0.426 | 0.409 | 0.0741 | 0.0000 |
+| TF-IDF + logistic | 0.782 | 0.636 | 0.909 | 0.959 | 0.734 | 0.0408 | 0.0131 |
+| frozen Qwen3 + linear head | 0.777 | 0.629 | 0.778 | 0.947 | 0.736 | 0.0421 | 0.0115 |
+
+The encoder head is strongest for constraints (AUROC 0.947, Brier 0.0845) and reports
+`error_behaviour` rather than declaring it undefined: 63 positives in the train split,
+AUROC 0.736, average precision 0.270, Brier 0.102. Its F1 at the default 0.5 threshold is
+0.000 because the calibrated probability stays near the low base rate; AUROC/AP are the
+informative ranking metrics for that label. TF-IDF is a strong lexical baseline for
+examples (AUROC 0.909 vs 0.778) and slightly higher macro-F1 (0.782 vs 0.777); the
+encoder's advantage is that it scores a raw wish without fitting a task-specific lexical
+model. The H3 policy calibrated on the deployed-style OOF scores asks 2.47 questions on
+average (264 tasks get 2, 236 get 3), with informative-pair precision 0.879, recall 0.582
+and utility recall 0.871; intent is never selected.
+
+### R1 artifacts and verification
+
+`results/detector/` commits `model.json` (encoder identity, head weights, calibrators,
+threshold and utility policy), `metrics.json` (out-of-fold detection/calibration metrics,
+baselines and policy diagnostics), `manifest.json`, `cv_predictions.jsonl` (per-task OOF
+scores and selected categories) and `report.md`.  The harness tests cover the four tools,
+sandbox paths, visible-test execution, turn cap, question budget, stakeholder gating, all
+nine conditions, the runner's resume path, both tool transports and a local fake endpoint;
+`make test` runs without network, GPU or the gitignored hidden tests.
+
 ## Repository layout
 
 ```
 src/wishrec/          R0 data pipeline (download, parse, levels, split, validation, artifacts)
-src/wishrec/config.py pinned sources, split contract, paths
-tests/                unit tests and committed-artifact checks
+src/wishrec/harness/  R1 ReAct loop, four tools, conditions, stakeholder, vLLM client, runner
+src/wishrec/detector/ R1 five-label detector, encoder, CV, calibration, metrics, policy
+configs/              vLLM endpoint example (no secrets)
+tests/                unit tests, fake-endpoint integration tests and artifact checks
 results/levels/       committed R0 artifacts (manifest, stats, tasks.jsonl)
+results/detector/     committed R1 detector artifacts
 data/                 gitignored downloads, validation cache and derived hidden tests
 paper/milestone/      milestone contract (do not modify)
 PLAN.md               R0-R3 rebuild plan
@@ -174,5 +277,6 @@ PLAN.md               R0-R3 rebuild plan
 
 ## Budget
 
-R0 uses no paid API and no GPU: CPU, local network for the pinned downloads, and ordinary
-Python subprocesses for canonical validation. The 18 GPU-hours belong to the R2 pilot.
+R0 and R1 use no paid API and no GPU: CPU, local network for the pinned downloads and the
+cached encoder, and ordinary Python subprocesses for canonical validation and the ReAct
+tools. The 18 GPU-hours belong to the R2 pilot.
