@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import statistics
 import subprocess
 import sys
@@ -72,6 +73,30 @@ def git_info() -> dict:
         "branch": _git("rev-parse", "--abbrev-ref", "HEAD"),
         "dirty": bool(status),
     }
+
+
+def portable_detail(detail: str) -> str:
+    """Strip local absolute paths from exclusion evidence before committing it.
+
+    Tracebacks captured during validation name the temporary workspace, the virtual
+    environment and the interpreter.  They are useful evidence but must not leak the
+    machine layout of the run that produced the cache, so the committed manifest keeps
+    the traceback with stable placeholders instead.
+    """
+    if not detail:
+        return ""
+    text = re.sub(r"/[^\s\"']*/wishrec-validate-[^/\s\"']+", "<workspace>", detail)
+    # Pytest reprs can truncate a path (".../folders/[90 chars]") before the random
+    # workspace suffix is visible, so cover the platform temp roots directly as well.
+    text = re.sub(r"/(?:private/)?var/folders/[^\s\"')]*", "<workspace>", text)
+    text = re.sub(r"/tmp/[^\s\"')]*", "<workspace>", text)
+    text = re.sub(
+        r"/[^\s\"']*/\.venv/lib/(python[\d.]+)/site-packages",
+        r"<venv>/lib/\1/site-packages",
+        text,
+    )
+    text = re.sub(r"/[^\s\"']*/\.local/share/uv/python/[^/\s\"']+", "<python>", text)
+    return text.replace(str(Path.home()), "~")
 
 
 def _parse_all(rows: dict[str, list[dict]]) -> tuple[list, list[dict]]:
@@ -349,7 +374,7 @@ def main(argv: list[str] | None = None) -> int:
                     f"{result.exception}"
                     + (f" (missing {result.missing_library})" if result.missing_library else "")
                 ),
-                "detail": result.detail[-1200:],
+                "detail": portable_detail(result.detail[-1200:]),
             }
         )
     print(f"valid tasks: {len(valid)} (failed validation: {len(failed)})", flush=True)

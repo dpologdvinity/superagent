@@ -147,3 +147,36 @@ def test_error_behaviour_prevalence_is_reported_per_source():
         assert block["counts"]["intent"] == block["denominator"]
     assert "by_source" in stats["library_requirements"]
     assert stats["exclusions"]["total"] == len(manifest["exclusions"])
+
+
+def test_exclusion_details_are_portable():
+    _, manifest, _ = _load()
+    for item in manifest["exclusions"]:
+        detail = item.get("detail", "")
+        assert "/Users/" not in detail, item["key"]
+        assert "/private/var/folders/" not in detail, item["key"]
+        assert "wishrec-validate-" not in detail, item["key"]
+
+
+def test_portable_detail_rewrites_local_paths():
+    from pathlib import Path
+
+    from wishrec.build import portable_detail
+
+    home = str(Path.home())
+    detail = (
+        '  File "/private/var/folders/9n/abc/T/wishrec-validate-czco4ya9/visible_test.py", line 16\n'
+        '  File "/Users/alice/work/.venv/lib/python3.12/site-packages/pandas/core/x.py", line 3\n'
+        '  File "/Users/alice/.local/share/uv/python/cpython-3.12.15-none/lib/python3.12/re.py", line 1\n'
+        f"data at {home}/nltk_data\n"
+        "PosixPath('/private/var/folders/9n/phmsx2[90 chars]act')\n"
+    )
+    portable = portable_detail(detail)
+    assert "/Users/" not in portable
+    assert "/private/var/folders/" not in portable
+    assert "<workspace>/visible_test.py" in portable
+    assert "<venv>/lib/python3.12/site-packages/pandas/core/x.py" in portable
+    assert "<python>/lib/python3.12/re.py" in portable
+    assert "~/nltk_data" in portable
+    assert portable_detail("") == ""
+
