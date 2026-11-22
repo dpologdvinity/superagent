@@ -54,6 +54,7 @@ def test_notebook_covers_the_r2_pipeline_steps():
         "requirements-validation.txt",
         "MPLBACKEND",
         "Agg",
+        "PYTHONPATH",
         "dry-run passes",
         "ModuleNotFoundError units",
         "CLEAR_CACHE_FOR_DRY_RUN",
