@@ -44,6 +44,7 @@ def _download(source: Source, force: bool = False) -> dict:
             repo_id=source.repo,
             filename=source.filename,
             revision=source.revision,
+            repo_type="dataset",
             cache_dir=str(RAW_DIR / "_hf-cache"),
         )
         dest.parent.mkdir(parents=True, exist_ok=True)

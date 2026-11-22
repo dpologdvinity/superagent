@@ -46,6 +46,12 @@ def test_notebook_covers_the_r2_pipeline_steps():
         "--smoothed",
         "files.download",
         "r2-artifacts",
+        "EXPECTED_LEVELS_SHA256",
+        "ALLOW_LEVELS_DRIFT",
+        "levels tasks.jsonl sha256",
+        "CLEAR_CACHE_FOR_DRY_RUN",
+        "dry run finished in",
+        "data_provenance.json",
     ):
         assert marker in text, marker
     assert "--split heldout" not in text
