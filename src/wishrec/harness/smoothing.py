@@ -168,7 +168,11 @@ def smooth_tasks(
         "created_at": utc_now_iso(),
         "git": git_info(),
         "environment": environment_info(),
-        "endpoint": llm.config.safe_identity,
+        "endpoint": {
+            **llm.config.safe_identity,
+            "temperature": llm.temperature,
+            "top_p": llm.top_p,
+        },
         "prompt": {
             "system": SMOOTH_SYSTEM,
         },
@@ -263,7 +267,9 @@ def main(argv: list[str] | None = None) -> int:
         f"R2 L3 smoothing: run_id={args.run_id} splits={counts} workers={args.workers}",
         flush=True,
     )
-    print(f"endpoint: {generator_config().safe_identity}", flush=True)
+    llm = LLMClient(generator_config(), temperature=0.0, top_p=1.0)
+    print(f"endpoint: {llm.config.safe_identity}", flush=True)
+    print(f"sampling: temperature={llm.temperature}, top_p={llm.top_p}", flush=True)
     print(f"output: {output}", flush=True)
     if "train" in counts and counts["train"] != TRAIN_TARGET:
         print(
@@ -277,7 +283,6 @@ def main(argv: list[str] | None = None) -> int:
             flush=True,
         )
 
-    llm = LLMClient(generator_config(), temperature=0.0, top_p=1.0)
     smooth_tasks(
         tasks,
         llm,

@@ -16,6 +16,7 @@ def _client(endpoint, model="Qwen/Qwen3-8B-AWQ") -> LLMClient:
     return LLMClient(
         EndpointConfig(base_url=endpoint.base_url, model=model, timeout=10),
         temperature=0.0,
+        top_p=1.0,
     )
 
 
@@ -50,6 +51,8 @@ def test_smoothing_is_resumable_and_records_provenance(tmp_path):
     assert manifest["complete"] is True
     assert manifest["tasks_completed"] == 2
     assert manifest["endpoint"]["model"] == "Qwen/Qwen3-8B-AWQ"
+    assert manifest["endpoint"]["temperature"] == 0.0
+    assert manifest["endpoint"]["top_p"] == 1.0
     assert "api_key" not in json.dumps(manifest).lower()
     record = next(iter(second.records.values()))
     assert record["smoothed_wish"].startswith("Smoothed:")
