@@ -1,12 +1,13 @@
 # Rebuild plan: milestone contract to final report
 
 The milestone contract is [`paper/milestone/main.pdf`](paper/milestone/main.pdf). The rebuild
-runs in four phases. R0 is complete in this repository state; R1-R3 are not started here.
+runs in four phases. R0 and R1 are complete in this repository state; R2-R3 are not
+started here.
 
-Budget target: **18 GPU-hours** for the pilot, one 24 GB GPU, and **$0 paid API**. R0 uses CPU
-and local network only.
+Budget target: **18 GPU-hours** for the pilot, one 24 GB GPU, and **$0 paid API**. R0 and R1
+use CPU and local network only.
 
-## R0: scaffold + data foundation (this phase)
+## R0: scaffold + data foundation (complete)
 
 **Goal.** Rebuild the repository from the null state to a validated data foundation that R1 can
 consume, without building the harness, detector, GPU run or paper.
@@ -59,31 +60,46 @@ regenerates everything from the pinned revisions.
   shortfall instead of padding the pool, and the artifact is not presented as meeting the
   target.
 
-## R1: harness + detector
+## R1: harness + detector (complete)
 
 **Goal.** Build the ReAct harness, the stakeholder, the nine conditions and the five-label
 silence detector.
 
-**Work.**
+**Work (delivered).**
 
-1. Harness: four tools (write the file, run visible tests, read the error, ask the stakeholder),
-   turn cap 12, no repository browsing, isolated per-task workspace, shared task/tool/test
-   configuration across conditions.
-2. Conditions: H0-H5, B1-B3 and DISCARD, with the same tasks, tools and tests; B2 uses extra
-   samples, B3 the frontier baseline. H4 exposes five sibling functions with doctests.
-3. Stakeholder: language-model protocol that answers only from the L0 specification.
-4. Detector: frozen Qwen3-Embedding-0.6B + five-label head, BCE on the deletion labels,
-   calibration on the development/pilot split; category ranking feeds the question templates,
-   the compiled Requirements block, the self-check-and-repair pass and the defensive-coding
-   instruction.
-5. Smoke test on a handful of development tasks; tests for tool sandboxing, turn cap, question
-   budget, level deletions and selection determinism.
+1. Harness: four tools (`write_file`; `acceptance_tests.py` in H1 only;
+   `run_visible_tests`; `read_error`; `ask_stakeholder`), turn cap 12, no repository
+   browsing, isolated per-task workspace and shared task/tool/test configuration across
+   conditions.
+2. Generator: an OpenAI-compatible vLLM endpoint (`Qwen/Qwen3-8B-AWQ`), configurable
+   endpoint/key/timeout via `configs/vllm.env.example`, with native OpenAI tool calls and a
+   JSON text-protocol fallback; the loop runs with either transport.
+3. Conditions: B1, H0, H1, H2, H3, H4, B2, B3 and DISCARD. B2 uses five direct samples;
+   B3 uses the frontier endpoint when configured and otherwise the same Qwen3-8B at
+   temperature 0.7; H4 exposes five sibling functions with doctests. H5 remains a plan item.
+4. Stakeholder: a temperature-0 model that sees only the L0 specification.
+5. Detector: frozen `Qwen/Qwen3-Embedding-0.6B` (1024-d) + five-label linear head,
+   BCE + L2, trained on the 500 `train` tasks; Platt calibration and 5-fold out-of-fold
+   metrics (AUROC, macro-F1, Brier/ECE) with prior and TF-IDF baselines; the
+   `error_behaviour` label (63 train positives, 147 kept positives) is reported rather than
+   declared undefined. The H3 policy ranks calibrated presence x utility (intent 0,
+   examples 0.2, signature/types 0.5, constraints 1.0, error_behaviour 1.0) and calibrates
+   to 2-3 questions per task.
+6. Tests for the loop, four tools, stakeholder gating, question budget, conditions, detector
+   and a local fake vLLM endpoint, plus an end-to-end runner test over all nine conditions.
 
-**Acceptance.** Every condition runs end to end on the smoke subset; the detector trains on the
-500-task split and calibrates without touching the held-out split; question selection is
-recorded per unit; the discard condition separates asking from knowing.
+**Acceptance.** All nine conditions run end to end in the fake-endpoint integration test;
+the detector trains on the 500-task split and calibrates without touching the held-out
+split; question selection is recorded per unit; the discard condition separates asking from
+knowing.
 
-## R2: Colab GPU pilot
+**Status.** Complete. The detector artifact is in `results/detector/`; the harness package is
+`src/wishrec/harness/` and the detector package is `src/wishrec/detector/`. L3 smoothing is
+implemented as a separate endpoint call but deliberately not run in R1: the detector trains
+on R0's raw first-sentence L3, and R2 will smooth the 500 train wishes, refit and use the
+smoothed wishes for the pilot. No GPU or paid API is used in R1.
+
+## R2: Colab GPU pilot (next)
 
 **Goal.** Run the 100-task development pilot with Qwen3-8B AWQ on vLLM, three samples per
 condition, within about 18 GPU-hours.
@@ -96,6 +112,24 @@ condition, within about 18 GPU-hours.
 3. Cache generations and traces; rerun only missing units after interruptions.
 4. Compute pass@1, recovery, per-category recovery and failure buckets; verify the sample count
    and cost.
+
+**R2 command.** With `configs/vllm.env` sourced and the server running:
+
+```bash
+# CPU preparation: materialize derived hidden tests and fit the detector.
+make levels
+make detector
+# GPU pilot: only the disjoint 100-task development split.
+PYTHONPATH=src uv run python -m wishrec.harness.runner pilot \
+  --run-id r2-pilot --samples 3 --workers 2
+```
+
+The runner refuses the held-out split, writes one trace per (condition, task, sample) under
+`results/runs/r2-pilot/` and skips completed units on restart. `--samples 3` repeats each
+condition unit three times; B2 itself expands to five direct samples per unit. The Colab
+notebook must provide the 24 GB GPU, vLLM and the pinned Qwen3-8B-AWQ model, the CPU
+environment for `make levels` / `make detector`, and the 18 GPU-hour budget; no paid API key
+is used.
 
 **Acceptance.** All pilot units complete or are reported missing; the main-table metrics are
 computed from measured traces; the held-out split is untouched; the GPU-hour budget is recorded.
