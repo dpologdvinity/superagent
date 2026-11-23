@@ -33,7 +33,7 @@
 A wish-driven coding agent receives an intent and builds an artifact. When the wish leaves a
 requirement implicit, the program can run, pass the tests the user remembered to mention, and
 still violate what the user meant. We mechanically degrade benchmark specifications into
-wishes by deleting five requirement fields, train a small \emph{silence detector} to predict
+wishes by deleting four of the five requirement fields, train a small \emph{silence detector} to predict
 which categories a wish leaves implicit, and use those predictions to target clarification
 questions. This report measures the design on a 100-task development pilot under the
 corrected protocol: the whole docstring prose before the examples is the intent,
@@ -251,7 +251,7 @@ beats another one: H3 $-$ H2 is $+9.3$ pp [$+1.7$, $+17.0$], while H2 is 7.7 poi
 \emph{below} H0 (44.3\%, [$-14.3$, $-1.0$]). The targeted condition does not reach the
 ceiling and its difference from H0 is $+1.7$ pp [$-5.7$, $+9.0$], which crosses zero; H4 is
 statistically indistinguishable from H3 (H3 $-$ H4 $+2.0$ pp [$-6.3$, $+9.7$]) and from H0
-($-0.3$ pp [$-6.0$, $+5.3$]). H3$^-$ is 11.0 points below H3 (42.7\%, [$-18.7$, $-2.7$]),
+($-0.3$ pp [$-6.0$, $+5.3$]). H3$^-$ is 11.0 points below H3 (42.7\% against 53.7\%; difference $-11.0$ pp [$-18.7$, $-2.7$]),
 so knowing the answers matters more than the act of asking them, but asking generically
 appears to cost more than it gains. H1 is 23.3 points below H0 (28.7\%), a result that is
 partly a protocol effect under inputs-only visible tests. B2's five samples raise its pass
@@ -270,19 +270,19 @@ spends the budget on generic prompts that may not address the missing field.
   \centering
   \small
   \setlength{\tabcolsep}{4pt}
-  \begin{tabular}{@{}llrrrrrr@{}}
+  \begin{tabular}{@{}llrrrrr@{}}
     \toprule
-    Condition & Description & pass@1 & pass rate & recovery & questions & turns & $n$ \\
+    Condition & Description & pass@1 & pass rate & recovery & questions & turns \\
     \midrule
-    B1 & full L0 specification, no dialogue & 0.623 & 0.623 & 1.000 & 0.00 & 4.34 & 300 \\
-    H0 & plain wish loop & 0.520 & 0.520 & 0.000 & 0.00 & 4.40 & 300 \\
-    H1 & acceptance tests first & 0.287 & 0.287 & $-2.259$ & 0.00 & 4.51 & 300 \\
-    H2 & generic clarification & 0.443 & 0.443 & $-0.743$ & 2.94 & 6.36 & 300 \\
-    H3 & detector-targeted clarification & 0.537 & 0.537 & 0.162 & 2.48 & 4.43 & 300 \\
-    H4 & sibling functions with doctests & 0.517 & 0.517 & $-0.032$ & 0.00 & 4.74 & 300 \\
-    B2 & five direct samples instead of questions & 0.513 & 0.547 & $-0.065$ & 0.00 & 5.00 & 300 \\
-    B3 & one-call baseline, wish and stub only & 0.310 & 0.310 & $-2.033$ & 0.00 & 1.00 & 300 \\
-    H3$^-$ & H3's questions, answers withheld & 0.427 & 0.427 & $-0.903$ & 2.48 & 4.09 & 300 \\
+    B1 & full L0 specification, no dialogue & 0.623 & 0.623 & 1.000 & 0.00 & 4.34 \\
+    H0 & plain wish loop & 0.520 & 0.520 & 0.000 & 0.00 & 4.40 \\
+    H1 & acceptance tests first & 0.287 & 0.287 & $-2.259$ & 0.00 & 4.51 \\
+    H2 & generic clarification & 0.443 & 0.443 & $-0.743$ & 2.94 & 6.36 \\
+    H3 & detector-targeted clarification & 0.537 & 0.537 & 0.162 & 2.48 & 4.43 \\
+    H4 & sibling functions with doctests & 0.517 & 0.517 & $-0.032$ & 0.00 & 4.74 \\
+    B2 & five direct samples instead of questions & 0.513 & 0.547 & $-0.065$ & 0.00 & 5.00 \\
+    B3 & one-call baseline, wish and stub only & 0.310 & 0.310 & $-2.033$ & 0.00 & 1.00 \\
+    H3$^-$ & H3's questions, answers withheld & 0.427 & 0.427 & $-0.903$ & 2.48 & 4.09 \\
     \bottomrule
   \end{tabular}
   \caption{Measured 100-task pilot under the corrected protocol, three samples per condition
@@ -307,7 +307,7 @@ spends the budget on generic prompts that may not address the missing field.
     H1 $-$ H0 & $-23.3$ & [$-31.3$, $-15.7$] \\
     H3 $-$ H2 & $+9.3$ & [$+1.7$, $+17.0$] \\
     H3 $-$ H4 & $+2.0$ & [$-6.3$, $+9.7$] \\
-    H3$^-$ $-$ H3 & $-11.0$ & [$-18.7$, $-2.7$] \\
+    H3$^-$ (no answers) $-$ H3 & $-11.0$ & [$-18.7$, $-2.7$] \\
     B2 $-$ H0 & $-0.7$ & [$-6.7$, $+5.0$] \\
     \bottomrule
   \end{tabular}
