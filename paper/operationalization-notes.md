@@ -36,8 +36,9 @@ Quantification on the 100 pilot tasks (`results/runs/r2-pilot/smoothing/wishes.j
 **Direction:** this attenuates H0 (the wish understates the task) and dilutes any measured
 asking effect. The null should not be read as evidence that elicitation cannot work in
 principle. The measured artifacts remain from parser `0.1.0`; a separate parser change
-(whole-prose intent plus an `inputs_only` visible-test mode) is in review as PR #22 and is
-not part of this run.
+(whole-prose intent plus an `inputs_only` visible-test mode) merged as PR #22
+(`15c7646f`) after this measurement. R5 rebuilt `results/levels/` and prepared the
+corrected R2b run; see the update at the end of these notes.
 
 ## 2. Visible tests re-supply examples
 
@@ -117,3 +118,22 @@ The five text edits from the submitted-milestone audit are present in
 4. Detector metrics and failure attribution (macro-F1 0.772; AUROC 0.931 constraints,
    0.739 error behaviour; F1 at 0.5 is 0.000 with 63 positives and AP 0.276).
 5. 2.509 GPU-hours, A100-SXM4-80GB, and the one-call B3 baseline (31.7%).
+
+## Update: corrected protocol prepared (R5)
+
+The parser fix for issue 1 merged as PR #22 (`15c7646f`, parser 0.2.0): the intent is the
+whole prose block before the examples, so a requirement in a later sentence stays in L3. It
+also adds `visible_tests=inputs_only`, which prints observed outputs for HumanEval+ and MBPP+
+and removes the expected-result comparison from those visible tests (issue 2 for those
+sources). R5 rebuilt `results/levels/` with `make levels VISIBLE_TESTS=inputs_only` and
+prepared the corrected R2b A100 run in `COLAB.md` and the notebook; see that runbook for the
+counts, the exact operator steps and the current limitations.
+
+Two boundaries matter when reading the corrected run:
+
+- The R2 measurement above is unchanged and stays tied to parser 0.1.0 and the previous
+  split; `results/levels_pre_r2b_split.json` archives that split.
+- The BigCodeBench residual remains: its visible tests are assertion-based `unittest`
+  methods, so its `examples` stay visible in the corrected protocol too. The corrected
+  protocol is not a full examples deletion.
+

@@ -16,16 +16,18 @@ was rebuilt from scratch to that design. The revised measured milestone is
 
 R0 (scaffold and data foundation), R1 (ReAct harness + detector) and R2 (Colab A100 pilot)
 are complete, and R3's measured pilot paper is written; the 300 held-out final study remains
-future work. The measured R2 artifacts are under
+future work. The committed data was rebuilt for the corrected R2b protocol (whole-prose
+intent, inputs-only HumanEval+/MBPP+ visible tests); that run is prepared but not executed,
+and the R2 artifacts remain the earlier measurement. The measured R2 artifacts are under
 [`results/runs/r2-pilot/`](results/runs/r2-pilot/), the full report is
 [`paper/main.pdf`](paper/main.pdf), and the revised two-page-body milestone is
 [`paper/milestone/main.pdf`](paper/milestone/main.pdf); the submitted milestone is preserved
 byte-identically under [`paper/milestone/submitted/`](paper/milestone/submitted/). The design
-is in [`PROJECT.md`](PROJECT.md), the rebuild plan is in [`PLAN.md`](PLAN.md), the R0 data
+is in [`PROJECT.md`](PROJECT.md), the rebuild plan is in [`PLAN.md`](PLAN.md), the data
 artifact is in [`results/levels/`](results/levels/), and the R1 detector artifact is in
 [`results/detector/`](results/detector/).
 
-## Current state: R2 measured, R3 paper
+## Current state: R2 measured, R2b prepared, R3 paper
 
 R0:
 
@@ -34,7 +36,9 @@ R0:
 - canonical-solution validation against one shared hidden suite and three visible tests;
 - seeded, source-stratified 500/200/300 split plus a disjoint 100-task development pilot
   (1,100 kept; seed `20261121`);
-- committed `results/levels/tasks.jsonl`, `manifest.json` and `stats.json`.
+- committed `results/levels/tasks.jsonl`, `manifest.json` and `stats.json` (rebuilt for R2b
+  with `make levels VISIBLE_TESTS=inputs_only`; the superseded R0/R2 split is archived in
+  [`results/levels_pre_r2b_split.json`](results/levels_pre_r2b_split.json)).
 
 R1:
 
@@ -70,6 +74,17 @@ R2 (complete, measured):
   paired task-level bootstrap recomputed from `results.jsonl`; the per-category grouping,
   failure buckets and smoothing refit are in the same run directory.
 
+R2b (prepared, not executed):
+
+- `results/levels/` rebuilt with `make levels VISIBLE_TESTS=inputs_only` against the merged
+  parser fix (`15c7646f`, parser 0.2.0): whole-prose intent, inputs-only HumanEval+/MBPP+
+  visible tests, 1,100 kept of 1,549 valid candidates (BigCodeBench 591, HumanEval+ 132,
+  MBPP+ 377), no shortfall; BigCodeBench visible tests stay assertion-based;
+- [`notebooks/colab_a100_vllm.ipynb`](notebooks/colab_a100_vllm.ipynb) and
+  [`COLAB.md`](COLAB.md) parameterize `r2b-pilot`, a new levels SHA, inputs-only
+  materialization and the operator checklist. The A100 run and the paper update are separate,
+  and corrected numbers replace the R2 pilot only after the operator's run.
+
 R3 (complete):
 
 - [`paper/main.tex`](paper/main.tex) / [`paper/main.pdf`](paper/main.pdf) is the full measured
@@ -87,9 +102,10 @@ R3 (complete):
 ```bash
 make test        # unit tests and committed-artifact checks; no network or GPU
 make detector    # fit/calibrate the five-label detector on the 500 train tasks (CPU)
-make levels      # pinned download, parse, validation, split and data artifacts
+make levels      # pinned download, parse, validation, split and data artifacts (full mode)
+make levels VISIBLE_TESTS=inputs_only  # corrected protocol used by the committed R2b levels
 
-# R2 local path with a fake endpoint (no GPU, no paid API):
+# R2b local path with a fake endpoint (no GPU, no paid API):
 uv run python scripts/local_fake_dry_run.py
 ```
 
@@ -104,11 +120,18 @@ vllm serve Qwen/Qwen3-8B-AWQ --max-model-len 16384 --gpu-memory-utilization 0.90
 
 `make levels` additionally installs `requirements-validation.txt`, the extra library set
 used to validate BigCodeBench canonical solutions, and materializes the gitignored hidden
-tests under `data/derived/levels/`. The harness needs those files; `make test` does not.
+tests under `data/derived/levels/`. Use `VISIBLE_TESTS=inputs_only` for the corrected
+protocol (the committed levels); plain `make levels` writes full-mode visible tests. The
+harness needs those files; `make test` does not.
 
-### R2 command (complete; reproduction path)
+### R2 command (complete; historical)
 
-`make levels` must complete first. Then, with the vLLM server running:
+The committed `results/levels/` now holds the corrected R2b task set; the R2 units ran on the
+previous split, whose task-to-split mapping is archived in
+[`results/levels_pre_r2b_split.json`](results/levels_pre_r2b_split.json). This block records
+the R2 protocol rather than a byte-for-byte rerun.
+
+The derived tests must be materialized first. Then, with the vLLM server running:
 
 ```bash
 # Smooth the 500 train + 100 pilot wishes and refit the detector on them.

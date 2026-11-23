@@ -1,17 +1,31 @@
-# R2 Colab A100/L4 runbook
+# R2b corrected Colab A100/L4 runbook
 
-This runbook covers the R2 GPU pilot for *What Does a Wish Leave Out?*: L3 smoothing with
-Qwen3-8B, a five-label detector refit on the smoothed wishes, a 5-task dry run, and the
-100-task × 3-sample × 9-condition pilot on one Colab A100 or L4 runtime. The notebook is
-[`notebooks/colab_a100_vllm.ipynb`](notebooks/colab_a100_vllm.ipynb).
+This runbook covers the **corrected** R2b GPU pilot for *What Does a Wish Leave Out?*: the
+corrected task levels (whole-prose intent and inputs-only HumanEval+/MBPP+ visible tests), L3
+smoothing with Qwen3-8B, a five-label detector refit on the smoothed wishes, a 5-task dry
+run, and the 100-task × 3-sample × 9-condition pilot on one Colab A100 or L4 runtime. The
+notebook is [`notebooks/colab_a100_vllm.ipynb`](notebooks/colab_a100_vllm.ipynb).
 
-**Scope:** prepare and run the pilot. Do not run the 300 held-out tasks here; they belong to
-R3. No paid API is used: the only endpoint is the local vLLM server (or a tunnel to it).
+**Scope:** prepare and run the corrected pilot. Do not run the 300 held-out tasks here; they
+belong to the later held-out study. No paid API is used: the only endpoint is the local vLLM
+server (or a tunnel to it).
+
+**R2 vs R2b.** The committed R2 pilot artifacts in `results/runs/r2-pilot/` were measured on
+the previous levels and remain the earlier result. Corrected numbers replace the R2 pilot only
+after the operator runs this notebook and the results are merged; do not mix R2 and R2b
+numbers in one table.
 
 ## What is verified locally vs by the operator
 
-Verified in the R2 PR by CPU-only local runs with a **fake OpenAI-compatible endpoint**:
+Verified in the R2b PR by CPU-only local runs:
 
+- `make levels VISIBLE_TESTS=inputs_only` rebuilt `results/levels/` against the merged parser
+  fix (`15c7646f`): 1,100 kept tasks, no shortfall, `parsing.visible_tests = inputs_only` and
+  parser 0.2.0. The committed-artifact tests check the corrected manifest, the inputs-only
+  HumanEval+/MBPP+ visible tests and the documented BigCodeBench residual (section 3.2).
+- `wishrec.materialize --visible-tests inputs_only` regenerated every derived task and every
+  hidden and visible SHA-256 matched the committed records; `run_visible_tests` returned the
+  printed inputs-only output for a HumanEval+ and an MBPP+ task.
 - `scripts/local_fake_dry_run.py` exercises the notebook's path end to end: endpoint probe
   (both transports), 600-task smoothing over the real committed splits, detector refit with
   the real frozen Qwen3-Embedding encoder, a real 5-task × 9-condition dry run over the real
@@ -35,7 +49,7 @@ Drive snapshot. The operator must verify those and record the results (checklist
 | Disk | ~60 GB free: project env, a separate vLLM env, Qwen3-8B-AWQ (~6 GB), Qwen3-Embedding (~1.2 GB), datasets, traces. |
 | GitHub | A **repo-scoped** token with read + contents write, stored as the Colab secret `GITHUB_TOKEN` (notebook access enabled). Used for clone and the optional results branch; never printed. |
 | Hugging Face | Public models; optional `HF_TOKEN` secret for rate limits. |
-| Persistence | Optional Google Drive mount. `PERSIST_TO_DRIVE = True` snapshots results after each shard and restores them on reconnect. The clean notebook uses `PERSIST_DIR = …/superagent-r2-clean`; an older `superagent-r2` snapshot is **not** read. |
+| Persistence | Optional Google Drive mount. `PERSIST_TO_DRIVE = True` snapshots results after each shard and restores them on reconnect. The corrected notebook uses `PERSIST_DIR = …/superagent-r2b-clean`; the R2 `superagent-r2-clean` and older `superagent-r2` snapshots are **not** read. |
 
 The repository token is read through an environment-backed git credential helper, so it does
 not appear in a URL or command. If you cannot use a token, the notebook offers an uploaded
@@ -51,10 +65,11 @@ forces `MPLBACKEND=Agg` for project subprocesses, and the harness already scrubs
 evaluation environment to `MPLBACKEND=Agg`.
 
 **Clean restart.** Use a new Colab runtime (Runtime → Disconnect and delete runtime) so
-`/content` is empty, then upload this notebook. It uses the new `superagent-r2-clean` Drive
-directory; it does not restore the previous failed run's snapshot. With no snapshot, step 3
-materializes the derived tests from the committed levels and downloads the pinned raw data
-(`repo_type="dataset"`), so no stale `data/derived` from an older task set is reused.
+`/content` is empty, then upload this notebook. It uses the new `superagent-r2b-clean` Drive
+directory; it does not restore the previous R2 run's snapshot. With no snapshot, step 3
+materializes the derived tests from the corrected committed levels and downloads the pinned raw
+data (`repo_type="dataset"`), so no stale `data/derived` from the R2 task set is reused. If an
+R2 snapshot is imported manually, the visible-test hash check regenerates the corrected files.
 
 ## 2. Run order and expected wall-clock
 
@@ -66,7 +81,7 @@ actual times in `gpu_time.json`.
 | 0 | Runtime/GPU check | Colab | <1 min |
 | 1 | Token, clone at `main`, record commit | Colab | 1–2 min |
 | 2 | Install `uv`, `uv sync --frozen`, then `requirements-validation.txt` into `.venv` (BigCodeBench test libs) | CPU | 5–10 min |
-| 3 | Verify/materialize derived tests from the **committed** levels (`wishrec.materialize --download --clean`; no snapshot on a clean run) | CPU | ~2–5 min including the pinned download |
+| 3 | Verify/materialize derived tests from the **corrected committed** levels (`wishrec.materialize --visible-tests inputs_only --download --clean`; no snapshot on a clean run) | CPU | ~2–5 min including the pinned download |
 | 4 | Install vLLM in `/content/vllm-env`, start server, download model | GPU | 10–30 min including download |
 | 5 | Probe `/v1/models`, native tool calls, text fallback; write `endpoint.json` | GPU | <2 min |
 | 6 | Smooth 500 train + 100 pilot wishes | GPU | 5–20 min |
@@ -91,33 +106,62 @@ The session guard starts no new shard with less than 30 min left.
 - The clone is `--depth 1 --branch main`; the exact commit is printed and included in every
   manifest and the results `COLAB_RUN.md`.
 
-### 3.2 Levels and derived tests
+### 3.2 Corrected levels and derived tests
 
-The pilot uses the **committed** `results/levels/tasks.jsonl`; its SHA-256 is pinned in the
-notebook (`EXPECTED_LEVELS_SHA256 = b80c7f72…`). It does **not** re-run `make levels` for a
-pilot: `make levels` re-parses, re-validates and re-selects the task set, so a different
-library environment can rebuild a different 1,100-task composition. `make levels` remains the
-development command that rebuilds the R0 artifact; it is not part of the pilot path.
-
-After a Drive restore the notebook checks **derived coverage**: every committed task must have
-`data/derived/levels/<source>/<task>/hidden_test.py`. A snapshot from a different task set can
-still contain 1,100 hidden tests while missing the committed keys. When coverage is
-incomplete, the notebook runs:
+`results/levels/` is the **corrected** R2b artifact, rebuilt by R5 against the merged parser
+fix (`15c7646f`) with:
 
 ```bash
-.venv/bin/python -m wishrec.materialize --tasks results/levels/tasks.jsonl --download --clean
+make levels VISIBLE_TESTS=inputs_only
+```
+
+The notebook pins its SHA-256
+(`EXPECTED_LEVELS_SHA256 = e4cf7564b38e17c040b8a37837c4757a8b5d4045791a1621331c91a15cd36436`),
+requires 1,100 kept tasks with no shortfall, and requires the manifest's
+`parsing.visible_tests` to be `inputs_only`. The corrected artifact uses parser 0.2.0: the
+intent is the whole prose block before the examples, and HumanEval+/MBPP+ visible tests print
+observed outputs instead of expected values. The corrected pool is 1,100 kept tasks from 1,549
+valid candidates (1,651 parsed of 1,682 rows; kept by source: BigCodeBench 591, HumanEval+
+132, MBPP+ 377; valid by source: BigCodeBench 1,040, HumanEval+ 132, MBPP+ 377), split
+500/200/300 + 100 (train 60/171/269, evolution 24/69/107, held-out 36/103/161, pilot
+12/34/54).
+
+The parser's "intent must contain a verb" rule rejects HumanEval+ rows whose prose has no
+allow-listed verb and rows under five tokens (`27` rows at the R5 rebuild); that is
+recorded in the manifest exclusions, not silently dropped. It is expected, and the 1,100
+target is still met without changing the split. Do not broaden the allow-list unless the
+target is not met.
+
+The pilot does **not** re-run `make levels`: `make levels` re-parses, re-validates and
+re-selects the task set, so a different library environment can rebuild a different
+composition. Derived tests are materialized from the committed records instead:
+
+```bash
+.venv/bin/python -m wishrec.materialize --tasks results/levels/tasks.jsonl \
+  --visible-tests inputs_only --download --clean
 ```
 
 This re-parses the pinned raw rows, writes the derived stub/visible/hidden/canonical files for
-the committed tasks, and verifies each file's SHA-256 against the values stored in the
-committed record. It does not validate or re-select, so it cannot change the split. If raw data
-is missing it downloads the pinned revisions first (`repo_type="dataset"`; the SHA-256s are
-checked).
+the committed tasks, and verifies each file's SHA-256 against the committed record. It does
+not validate or re-select, so it cannot change the split. If raw data is missing it downloads
+the pinned revisions first (`repo_type="dataset"`; the SHA-256s are checked).
 
-If the levels SHA itself does not match (a rebuilt `results/levels/` rather than a stale
-snapshot), the notebook stops unless `ALLOW_LEVELS_DRIFT = True`; in that case commit the run's
-`results/levels/` and `data_provenance.json` with the results, and never mix the committed R0
-stats with the rebuilt split.
+After a Drive restore the notebook hashes **every** committed hidden and visible test. A
+snapshot from a different task set can contain 1,100 hidden tests while missing the committed
+keys, and a stale R2 snapshot has the old visible tests; either case runs the materializer
+above and re-checks. The same cell runs the `run_visible_tests` tool on one HumanEval+ and one
+MBPP+ task and requires `Visible tests passed. Printed output:`, so the inputs-only mode is
+observed rather than assumed.
+
+If the levels SHA does not match (a rebuilt `results/levels/` rather than the committed
+corrected artifact), the notebook stops unless `ALLOW_LEVELS_DRIFT = True`; in that case
+commit the run's `results/levels/` and `data_provenance.json` with the results, and never mix
+the committed corrected stats with a rebuilt split.
+
+**BigCodeBench residual.** BigCodeBench's visible suite is a selection of `unittest` methods
+with hard-coded expectations, so `VISIBLE_TESTS=inputs_only` cannot remove them without
+breaking the suite. Its `examples` therefore remain visible; the corrected protocol is a full
+examples deletion for HumanEval+/MBPP+ only.
 
 ### 3.3 vLLM server
 
@@ -142,7 +186,7 @@ the JSON text protocol. Do not guess: the next step records the working transpor
 
 `python -m wishrec.harness.endpoint_check` checks `/v1/models`, then makes one native tool
 call and one text-protocol call with a trivial `echo` tool. It writes
-`results/runs/r2-pilot/endpoint.json` with:
+`results/runs/r2b-pilot/endpoint.json` with:
 
 - model ids from `/v1/models`;
 - `native.ok` / `native.error` and `text.ok` / `text.error`;
@@ -154,15 +198,16 @@ a real key (`VLLM_API_KEY=EMPTY` for local vLLM).
 
 ### 3.5 L3 smoothing
 
-R0's L3 is the raw first intent sentence. R2 smooths the **500 detector-train** wishes and
-the **100 pilot** wishes with Qwen3-8B at temperature 0:
+The corrected L3 is the whole parsed prose intent block (R2's levels kept only the first
+sentence). The R2b path smooths the **500 detector-train** wishes and the **100 pilot**
+wishes with Qwen3-8B at temperature 0:
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m wishrec.harness.smoothing \
-  --run-id r2-pilot --splits train pilot --workers 4
+  --run-id r2b-pilot --splits train pilot --workers 4
 ```
 
-The artifact is `results/runs/r2-pilot/smoothing/wishes.jsonl` (one record per task:
+The artifact is `results/runs/r2b-pilot/smoothing/wishes.jsonl` (one record per task:
 raw wish, smoothed wish, changed/fallback flags, model, timestamp, duration) plus a manifest
 with the SHA-256. It is resumable: completed task keys are skipped. The 300 held-out tasks
 are never sent to the endpoint.
@@ -180,12 +225,12 @@ manifest, CV predictions, report) and leaves the committed R1 `results/detector/
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m wishrec.detector.train \
-  --run-id r2 --smoothed-wishes results/runs/r2-pilot/smoothing/wishes.jsonl \
+  --run-id r2b --smoothed-wishes results/runs/r2b-pilot/smoothing/wishes.jsonl \
   --output results/detector-smoothed
 ```
 
 Record whether the pre-smoothing R1 detector was retrained (`RETRAIN_R1_DETECTOR`, default
-False uses the committed artifact) in `results/runs/r2-pilot/r1_detector.json`, with its
+False uses the committed artifact) in `results/runs/r2b-pilot/r1_detector.json`, with its
 SHA-256. The pilot's H3/DISCARD conditions always use the smoothed refit. Compare the refit's
 macro-F1 / AUROCs to `results/detector/metrics.json`; if they collapse, stop and inspect the
 smoothed wishes rather than running 18 GPU-hours against a broken detector.
@@ -197,26 +242,28 @@ venv is missing `requirements-validation.txt`) or if **0/45** units pass. A 0/45
 a model result; fix the environment/transport before starting the pilot.
 
 Every condition runs on the first five pilot tasks with one sample (45 units), using the
-smoothed wishes and the refit detector. The notebook prints each unit's compact trace, token
-totals, `$0` paid cost, GPU name and wall time, and requires exactly 45 units. A fresh dry run
-is enforced: restored dry-run units and `results/cache` are cleared first, and the cell
-refuses a result completed in under 60 s or with zero tokens (that is a cache/snapshot
-replay, not an endpoint test). Do not start
-the pilot if a condition fails systematically, the transport changes mid-run, or a 400
+smoothed wishes, the refit detector and the corrected inputs-only visible tests. The
+BigCodeBench visible tests in those tasks remain assertion-based (the documented residual).
+The notebook prints each unit's compact trace, token totals, `$0` paid cost, GPU name and
+wall time, and requires exactly 45 units. A fresh dry run is enforced: restored dry-run units
+and `results/cache` are cleared first, and the cell refuses a result completed in under 60 s
+or with zero tokens (that is a cache/snapshot replay, not an endpoint test). Do not start the
+pilot if a condition fails systematically, the transport changes mid-run, or a 400
 context-length error appears (see troubleshooting).
 
 ### 3.8 The pilot
 
 ```bash
 PYTHONPATH=src .venv/bin/python -m wishrec.harness.runner pilot \
-  --run-id r2-pilot --samples 3 --workers 2 --shards 2 --shard 0 \
-  --smoothed results/runs/r2-pilot/smoothing/wishes.jsonl \
+  --run-id r2b-pilot --samples 3 --workers 2 --shards 2 --shard 0 \
+  --smoothed results/runs/r2b-pilot/smoothing/wishes.jsonl \
   --detector results/detector-smoothed/model.json \
-  --output results/runs/r2-pilot
+  --output results/runs/r2b-pilot
 ```
 
-- `pilot` selects only the disjoint 100-task development split; `--split heldout` is refused.
-- Units are written atomically under `results/runs/r2-pilot/units/<condition>/<sample>/`.
+- `pilot` selects only the disjoint corrected 100-task development split; `--split heldout`
+  is refused.
+- Units are written atomically under `results/runs/r2b-pilot/units/<condition>/<sample>/`.
 - Resume skips units already complete **and free of API errors**; a unit whose loop hit an
   API error is retried on the next invocation. The config hash covers tasks, conditions,
   samples, endpoint identity, smoothing artifact SHA-256 and detector SHA-256, so changing
@@ -226,7 +273,7 @@ PYTHONPATH=src .venv/bin/python -m wishrec.harness.runner pilot \
   and `report.md`.
 - After each shard the notebook snapshots `results/runs`, `results/detector-smoothed`,
   `results/cache`, `data/` and `logs/` to Drive and appends a marker to
-  `results/runs/r2-pilot/shards.jsonl`.
+  `results/runs/r2b-pilot/shards.jsonl`.
 
 Change `WORKERS` only after checking vLLM throughput and memory; 2 is the documented
 default. Do not change `SAMPLES`, `SHARDS`, `RUN_ID` or the task selection between sessions,
@@ -235,7 +282,7 @@ or the config hash will reject the run.
 ### 3.9 Report
 
 ```bash
-PYTHONPATH=src .venv/bin/python -m wishrec.harness.report results/runs/r2-pilot --require-complete
+PYTHONPATH=src .venv/bin/python -m wishrec.harness.report results/runs/r2b-pilot --require-complete
 ```
 
 The report writes `summary.json` and `report.md` with:
@@ -297,17 +344,20 @@ model:
 2. On the local machine (CPU-only steps):
 
    ```bash
-   make levels
+   # Corrected levels are committed; materialize their derived tests (or rebuild with
+   # `make levels VISIBLE_TESTS=inputs_only` if you need to reproduce them).
+   PYTHONPATH=src uv run python -m wishrec.materialize --tasks results/levels/tasks.jsonl \
+     --visible-tests inputs_only --download --clean
    cp configs/vllm.env.example configs/vllm.env
    export VLLM_BASE_URL=https://<tunnel-host>/v1 VLLM_API_KEY=EMPTY VLLM_MODEL=Qwen/Qwen3-8B-AWQ
-   PYTHONPATH=src uv run python -m wishrec.harness.endpoint_check --run-id r2-pilot
-   PYTHONPATH=src uv run python -m wishrec.harness.smoothing --run-id r2-pilot --splits train pilot
-   PYTHONPATH=src uv run python -m wishrec.detector.train --run-id r2 \
-     --smoothed-wishes results/runs/r2-pilot/smoothing/wishes.jsonl \
+   PYTHONPATH=src uv run python -m wishrec.harness.endpoint_check --run-id r2b-pilot
+   PYTHONPATH=src uv run python -m wishrec.harness.smoothing --run-id r2b-pilot --splits train pilot
+   PYTHONPATH=src uv run python -m wishrec.detector.train --run-id r2b \
+     --smoothed-wishes results/runs/r2b-pilot/smoothing/wishes.jsonl \
      --output results/detector-smoothed
-   PYTHONPATH=src uv run python -m wishrec.harness.runner pilot --run-id r2-pilot \
+   PYTHONPATH=src uv run python -m wishrec.harness.runner pilot --run-id r2b-pilot \
      --samples 3 --workers 2 --shards 2 --shard 0 \
-     --smoothed results/runs/r2-pilot/smoothing/wishes.jsonl \
+     --smoothed results/runs/r2b-pilot/smoothing/wishes.jsonl \
      --detector results/detector-smoothed/model.json
    ```
 
@@ -363,10 +413,18 @@ again. The vLLM wait loop allows 35 minutes.
 
 ### `make levels` fails or reports a shortfall
 
+- Run the corrected protocol with `make levels VISIBLE_TESTS=inputs_only`. Plain
+  `make levels` writes `full`-mode visible tests and will not match the committed R2b records.
 - Install/retry the pinned validation libraries (`requirements-validation.txt`); some
   BigCodeBench tasks need them for canonical validation.
 - Network flakiness: rerun `make levels`; downloads are cached under `data/raw/` and
   validation results under `data/cache/validation/`.
+- The narrow intent verb allow-list rejects HumanEval+ rows with no allow-listed requirement
+  verb and rows under five tokens (`27` rows at the R5 rebuild, plus the `ref_func`
+  exclusions). That is expected and recorded. If `counts.shortfall > 0`, identify the cause
+  and apply the smallest documented fix (for example broadening the verb list to common
+  imperatives while keeping the verb rule), rebuild, and report both counts; do not shrink
+  the split or pad tasks.
 - A shortfall is data, not a bug: record the exact shortfall from `results/levels/manifest.json`
   and stop; do not pad or substitute tasks.
 
@@ -405,8 +463,13 @@ Record each answer in the PR/issue thread:
       returned `Qwen/Qwen3-8B-AWQ`.
 - [ ] `endpoint.json` records native and text probe results and the selected transport; the
       pilot used that transport throughout.
-- [ ] `make levels` completed with 1,100 hidden tests and the expected 500/200/300 + 100
-      split, or the run stopped on a recorded shortfall.
+- [ ] The committed corrected `results/levels/manifest.json` says
+      `parsing.visible_tests = inputs_only`, 1,100 kept tasks and no shortfall; the
+      notebook's levels SHA check passed.
+- [ ] Derived materialization used `--visible-tests inputs_only`; the notebook's hidden+visible
+      hash check reached 1,100/1,100 and `run_visible_tests` returned printed output for a
+      HumanEval+ and an MBPP+ task.
+- [ ] The expected 500/200/300 + 100 split is reported (composition may differ from R2).
 - [ ] Smoothing manifest: 600 records, `complete: true`, splits `{train: 500, pilot: 100}`,
       fallback count explained; artifact SHA-256 recorded.
 - [ ] Detector refit on smoothed wishes completed; `results/detector-smoothed/metrics.json`
@@ -417,25 +480,31 @@ Record each answer in the PR/issue thread:
       five direct samples; held-out used = 0.
 - [ ] `summary.json`/`report.md` contains pass@1, recovery, per-category recovery, failure
       buckets; GPU-hours are recorded and roughly match the ~18 h target; paid cost = $0.
-- [ ] `r2-artifacts.zip` downloaded and/or a results branch/PR opened; it contains no token.
+- [ ] `r2b-artifacts.zip` downloaded and/or a results branch/PR opened; it contains no token.
+- [ ] BigCodeBench's assertion-based visible tests (examples still visible) are recorded as a
+      limitation; the report does not claim a full examples deletion.
+- [ ] Corrected R2b numbers are reported separately from R2 and replace them only after this
+      run is merged.
 - [ ] The 300 held-out tasks were not run; `paper/milestone/` was not modified.
 
 ## 8. Artifact inventory
 
 | Path | Contents |
 | --- | --- |
-| `results/runs/r2-pilot/smoothing/wishes.jsonl` | 600 smoothed wishes + provenance |
-| `results/runs/r2-pilot/smoothing/manifest.json` | endpoint, splits, counts, artifact SHA-256 |
+| `results/runs/r2b-pilot/smoothing/wishes.jsonl` | 600 smoothed wishes + provenance |
+| `results/runs/r2b-pilot/smoothing/manifest.json` | endpoint, splits, counts, artifact SHA-256 |
 | `results/detector-smoothed/` | smoothed refit model, metrics, CV predictions, report |
-| `results/runs/r2-pilot/endpoint.json` | `/v1/models`, native/text probes, selected transport |
-| `results/runs/r2-pilot/r1_detector.json` | committed vs retrained pre-smoothing detector |
-| `results/runs/r2-pilot/units/` | one trace per (condition, task, sample) |
-| `results/runs/r2-pilot/results.jsonl` | compact per-unit results |
-| `results/runs/r2-pilot/summary.json`, `report.md` | aggregate metrics |
-| `results/runs/r2-pilot/gpu_time.json` | shard wall-clock and GPU-hour estimate |
-| `results/runs/r2-pilot/environment.json` | GPU, vLLM, model, transport, hashes, commit |
-| `results/runs/r2-dry/` | 5-task dry run traces, summary, dry_run.json |
-| `r2-artifacts.zip` | downloadable bundle of the above (full traces included) |
+| `results/runs/r2b-pilot/endpoint.json` | `/v1/models`, native/text probes, selected transport |
+| `results/runs/r2b-pilot/r1_detector.json` | committed vs retrained pre-smoothing detector |
+| `results/runs/r2b-pilot/units/` | one trace per (condition, task, sample) |
+| `results/runs/r2b-pilot/results.jsonl` | compact per-unit results |
+| `results/runs/r2b-pilot/summary.json`, `report.md` | aggregate metrics |
+| `results/runs/r2b-pilot/gpu_time.json` | shard wall-clock and GPU-hour estimate |
+| `results/runs/r2b-pilot/environment.json` | GPU, vLLM, model, transport, hashes, commit |
+| `results/runs/r2b-pilot/data_provenance.json` | run id, levels SHA-256/parse mode, commit, transport |
+| `results/levels/` | corrected R2b levels (`tasks.jsonl`, `manifest.json`, `stats.json`) |
+| `results/runs/r2b-dry/` | 5-task dry run traces, summary, dry_run.json |
+| `r2b-artifacts.zip` | downloadable bundle of the above (full traces included) |
 
 ## 9. Known limitations
 
@@ -448,5 +517,18 @@ Record each answer in the PR/issue thread:
   the A100 runtime.
 - `--max-model-len 16384` is the ticket's setting. If H4 context errors force 32768, record
   that operational change; it does not enter the run config hash.
+- **BigCodeBench visible tests are assertion-based.** `VISIBLE_TESTS=inputs_only` prints
+  observed results for HumanEval+ and MBPP+ only. BigCodeBench's visible `unittest` methods
+  still carry hard-coded expected values, so its `examples` stay visible; the corrected
+  protocol is not a full examples deletion. Interpret BigCodeBench examples effects
+  accordingly.
+- **R2 and R2b are not a clean ablation.** Between them the intent definition (whole prose vs
+  first sentence), the HumanEval+ task pool (`27` rows rejected by the intent verb rule)
+  and the visible-test mode change together. Report R2b as a corrected measurement, not as an
+  isolated estimate of one fix.
+- **Task composition changes.** The corrected pool keeps all valid HumanEval+/MBPP+ tasks and
+  fills to 1,100 with BigCodeBench, so per-source composition differs from R2.
+  `results/levels_pre_r2b_split.json` archives the R2 task-to-split mapping for the old
+  artifacts.
 - No paid API and no held-out leakage are enforced by the code and checked by the report;
   the operator still verifies the token/secret handling and the final artifact bundle.
