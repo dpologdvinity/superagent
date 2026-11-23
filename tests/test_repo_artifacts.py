@@ -34,7 +34,14 @@ def test_final_milestone_and_extended_report_exist():
     milestone = (ROOT / "paper" / "milestone" / "main.tex").read_text(encoding="utf-8")
     assert "Noah Foster" in milestone
     assert "H3$^-$" in milestone
-    assert "62.3" in milestone and "53.7" in milestone and "42.7" in milestone
+    # The accepted layout puts title/abstract on page 1, the body on pages 2--3,
+    # and the free table (all nine conditions, with Turns) at the end.
+    assert "\\clearpage" in milestone
+    assert "Turns" in milestone
+    for condition in ("B1", "H0", "H1", "H2", "H3", "H4", "B2", "B3", "H3$^-$"):
+        assert condition in milestone
+    assert "0.623" in milestone and "0.537" in milestone and "0.427" in milestone
+    assert "53.7" in milestone and "42.7" in milestone
 
 
 def test_final_detector_artifact_matches_the_reported_metrics():

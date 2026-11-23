@@ -79,6 +79,8 @@ for generic questioning at the same budget and 42.7\% when the same answers are 
 a harness that may read neighbouring code reaches 51.7\%.
 \end{abstract}
 
+\clearpage
+
 \section{Approach}
 
 \paragraph{The task, and what actually differs across the three datasets.}
@@ -98,9 +100,9 @@ them constraining its arguments and 25.7\% also specifying error behaviour; MBPP
 Each docstring is parsed into five fields---intent, signature and types, examples, constraints
 and edge cases, error behaviour---and levels delete fields: L0 keeps all, L1 drops examples and
 type detail, L2 also drops constraints and error behaviour, L3 keeps the intent alone (the whole
-prose block, not its first sentence, after R2 showed that one sentence often names only the
+prose block, not its first sentence, after an earlier pilot showed that one sentence often names only the
 input). Hidden tests are identical across levels, so an L0--L3 difference is information loss, and
-the deleted fields are the detector's labels. Building the corpus costs no model calls: 1{,}682 rows, 1{,}651 parsed (31 unparsable), 1{,}549 validated by running their visible and hidden suites (666\,s, eight cores), 1{,}100 kept; the 133 exclusions are 31 parse, 86 visible and 16 hidden. Eleven minutes and \$0 per rebuild is why we could rebuild every level after a parsing bug.
+the deleted fields are the detector's labels. Building the corpus costs no model calls: 1{,}682 rows, 1{,}651 parsed (31 unparsable), 1{,}549 validated by running their visible and hidden suites (666\,s, six workers), 1{,}100 kept; the 133 exclusions are 31 parse, 86 visible and 16 hidden. Eleven minutes and \$0 per rebuild is why we could rebuild every level after a parsing bug.
 
 \paragraph{How the detector changes the generated program.}
 The detector never touches model weights; it changes what the generator is conditioned on. It
@@ -117,11 +119,10 @@ is to make elicitation worth its cost, not to beat a silent agent.
 
 \paragraph{Conditions and baselines.}
 H0 is the plain loop; H1 writes acceptance tests first; H2 asks generic questions; H3 asks
-detector-targeted questions; H4 exposes five sibling functions with doctests; H3$^-$ asks H3's questions and
-withholds the answers. B1 gives the full specification with no dialogue; B2 draws five
-single-shot samples (51.3\% pass@1, 54.7\% over five samples); B3 is a one-call, no-tools baseline
-at 31.0\%. H5, not yet run, evolves the harness offline on 200 development wishes with RRSI's
-component-wise edits and regularized selection of the RRSI line of work \citep{xia2026rrsi}. The
+detector-targeted questions; H4 exposes five sibling functions with doctests; H3$^-$ asks the same questions and
+withholds the answers. B1 gives the full specification with no dialogue; B2 draws five single-shot
+samples; B3 is a single call with no tools. H5, not yet run, evolves the harness offline on 200 development wishes with RRSI's
+component-wise edits and regularized selection \citep{xia2026rrsi}. The
 loop conditions (B1, H0--H4, H3$^-$) share tasks, tools and hidden tests; B2 and B3 are
 dialogue-free baselines.
 
@@ -136,24 +137,26 @@ temperature 0.7, top-$p$ 0.95, twelve turns, three samples per task, seed 202611
 features (five labels, 600 full-batch AdamW steps, calibrated out of fold).
 
 \begin{center}
-  \small
-  \begin{tabular}{@{}llrrr@{}}
+  \footnotesize
+  \begin{tabular}{@{}llrrrr@{}}
     \toprule
-    Condition & Description & pass@1 & Recovery & Questions \\
+    Cond. & Description & pass@1 & Recovery & Questions & Turns \\
     \midrule
-    B1        & full specification, no dialogue & 62.3 & 1.00 & 0 \\
-    H0        & ReAct, no questions             & 52.0 & 0.00 & 0 \\
-    H1        & acceptance tests first          & 28.7 & $-2.26$ & 0 \\
-    H2        & generic clarification           & 44.3 & $-0.74$ & 2.94 \\
-    H3        & detector-targeted clarification & \textbf{53.7} & 0.16 & 2.48 \\
-    H4        & context-rich (sibling functions)& 51.7 & $-0.03$ & 0 \\
-    H3$^-$    & H3's questions, answers withheld& 42.7 & $-0.90$ & 2.48 \\
+    B1     & full specification, no dialogue  & 0.623 & 1.000 & 0.00 & 4.34 \\
+    H0     & plain wish loop                  & 0.520 & 0.000 & 0.00 & 4.40 \\
+    H1     & acceptance tests first           & 0.287 & $-2.259$ & 0.00 & 4.51 \\
+    H2     & generic clarification            & 0.443 & $-0.743$ & 2.94 & 6.36 \\
+    H3     & detector-targeted clarification  & \textbf{0.537} & 0.162 & 2.48 & 4.43 \\
+    H4     & sibling functions with doctests  & 0.517 & $-0.032$ & 0.00 & 4.74 \\
+    B2     & five direct samples              & 0.513 & $-0.065$ & 0.00 & 5.00 \\
+    B3     & one call, wish and stub only     & 0.310 & $-2.033$ & 0.00 & 1.00 \\
+    H3$^-$ & H3's questions, answers withheld & 0.427 & $-0.903$ & 2.48 & 4.09 \\
     \bottomrule
   \end{tabular}
   \vspace{2pt}
 
-  {\footnotesize\raggedright\textbf{Table 2.} R2b pilot, 100 development tasks, 3 samples,
-  single seed; held-out tasks used: 0.\par}
+  {\footnotesize\raggedright\textbf{Table 1.} Pilot on 100 development tasks, three samples,
+  single seed, held-out tasks used: 0. B2's five-sample pass rate is 0.547.\par}
 \end{center}
 
 \paragraph{Results.}
@@ -165,7 +168,8 @@ withholding H3's answers costs $11.0$ pp $[-18.7,\,-2.7]$; H3 is not distinguish
 questions cost 7.7 pp $[-14.3,\,-1.0]$. The context-rich harness neither helps nor
 hurts (51.7)---browsing is not a substitute for eliciting. Failures are mostly wrong outputs
 (\texttt{AssertionError} 858); the detector reaches macro-F1 0.792 (TF-IDF 0.789) and AUROC 0.744
-on error behaviour, where the label is rare (85 of 500 training tasks).
+on error behaviour, where the label is rare (85 of 500 training tasks). Per category, H3 closes 19\% of the constraint gap, 16\% of signature/types,
+10\% of examples and 8\% of error behaviour.
 
 Code: we wrote the level builder, harness, detector and evaluation; the hidden tests are EvalPlus's and BigCodeBench's, and the evolution search follows RRSI.
 
