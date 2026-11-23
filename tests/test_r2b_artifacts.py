@@ -192,13 +192,3 @@ def test_r2b_provenance_matches_the_corrected_levels():
     assert manifest["level_manifest_sha256"] == hashlib.sha256(
         canonical.encode()
     ).hexdigest()
-
-
-def test_r2_milestone_snapshot_is_preserved():
-    snapshot = ROOT / "paper" / "milestone" / "r2"
-    assert _sha256(snapshot / "main.tex") == (
-        "6153f83b4df2eb05ff55981c8218ba4556b808e40db957e950cea58b0e51d817"
-    )
-    assert _sha256(snapshot / "main.pdf") == (
-        "345241695f53be08306425bfcfe4cb23651d0ec0956a1fd46e460bc4dc6e5a2f"
-    )

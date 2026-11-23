@@ -1,1 +1,17 @@
-https://colab.research.google.com/drive/1cU_m5_HG8g9LzKzIhVtudr174CZdt3FJ?usp=sharing
+# Colab A100 runbook
+
+Notebook: https://colab.research.google.com/drive/1cU_m5_HG8g9LzKzIhVtudr174CZdt3FJ?usp=sharing
+
+Prerequisites:
+- one Colab A100-40GB runtime;
+- a repo-scoped GitHub token with contents read/write in the Colab secret `GITHUB_TOKEN`;
+- about 60 GB free disk for the project environment, vLLM, and the two public models;
+- no paid API key: the only endpoint is the local vLLM server.
+
+Execute `notebooks/colab_a100_vllm.ipynb` top to bottom. It clones the repository, installs
+`uv` and the validation requirements, materializes the inputs-only levels, serves
+`Qwen/Qwen3-8B-AWQ` on vLLM, smooths the 500 train and 100 pilot wishes, refits the detector,
+runs a 5-task x 9-condition dry run, and runs the 2,700-unit pilot in two shards. The measured
+run took 2.902 GPU-hours on one A100-SXM4-40GB and produced `results/runs/r2b-pilot/`.
+
+The full operator runbook is `COLAB.md`.

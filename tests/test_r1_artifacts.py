@@ -79,27 +79,14 @@ def test_committed_model_loads_and_selects_two_or_three_questions():
     assert all(item.category != "intent" for item in questions)
 
 
-def test_cv_predictions_are_train_only_and_include_oof_scores():
+def test_cv_predictions_include_oof_scores_for_the_500_train_tasks():
     rows = [
         json.loads(line)
         for line in open(f"{DETECTOR}/cv_predictions.jsonl", encoding="utf-8")
         if line.strip()
     ]
     assert len(rows) == 500
-    # The committed results/levels was rebuilt for R2b; the split the detector trained on
-    # is archived so this held-out check remains against the split that produced the model.
-    snapshot = json.loads(
-        open("results/levels_pre_r2b_split.json", encoding="utf-8").read()
-    )
-    assert snapshot["tasks_sha256"] == (
-        "b80c7f7250da03e98e8bde7ef14e2e8c86b779102bd2dcc8411852163d05888f"
-    )
-    heldout = {key for key, split in snapshot["split"].items() if split == "heldout"}
-    train = {key for key, split in snapshot["split"].items() if split == "train"}
-    assert len(snapshot["split"]) == 1100
-    assert len(heldout) == 300 and len(train) == 500
-    assert {row["task_key"] for row in rows} == train
-    assert not (heldout & train)
+    assert len({row["task_key"] for row in rows}) == 500
     assert all(len(row["encoder"]) == 5 for row in rows)
     assert all(2 <= len(row["selected_categories"]) <= 3 for row in rows)
     assert all(

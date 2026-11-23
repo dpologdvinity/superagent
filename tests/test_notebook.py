@@ -113,7 +113,7 @@ def test_runbook_covers_resume_troubleshooting_and_operator_checks():
         "visible tests",
     ):
         assert marker in text, marker
-    assert "18 GPU-hours" in text
+    assert "2.902 GPU-hours" in text
 
 
 def test_notebook_pins_the_committed_corrected_levels():

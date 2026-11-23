@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local fake-endpoint dry run of the R2 Colab harness path.
+"""Local fake-endpoint dry run of the Colab harness path.
 
 This script is the local counterpart of ``notebooks/colab_a100_vllm.ipynb``.  It runs the
 same pipeline against an in-process OpenAI-compatible fake endpoint instead of vLLM, using
@@ -10,7 +10,7 @@ Qwen3-Embedding encoder (CPU; download/cache only, no GPU):
 2. L3 smoothing of the 500 detector-train and 100 pilot wishes;
 3. detector refit on the smoothed train wishes;
 4. a 5-task x 9-condition dry run over two config-stable shards;
-5. the aggregate R2 report (pass@1, recovery, per-category recovery, failure buckets).
+5. the aggregate pilot report (pass@1, recovery, per-category recovery, failure buckets).
 
 No GPU, paid API, vLLM server or Colab runtime is used, and nothing is written outside
 ``--output-dir`` (plus the gitignored encoder embedding cache).  The vLLM/Colab path itself

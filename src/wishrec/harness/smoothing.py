@@ -1,11 +1,10 @@
-"""R2 L3 smoothing: rewrite the train and pilot wishes with the generator endpoint.
+"""L3 smoothing: rewrite the train and pilot wishes with the generator endpoint.
 
-R0's L3 is the raw first intent sentence.  The milestone smooths it into a natural wish
-with a language model before the pilot; R1 implemented the single call in
-:func:`wishrec.harness.wish.smooth_wish` but deliberately did not run it.  This module
-executes that step against the operator's Qwen3-8B endpoint:
+The mechanical L3 is the whole parsed intent prose.  The milestone smooths it into a natural
+wish with a language model before the pilot.  This module executes that step against the
+operator's Qwen3-8B endpoint:
 
-    python -m wishrec.harness.smoothing --run-id r2-pilot --splits train pilot
+    python -m wishrec.harness.smoothing --run-id r2b-pilot --splits train pilot
 
 It writes ``results/runs/<run-id>/smoothing/wishes.jsonl`` (one record per task) plus a
 manifest, and is resumable: completed task keys are skipped on a second invocation, and each

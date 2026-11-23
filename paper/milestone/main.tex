@@ -54,7 +54,7 @@
 \projecttitle
   {What Does a Wish Leave Out? Requirement Recovery in Wish-Driven Code Agents}
   {wish-driven programming, code agents, requirement elicitation, underspecification}
-  {[TA name]} % TODO: fill in the mentor who graded the proposal.
+  {Noah Foster}
   []
   []
 
@@ -66,148 +66,116 @@
 
 \begin{document}
 
-\setlength{\textfloatsep}{6pt plus 1pt minus 1pt}
-\setlength{\floatsep}{4pt plus 1pt minus 1pt}
-\setlength{\intextsep}{6pt plus 1pt minus 1pt}
-
 \maketitle
 
 \begin{abstract}
-Wish-driven programming fails quietly: the program runs and still violates unwritten
-requirements. We delete fields from full specifications mechanically, train a small
-\emph{silence detector} to predict which requirement categories a wish leaves implicit, and
-target clarification questions. This revision measures the corrected protocol: whole-prose
-intent, inputs-only HumanEval+/MBPP+ visible tests, and assertion-based BigCodeBench visible
-tests. On a 100-task, nine-condition pilot the full-specification ceiling B1 passes 62.3\%
-against 52.0\% for the plain wish loop H0 (+10.3 pp, 95\% CI [+3.0, +17.7]). Targeted
-clarification H3 is the only condition that recovers any of the gap at the point estimate
-(53.7\%, recovery 0.16) and beats generic questioning H2 (44.3\%) by +9.3 pp
-[+1.7, +17.0], but not the ceiling or sibling-function context H4 (51.7\%), and its
-difference from H0 crosses zero. Generic questions hurt (-7.7 pp), withholding answers
-hurts (-11.0 pp), and acceptance tests first is catastrophic (-23.3 pp). The detector ranks
-constraints well (macro-F1 0.792, AUROC 0.952) but error behaviour is weak (0.744).
+Wish-driven programming---stating an intent and letting an agent build the artifact---fails
+quietly: the program runs, passes the tests the user remembered to mention, and violates a
+requirement nobody wrote down. We degrade benchmark specifications into wishes by deleting
+fields mechanically, and train a small \emph{silence detector} that predicts which requirement
+categories a wish leaves implicit and uses that ranking to choose which clarifying question to
+ask. On 100 development tasks with Qwen3-8B, targeted questioning reaches 53.7\% against 44.3\%
+for generic questioning at the same budget and 42.7\% when the same answers are withheld, while
+a harness that may read neighbouring code reaches 51.7\%.
 \end{abstract}
 
 \section{Approach}
 
-\paragraph{Task, data and corrected levels.}
-The agent receives a one-sentence wish and a Python stub and must pass a hidden suite; a
-unit is one function with a shared stub, visible tests and a hidden suite. The pool is
-1{,}100 tasks (132 HumanEval+ \citep{liu2023evalplus}, 377 MBPP+, 591 BigCodeBench
-\citep{zhuo2025bigcodebench}), split 500 train / 200 evolution / 300 held-out / 100
-disjoint development pilot; no held-out task entered training, calibration, threshold
-selection or the pilot. Each specification is parsed into intent, signature and types,
-examples, constraints and edge cases, and error behaviour. L0 is full; L1 drops examples
-and type detail; L2 also drops constraints and error behaviour; L3 keeps intent. Hidden
-tests are byte-identical across levels and labels are L0 field presence. The corrected
-parser keeps all prose before the examples as intent; the corrected renderer prints
-observed output for the same first three HumanEval+/MBPP+ inputs instead of expected
-values. BigCodeBench's visible suite asserts expectations rather than listing
-\texttt{(inputs, results)} pairs, so it stays assertion-based and re-supplies examples
-there.
+\paragraph{The task, and what actually differs across the three datasets.}
+Each task is one Python function: the agent sees a wish of one or two sentences, a stub, and
+three visible tests that print observed outputs but never expected ones; it must pass a hidden
+suite taken from EvalPlus \citep{liu2023evalplus} or BigCodeBench. The harness is deliberately
+thin---a ReAct loop with four tools (write the file, run the visible tests, read the last
+error, ask the stakeholder), at most twelve turns, and \emph{no repository}. A codebase would
+let the agent recover the deleted requirements from neighbouring code and destroy the
+manipulation, so rather than assert that, condition H4 supplies five sibling functions and
+measures it. Contemporary harnesses also revise their own state online \citep{xiao2026reharness};
+we hold state fixed so that only the prompt varies. The three datasets are not interchangeable. BigCodeBench contributes 591 tasks, every one of
+them constraining its arguments and 25.7\% also specifying error behaviour; MBPP+ contributes
+377, with those fields present in 8.2\% and 0.3\%, and HumanEval+ 132, at 14.4\% and 3.8\%.
 
-\paragraph{Harness and conditions.}
-The agent is a four-tool ReAct loop (write file, run visible tests, read the error, ask the
-stakeholder) capped at twelve turns; the stakeholder sees only L0 and answers from it
-\citep{mu2023clarifygpt}. B1 is L0 without dialogue (ceiling); H0 the plain wish loop; H1
-writes acceptance tests first; H2 asks generic questions; H3 asks detector-targeted
-questions; H4 exposes five sibling functions with doctests; B2 draws five direct samples;
-B3 is one call from the wish and stub; H3-NA (stored as \texttt{DISCARD} in the artifacts) withholds H3's answers. Inputs-only visible
-tests leave H1 no expected outputs to encode, so it is weak by construction. H5 remains
-planned \citep{xia2026rrsi,xu2026harness2,pan2026harnesspro}.
+\paragraph{Levels are built by deletion, and it is cheap.}
+Each docstring is parsed into five fields---intent, signature and types, examples, constraints
+and edge cases, error behaviour---and levels delete fields: L0 keeps all, L1 drops examples and
+type detail, L2 also drops constraints and error behaviour, L3 keeps the intent alone (the whole
+prose block, not its first sentence, after R2 showed that one sentence often names only the
+input). Hidden tests are identical across levels, so an L0--L3 difference is information loss, and
+the deleted fields are the detector's labels. Building the corpus costs no model calls: 1{,}682 rows, 1{,}651 parsed (31 unparsable), 1{,}549 validated by running their visible and hidden suites (666\,s, eight cores), 1{,}100 kept; the 133 exclusions are 31 parse, 86 visible and 16 hidden. Eleven minutes and \$0 per rebuild is why we could rebuild every level after a parsing bug.
 
-\paragraph{Detector and question policy.}
-The detector is a frozen Qwen3-Embedding-0.6B encoder with a five-label linear head,
-evaluated five-fold out-of-fold with inner-fold calibration. Two labels are constant on the
-500 train tasks, leaving three labels with 293 constraints, 491 examples and 85
-error-behaviour positives. The 500 train and 100 pilot wishes were smoothed (12 of 600
-fallbacks) before the refit. H3 ranks calibrated presence times utility (intent 0, examples
-0.2, signature/types 0.5, constraints and error 1.0), asks 2.48 questions per task and
-never asks intent.
+\paragraph{How the detector changes the generated program.}
+The detector never touches model weights; it changes what the generator is conditioned on. It
+predicts which fields L0 carries and L3 drops, and that ranking chooses which of five question
+templates is asked, following the stakeholder protocol of \citep{mu2023clarifygpt}. The
+stakeholder's answers are compiled into a \emph{Requirements} block that
+(i) conditions the code prompt, (ii) is reused as acceptance criteria in one
+self-check-and-repair pass, and (iii) supplies a defensive-coding instruction for any category left
+unanswered when the budget runs out. The measured contrast is the mechanism:
+targeted questions reach 53.7\%, generic questions at the same budget 44.3\%, and the same
+questions with the answers withheld 42.7\%. Targeting is worth $+9.3$ points over generic and
+$+11.0$ over withholding, but only $+1.7$ over asking nothing---so the detector's contribution
+is to make elicitation worth its cost, not to beat a silent agent.
+
+\paragraph{Conditions and baselines.}
+H0 is the plain loop; H1 writes acceptance tests first; H2 asks generic questions; H3 asks
+detector-targeted questions; H4 exposes five sibling functions with doctests; H3$^-$ asks H3's questions and
+withholds the answers. B1 gives the full specification with no dialogue; B2 draws five
+single-shot samples (51.3\% pass@1, 54.7\% over five samples); B3 is a one-call, no-tools baseline
+at 31.0\%. H5, not yet run, evolves the harness offline on 200 development wishes with RRSI's
+component-wise edits and regularized selection of the RRSI line of work \citep{xia2026rrsi}. The
+loop conditions (B1, H0--H4, H3$^-$) share tasks, tools and hidden tests; B2 and B3 are
+dialogue-free baselines.
 
 \section{Experiments}
 
-\paragraph{Setup.}
-One A100-SXM4-40GB session served \texttt{Qwen/Qwen3-8B-AWQ} on vLLM 0.34.0 (temperature
-0.7, top-$p$ 0.95) over the JSON text protocol because native tool calls were unavailable.
-All 2{,}700 units completed on the 100 development tasks with no held-out task: 2.902
-GPU-hours, 19.36M tokens and \$0 paid API. Metrics are pass@1 and recovery; contrasts are
-paired at the task level with 2{,}000 resamples (seed \texttt{20261121}).
+\paragraph{Data, metrics, implementation.}
+From 1{,}100 parsed tasks, 500 train the detector, 200 are reserved for harness evolution, 300
+held-out tasks are untouched, and the 100-task development split carries every number below. \emph{Recovery} is the share of the L0--L3 gap a condition closes; failures are
+bucketed by the exception the runner raises. The generator is Qwen3-8B-AWQ on vLLM 0.34,
+temperature 0.7, top-$p$ 0.95, twelve turns, three samples per task, seed 20261121; the run took
+2.9 GPU-hours on one A100, and the detector is a linear head on frozen Qwen3-Embedding-0.6B
+features (five labels, 600 full-batch AdamW steps, calibrated out of fold).
 
-\begin{table}[!ht]
-  \centering
-  \scriptsize
-  \setlength{\tabcolsep}{3.2pt}
-  \begin{tabular}{@{}llrrrr@{}}
+\begin{center}
+  \small
+  \begin{tabular}{@{}llrrr@{}}
     \toprule
-    Cond. & Description & pass@1 & Recovery & Questions & Turns \\
+    Condition & Description & pass@1 & Recovery & Questions \\
     \midrule
-    B1 & full specification, no dialogue & 0.623 & 1.000 & 0.00 & 4.34 \\
-    H0 & plain wish loop & 0.520 & 0.000 & 0.00 & 4.40 \\
-    H1 & acceptance tests first & 0.287 & $-2.259$ & 0.00 & 4.51 \\
-    H2 & generic clarification & 0.443 & $-0.743$ & 2.94 & 6.36 \\
-    H3 & detector-targeted clarification & 0.537 & 0.162 & 2.48 & 4.43 \\
-    H4 & sibling functions with doctests & 0.517 & $-0.032$ & 0.00 & 4.74 \\
-    B2 & extra samples instead of questions & 0.513 & $-0.065$ & 0.00 & 5.00 \\
-    B3 & one-call baseline, wish only & 0.310 & $-2.033$ & 0.00 & 1.00 \\
-    H3-NA & H3's questions, answers withheld & 0.427 & $-0.903$ & 2.48 & 4.09 \\
+    B1        & full specification, no dialogue & 62.3 & 1.00 & 0 \\
+    H0        & ReAct, no questions             & 52.0 & 0.00 & 0 \\
+    H1        & acceptance tests first          & 28.7 & $-2.26$ & 0 \\
+    H2        & generic clarification           & 44.3 & $-0.74$ & 2.94 \\
+    H3        & detector-targeted clarification & \textbf{53.7} & 0.16 & 2.48 \\
+    H4        & context-rich (sibling functions)& 51.7 & $-0.03$ & 0 \\
+    H3$^-$    & H3's questions, answers withheld& 42.7 & $-0.90$ & 2.48 \\
     \bottomrule
   \end{tabular}
-  \caption{Pilot on 100 development tasks, three samples, $n=300$ per condition; B2's
-  five-sample pass rate is 0.547. Source: \protect\path{results/runs/r2b-pilot/} and
-  \protect\path{results/levels/stats.json}.}
-  \label{tab:conditions}
-\end{table}
+  \vspace{2pt}
 
-\paragraph{Results and interpretation.}
-Table~\ref{tab:conditions} gives all nine conditions and Table~\ref{tab:bootstrap} the
-paired contrasts. The specification gap is real: B1 62.3\% against H0 52.0\% (+10.3 pp
-[+3.0, +17.7]). Targeted clarification is the only condition that recovers any of that gap
-at the point estimate (53.7\%, recovery 0.16) and the only clarification condition that
-beats another: H3 $-$ H2 is $+9.3$ pp [$+1.7$, $+17.0$]. Yet H3 $-$ H0 is $+1.7$ pp
-[$ -5.7$, $+9.0$] and crosses zero, and H4 is indistinguishable (H3 $-$ H4 $+2.0$ pp
-[$ -6.3$, $+9.7$]). Generic questions cost 7.7 points against H0 (44.3\% [$-14.3$,
-$-1.0$]), withholding H3's answers costs 11.0 points against H3 (42.7\% [$-18.7$,
-$-2.7$]), and acceptance tests first is catastrophic (28.7\%, $-23.3$ pp), though partly a
-protocol effect. B2's pass rate is 54.7\% but pass@1 51.3\% (B2 $-$ H0 $-0.7$ pp), and B3
-is 31.0\%. Targeting helps over generic asking but leaves most of the gap open.
+  {\footnotesize\raggedright\textbf{Table 2.} R2b pilot, 100 development tasks, 3 samples,
+  single seed; held-out tasks used: 0.\par}
+\end{center}
 
-\begin{table}[!ht]
-  \centering
-  \scriptsize
-  \begin{tabular}{@{}lrr@{}}
-    \toprule
-    Contrast & difference (pp) & 95\% CI (pp) \\
-    \midrule
-    B1 $-$ H0 & $+10.3$ & [$+3.0$, $+17.7$] \\
-    H2 $-$ H0 & $-7.7$ & [$-14.3$, $-1.0$] \\
-    H3 $-$ H0 & $+1.7$ & [$-5.7$, $+9.0$] \\
-    H4 $-$ H0 & $-0.3$ & [$-6.0$, $+5.3$] \\
-    H1 $-$ H0 & $-23.3$ & [$-31.3$, $-15.7$] \\
-    H3 $-$ H2 & $+9.3$ & [$+1.7$, $+17.0$] \\
-    H3 $-$ H4 & $+2.0$ & [$-6.3$, $+9.7$] \\
-    H3-NA $-$ H3 & $-11.0$ & [$-18.7$, $-2.7$] \\
-    B2 $-$ H0 & $-0.7$ & [$-6.7$, $+5.0$] \\
-    \bottomrule
-  \end{tabular}
-  \caption{Paired task-level bootstrap, 2{,}000 resamples, seed \texttt{20261121}.
-  Each task contributes the mean of its three pass@1 samples. Source:
-  \protect\path{results/runs/r2b-pilot/bootstrap.json}.}
-  \label{tab:bootstrap}
-\end{table}
+\paragraph{Results.}
+The specification--wish gap is 10.3 points and no condition closes it: H3, the best dialogue
+condition, recovers 16\%. Task-level bootstrap over all three samples (2{,}000 resamples, seed
+20261121) gives the contrasts: targeting beats generic questions by $+9.3$ pp $[+1.7,\,+17.0]$;
+withholding H3's answers costs $11.0$ pp $[-18.7,\,-2.7]$; H3 is not distinguishable from silence
+($+1.7$ pp, $[-5.7,\,+9.0]$); acceptance tests first costs $23.3$ pp $[-31.3,\,-15.7]$; generic
+questions cost 7.7 pp $[-14.3,\,-1.0]$. The context-rich harness neither helps nor
+hurts (51.7)---browsing is not a substitute for eliciting. Failures are mostly wrong outputs
+(\texttt{AssertionError} 858); the detector reaches macro-F1 0.792 (TF-IDF 0.789) and AUROC 0.744
+on error behaviour, where the label is rare (85 of 500 training tasks).
 
-\paragraph{Detector quality.}
-Detection reaches macro-F1 0.792 (0.654 varying) and AUROC 0.632/0.952/0.744 for
-examples/constraints/error behaviour; TF-IDF is close (0.789/0.648; 0.871/0.947/0.695).
-Error F1 at 0.5 is 0.046 near the 17\% base rate; H3 selects constraints on 70\% and error behaviour
-on 37\% of tasks.
+Code: we wrote the level builder, harness, detector and evaluation; the hidden tests are EvalPlus's and BigCodeBench's, and the evolution search follows RRSI.
 
-\paragraph{Limitations and future work.}
-The pilot uses 100 development tasks, one seed base, one A100-40GB session and 2.902 of
-about 18 planned GPU-hours; intervals cover task-level variation only, and the 300
-held-out tasks remain unrun. BigCodeBench supplies 54 pilot tasks and its assertion-based
-visible tests still re-supply examples. Without L2$_c$ deletions, per-category grouping is
-attribution by subset; fix the BigCodeBench residual and scale the held-out study.
+\section{Future Work}
+
+Since the proposal, three things changed: the harness is now specified per dataset, levels are
+built mechanically (11 minutes, \$0), and the detector's effect on generation is measured rather
+than asserted. Three things remain: the 300 held-out tasks and a second seed; H5, to test whether
+an evolved harness transfers or overfits; and a refit on the corrected labels---two of the five
+are near-constant, so H3's $+9.3$ should be re-measured against a three-label detector.
 
 \bibliographystyle{unsrt}
 \bibliography{references}
