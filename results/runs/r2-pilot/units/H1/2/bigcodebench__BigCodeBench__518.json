@@ -1,0 +1,454 @@
+{
+  "api_error": "",
+  "bucket": "ValueError",
+  "condition": "H1",
+  "config_hash": "018cdb8142b46d425670ff7a4f4b0b56f946ca4b3e328fb16337dec5a9a86c00",
+  "created_at": "2026-11-23T00:23:25+00:00",
+  "detector_questions": [],
+  "duration_s": 9.394,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "ValueError",
+    "duration_s": 0.884,
+    "exception": "ValueError",
+    "output_tail": ".........E\n======================================================================\nERROR: test_case_9 (hidden_test.TestCases.test_case_9)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-gpwgs6zg/hidden_test.py\", line 68, in test_case_9\n    task_func(input_data)\n  File \"/tmp/wish-eval-gpwgs6zg/solution.py\", line 12, in task_func\n    distances = pdist(df.values, metric='euclidean')\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/spatial/distance.py\", line 2100, in pdist\n    return xpx.lazy_apply(_np_pdist, X, out,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/_external/array_api_extra/_lib/_lazy.py\", line 300, in lazy_apply\n    out = wrapped(*args, **kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/_external/array_api_extra/_lib/_lazy.py\", line 350, in wrapper\n    out = func(*args_list, **kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/spatial/distance.py\", line 2138, in _np_pdist\n    return pdist_fn(X, out=out, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: Unsupported dtype object\n\n----------------------------------------------------------------------\nRan 10 tests in 0.013s\n\nFAILED (errors=1)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import pandas as pd\n\nfrom scipy.spatial.distance import pdist, squareform\n\n\ndef task_func(array):\n    # Create DataFrame with columns labeled 'A', 'B', ...\n    columns = [chr(65 + i) for i in range(len(array[0]))]\n    df = pd.DataFrame(array, columns=columns)\n\n    # Compute Euclidean distance matrix\n    distances = pdist(df.values, metric='euclidean')\n    distance_matrix = squareform(distances)\n    distance_matrix = pd.DataFrame(distance_matrix, index=df.index, columns=df.index)\n\n    return df, distance_matrix",
+  "follow_up_questions": [],
+  "hidden_duration_s": 0.884,
+  "hidden_output_tail": ".........E\n======================================================================\nERROR: test_case_9 (hidden_test.TestCases.test_case_9)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-gpwgs6zg/hidden_test.py\", line 68, in test_case_9\n    task_func(input_data)\n  File \"/tmp/wish-eval-gpwgs6zg/solution.py\", line 12, in task_func\n    distances = pdist(df.values, metric='euclidean')\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/spatial/distance.py\", line 2100, in pdist\n    return xpx.lazy_apply(_np_pdist, X, out,\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/_external/array_api_extra/_lib/_lazy.py\", line 300, in lazy_apply\n    out = wrapped(*args, **kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/_external/array_api_extra/_lib/_lazy.py\", line 350, in wrapper\n    out = func(*args_list, **kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/spatial/distance.py\", line 2138, in _np_pdist\n    return pdist_fn(X, out=out, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: Unsupported dtype object\n\n----------------------------------------------------------------------\nRan 10 tests in 0.013s\n\nFAILED (errors=1)",
+  "llm_calls": [
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"acceptance_tests.py\", \"content\": \"from solution import task_func\\nimport unittest\\n\\nclass TestCases(unittest.TestCase):\\n    def test_case_1(self):\\n        input_data = [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]\\n        df, distance_matrix = task_func(input_data)\\n        self.assertEqual(df.shape, (2, 5))\\n        self.assertTrue((df.columns == ['A', 'B', 'C', 'D', 'E']).all())\\n        self.assertEqual(distance_matrix.shape, (2, 2))\\n        self.assertAlmostEqual(distance_matrix.iloc[0, 1], 11.18034, places=5)\\n        self.assertAlmostEqual(distance_matrix.iloc[1, 0], 11.18034, places=5)\\n\\n    def test_case_2(self):\\n        input_data = [[-5, -4, -3, -2, -1], [0, 0, 0, 0, 0], [1, 2, 3, 4, 5]]\\n        df, distance_matrix = task_func(input_data)\\n        self.assertEqual(df.shape, (3, 5))\\n        self.assertEqual(distance_matrix.shape, (3, 3))\\n        self.assertAlmostEqual(distance_matrix.iloc[0, 1], 7.4162, places=5)\\n        self.assertAlmostEqual(distance_matrix.iloc[1, 2], 7.4162, places=5)\\n\\n    def test_case_3(self):\\n        input_data = [[1, 2], [3, 4]]\\n        df, distance_matrix = task_func(input_data)\\n        self.assertEqual(df.shape, (2, 2))\\n        self.assertEqual(distance_matrix.shape, (2, 2))\\n        self.assertAlmostEqual(distance_matrix.iloc[0, 1], 2.82843, places=5)\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 919,
+        "output_tokens": 465,
+        "total_tokens": 1384
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1404,
+        "output_tokens": 14,
+        "total_tokens": 1418
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "read_error"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1447,
+        "output_tokens": 13,
+        "total_tokens": 1460
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import pandas as pd\\n\\nfrom scipy.spatial.distance import pdist, squareform\\n\\n\\ndef task_func(array):\\n    # Create DataFrame with columns labeled 'A', 'B', ...\\n    columns = [chr(65 + i) for i in range(len(array[0]))]\\n    df = pd.DataFrame(array, columns=columns)\\n\\n    # Compute Euclidean distance matrix\\n    distances = pdist(df.values, metric='euclidean')\\n    distance_matrix = squareform(distances)\\n\\n    return df, distance_matrix\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1762,
+        "output_tokens": 219,
+        "total_tokens": 1981
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1926,
+        "output_tokens": 17,
+        "total_tokens": 1943
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "read_error"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1970,
+        "output_tokens": 16,
+        "total_tokens": 1986
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import pandas as pd\\n\\nfrom scipy.spatial.distance import pdist, squareform\\n\\n\\ndef task_func(array):\\n    # Create DataFrame with columns labeled 'A', 'B', ...\\n    columns = [chr(65 + i) for i in range(len(array[0]))]\\n    df = pd.DataFrame(array, columns=columns)\\n\\n    # Compute Euclidean distance matrix\\n    distances = pdist(df.values, metric='euclidean')\\n    distance_matrix = squareform(distances)\\n    distance_matrix = pd.DataFrame(distance_matrix, index=df.index, columns=df.index)\\n\\n    return df, distance_matrix\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 2336,
+        "output_tokens": 159,
+        "total_tokens": 2495
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 2518,
+        "output_tokens": 17,
+        "total_tokens": 2535
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 2551,
+        "output_tokens": 7,
+        "total_tokens": 2558
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. You cannot ask the stakeholder questions in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Wish\n\nGenerate a Pandas DataFrame from a 2D list with columns labeled alphabetically starting from 'A' using the `chr()` function, and compute the Euclidean distance matrix between rows.\n\n## Starting file (solution.py)\n\n```python\nimport pandas as pd\n\nfrom scipy.spatial.distance import pdist, squareform\n\ndef task_func(array):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\n\nclass TestCases(unittest.TestCase):\n\n    def test_case_1(self):\n        input_data = [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]\n        df, distance_matrix = task_func(input_data)\n        self.assertEqual(df.shape, (2, 5))\n        self.assertTrue((df.columns == ['A', 'B', 'C', 'D', 'E']).all())\n        self.assertEqual(distance_matrix.shape, (2, 2))\n        self.assertAlmostEqual(distance_matrix.iloc[0, 1], 11.18034, places=5)\n        self.assertAlmostEqual(distance_matrix.iloc[1, 0], 11.18034, places=5)\n\n    def test_case_2(self):\n        input_data = [[-5, -4, -3, -2, -1], [0, 0, 0, 0, 0], [1, 2, 3, 4, 5]]\n        df, distance_matrix = task_func(input_data)\n        self.assertEqual(df.shape, (3, 5))\n        self.assertEqual(distance_matrix.shape, (3, 3))\n        self.assertAlmostEqual(distance_matrix.iloc[0, 1], 7.4162, places=5)\n        self.assertAlmostEqual(distance_matrix.iloc[1, 2], 7.4162, places=5)\n\n    def test_case_3(self):\n        input_data = [[1, 2], [3, 4]]\n        df, distance_matrix = task_func(input_data)\n        self.assertEqual(df.shape, (2, 2))\n        self.assertEqual(distance_matrix.shape, (2, 2))\n        self.assertAlmostEqual(distance_matrix.iloc[0, 1], 2.82843, places=5)\n```\n\nBefore implementing, write your acceptance tests to `acceptance_tests.py` with write_file. Then implement `solution.py` and run the visible tests.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"acceptance_tests.py\", \"content\": \"from solution import task_func\\nimport unittest\\n\\nclass TestCases(unittest.TestCase):\\n    def test_case_1(self):\\n        input_data = [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]\\n        df, distance_matrix = task_func(input_data)\\n        self.assertEqual(df.shape, (2, 5))\\n        self.assertTrue((df.columns == ['A', 'B', 'C', 'D', 'E']).all())\\n        self.assertEqual(distance_matrix.shape, (2, 2))\\n        self.assertAlmostEqual(distance_matrix.iloc[0, 1], 11.18034, places=5)\\n        self.assertAlmostEqual(distance_matrix.iloc[1, 0], 11.18034, places=5)\\n\\n    def test_case_2(self):\\n        input_data = [[-5, -4, -3, -2, -1], [0, 0, 0, 0, 0], [1, 2, 3, 4, 5]]\\n        df, distance_matrix = task_func(input_data)\\n        self.assertEqual(df.shape, (3, 5))\\n        self.assertEqual(distance_matrix.shape, (3, 3))\\n        self.assertAlmostEqual(distance_matrix.iloc[0, 1], 7.4162, places=5)\\n        self.assertAlmostEqual(distance_matrix.iloc[1, 2], 7.4162, places=5)\\n\\n    def test_case_3(self):\\n        input_data = [[1, 2], [3, 4]]\\n        df, distance_matrix = task_func(input_data)\\n        self.assertEqual(df.shape, (2, 2))\\n        self.assertEqual(distance_matrix.shape, (2, 2))\\n        self.assertAlmostEqual(distance_matrix.iloc[0, 1], 2.82843, places=5)\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 1255 characters to acceptance_tests.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests failed (TypeError). Call read_error to see the traceback.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "read_error"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "EEE\n======================================================================\nERROR: test_case_1 (visible_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 10, in test_case_1\n    df, distance_matrix = task_func(input_data)\n    ^^^^^^^^^^^^^^^^^^^\nTypeError: cannot unpack non-iterable NoneType object\n\n======================================================================\nERROR: test_case_2 (visible_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 19, in test_case_2\n    df, distance_matrix = task_func(input_data)\n    ^^^^^^^^^^^^^^^^^^^\nTypeError: cannot unpack non-iterable NoneType object\n\n======================================================================\nERROR: test_case_3 (visible_test.TestCases.test_case_3)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 27, in test_case_3\n    df, distance_matrix = task_func(input_data)\n    ^^^^^^^^^^^^^^^^^^^\nTypeError: cannot unpack non-iterable NoneType object\n\n----------------------------------------------------------------------\nRan 3 tests in 0.001s\n\nFAILED (errors=3)",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import pandas as pd\\n\\nfrom scipy.spatial.distance import pdist, squareform\\n\\n\\ndef task_func(array):\\n    # Create DataFrame with columns labeled 'A', 'B', ...\\n    columns = [chr(65 + i) for i in range(len(array[0]))]\\n    df = pd.DataFrame(array, columns=columns)\\n\\n    # Compute Euclidean distance matrix\\n    distances = pdist(df.values, metric='euclidean')\\n    distance_matrix = squareform(distances)\\n\\n    return df, distance_matrix\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 429 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests failed (AttributeError). Call read_error to see the traceback.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "read_error"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "EEE\n======================================================================\nERROR: test_case_1 (visible_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 14, in test_case_1\n    self.assertAlmostEqual(distance_matrix.iloc[0, 1], 11.18034, places=5)\n                           ^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'numpy.ndarray' object has no attribute 'iloc'\n\n======================================================================\nERROR: test_case_2 (visible_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 22, in test_case_2\n    self.assertAlmostEqual(distance_matrix.iloc[0, 1], 7.4162, places=5)\n                           ^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'numpy.ndarray' object has no attribute 'iloc'\n\n======================================================================\nERROR: test_case_3 (visible_test.TestCases.test_case_3)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 30, in test_case_3\n    self.assertAlmostEqual(distance_matrix.iloc[0, 1], 2.82843, places=5)\n                           ^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'numpy.ndarray' object has no attribute 'iloc'\n\n----------------------------------------------------------------------\nRan 3 tests in 0.009s\n\nFAILED (errors=3)",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import pandas as pd\\n\\nfrom scipy.spatial.distance import pdist, squareform\\n\\n\\ndef task_func(array):\\n    # Create DataFrame with columns labeled 'A', 'B', ...\\n    columns = [chr(65 + i) for i in range(len(array[0]))]\\n    df = pd.DataFrame(array, columns=columns)\\n\\n    # Compute Euclidean distance matrix\\n    distances = pdist(df.values, metric='euclidean')\\n    distance_matrix = squareform(distances)\\n    distance_matrix = pd.DataFrame(distance_matrix, index=df.index, columns=df.index)\\n\\n    return df, distance_matrix\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 515 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests passed.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant"
+    }
+  ],
+  "pass": false,
+  "questions": 0,
+  "run_id": "r2-pilot",
+  "sample_index": 2,
+  "seed": 20261123,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/518",
+  "stakeholder_answers": [],
+  "started_at": "2026-11-23T00:23:16+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/518",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "from solution import task_func\nimport unittest\n\nclass TestCases(unittest.TestCase):\n    def test_case_1(self):\n        input_data = [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]\n        df, distance_matrix = task_func(input_data)\n        self.assertEqual(df.shape, (2, 5))\n        self.assertTrue((df.columns == ['A', 'B', 'C', 'D', 'E']).all())\n        self.assertEqual(distance_matrix.shape, (2, 2))\n        self.assertAlmostEqual(distance_matrix.iloc[0, 1], 11.18034, places=5)\n        self.assertAlmostEqual(distance_matrix.iloc[1, 0], 11.18034, places=5)\n\n    def test_case_2(self):\n        input_data = [[-5, -4, -3, -2, -1], [0, 0, 0, 0, 0], [1, 2, 3, 4, 5]]\n        df, distance_matrix = task_func(input_data)\n        self.assertEqual(df.shape, (3, 5))\n        self.assertEqual(distance_matrix.shape, (3, 3))\n        self.assertAlmostEqual(distance_matrix.iloc[0, 1], 7.4162, places=5)\n        self.assertAlmostEqual(distance_matrix.iloc[1, 2], 7.4162, places=5)\n\n    def test_case_3(self):\n        input_data = [[1, 2], [3, 4]]\n        df, distance_matrix = task_func(input_data)\n        self.assertEqual(df.shape, (2, 2))\n        self.assertEqual(distance_matrix.shape, (2, 2))\n        self.assertAlmostEqual(distance_matrix.iloc[0, 1], 2.82843, places=5)",
+          "path": "acceptance_tests.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 1255 characters to acceptance_tests.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests failed (TypeError). Call read_error to see the traceback."
+      },
+      {
+        "arguments": {},
+        "name": "read_error",
+        "ok": true,
+        "result": "EEE\n======================================================================\nERROR: test_case_1 (visible_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 10, in test_case_1\n    df, distance_matrix = task_func(input_data)\n    ^^^^^^^^^^^^^^^^^^^\nTypeError: cannot unpack non-iterable NoneType object\n\n======================================================================\nERROR: test_case_2 (visible_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 19, in test_case_2\n    df, distance_matrix = task_func(input_data)\n    ^^^^^^^^^^^^^^^^^^^\nTypeError: cannot unpack non-iterable NoneType object\n\n======================================================================\nERROR: test_case_3 (visible_test.TestCases.test_case_3)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 27, in test_case_3\n    df, distance_matrix = task_func(input_data)\n    ^^^^^^^^^^^^^^^^^^^\nTypeError: cannot unpack non-iterable NoneType object\n\n----------------------------------------------------------------------\nRan 3 tests in 0.001s\n\nFAILED (errors=3)"
+      },
+      {
+        "arguments": {
+          "content": "import pandas as pd\n\nfrom scipy.spatial.distance import pdist, squareform\n\n\ndef task_func(array):\n    # Create DataFrame with columns labeled 'A', 'B', ...\n    columns = [chr(65 + i) for i in range(len(array[0]))]\n    df = pd.DataFrame(array, columns=columns)\n\n    # Compute Euclidean distance matrix\n    distances = pdist(df.values, metric='euclidean')\n    distance_matrix = squareform(distances)\n\n    return df, distance_matrix",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 429 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests failed (AttributeError). Call read_error to see the traceback."
+      },
+      {
+        "arguments": {},
+        "name": "read_error",
+        "ok": true,
+        "result": "EEE\n======================================================================\nERROR: test_case_1 (visible_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 14, in test_case_1\n    self.assertAlmostEqual(distance_matrix.iloc[0, 1], 11.18034, places=5)\n                           ^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'numpy.ndarray' object has no attribute 'iloc'\n\n======================================================================\nERROR: test_case_2 (visible_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 22, in test_case_2\n    self.assertAlmostEqual(distance_matrix.iloc[0, 1], 7.4162, places=5)\n                           ^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'numpy.ndarray' object has no attribute 'iloc'\n\n======================================================================\nERROR: test_case_3 (visible_test.TestCases.test_case_3)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 30, in test_case_3\n    self.assertAlmostEqual(distance_matrix.iloc[0, 1], 2.82843, places=5)\n                           ^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'numpy.ndarray' object has no attribute 'iloc'\n\n----------------------------------------------------------------------\nRan 3 tests in 0.009s\n\nFAILED (errors=3)"
+      },
+      {
+        "arguments": {
+          "content": "import pandas as pd\n\nfrom scipy.spatial.distance import pdist, squareform\n\n\ndef task_func(array):\n    # Create DataFrame with columns labeled 'A', 'B', ...\n    columns = [chr(65 + i) for i in range(len(array[0]))]\n    df = pd.DataFrame(array, columns=columns)\n\n    # Compute Euclidean distance matrix\n    distances = pdist(df.values, metric='euclidean')\n    distance_matrix = squareform(distances)\n    distance_matrix = pd.DataFrame(distance_matrix, index=df.index, columns=df.index)\n\n    return df, distance_matrix",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 515 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests passed."
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 0.851,
+        "exception": "TypeError",
+        "ok": false,
+        "output": "EEE\n======================================================================\nERROR: test_case_1 (visible_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 10, in test_case_1\n    df, distance_matrix = task_func(input_data)\n    ^^^^^^^^^^^^^^^^^^^\nTypeError: cannot unpack non-iterable NoneType object\n\n======================================================================\nERROR: test_case_2 (visible_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 19, in test_case_2\n    df, distance_matrix = task_func(input_data)\n    ^^^^^^^^^^^^^^^^^^^\nTypeError: cannot unpack non-iterable NoneType object\n\n======================================================================\nERROR: test_case_3 (visible_test.TestCases.test_case_3)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 27, in test_case_3\n    df, distance_matrix = task_func(input_data)\n    ^^^^^^^^^^^^^^^^^^^\nTypeError: cannot unpack non-iterable NoneType object\n\n----------------------------------------------------------------------\nRan 3 tests in 0.001s\n\nFAILED (errors=3)"
+      },
+      {
+        "duration_s": 0.872,
+        "exception": "AttributeError",
+        "ok": false,
+        "output": "EEE\n======================================================================\nERROR: test_case_1 (visible_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 14, in test_case_1\n    self.assertAlmostEqual(distance_matrix.iloc[0, 1], 11.18034, places=5)\n                           ^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'numpy.ndarray' object has no attribute 'iloc'\n\n======================================================================\nERROR: test_case_2 (visible_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 22, in test_case_2\n    self.assertAlmostEqual(distance_matrix.iloc[0, 1], 7.4162, places=5)\n                           ^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'numpy.ndarray' object has no attribute 'iloc'\n\n======================================================================\nERROR: test_case_3 (visible_test.TestCases.test_case_3)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-5fnbf048/visible_test.py\", line 30, in test_case_3\n    self.assertAlmostEqual(distance_matrix.iloc[0, 1], 2.82843, places=5)\n                           ^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'numpy.ndarray' object has no attribute 'iloc'\n\n----------------------------------------------------------------------\nRan 3 tests in 0.009s\n\nFAILED (errors=3)"
+      },
+      {
+        "duration_s": 0.846,
+        "exception": "None",
+        "ok": true,
+        "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.007s\n\nOK"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 9,
+    "input_tokens": 16833,
+    "output_tokens": 927,
+    "total_tokens": 17760
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 9
+}

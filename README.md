@@ -2,9 +2,11 @@
 
 Requirement recovery in wish-driven code agents. Columbia COMS 4705.
 
-The milestone contract is [`paper/milestone/main.pdf`](paper/milestone/main.pdf); its source is
-[`paper/milestone/main.tex`](paper/milestone/main.tex). The implementation is being rebuilt from
-scratch to that design:
+The submitted milestone is
+[`paper/milestone/submitted/main.pdf`](paper/milestone/submitted/main.pdf) (source:
+[`paper/milestone/submitted/main.tex`](paper/milestone/submitted/main.tex)). The implementation
+was rebuilt from scratch to that design. The revised measured milestone is
+[`paper/milestone/main.pdf`](paper/milestone/main.pdf). The design:
 
 - generator: Qwen3-8B (AWQ) on vLLM, one 24 GB GPU;
 - detector: frozen Qwen3-Embedding-0.6B + five-label linear head, CPU;
@@ -12,15 +14,18 @@ scratch to that design:
   disjoint 100-task pilot;
 - pilot: 100 development tasks, three samples.
 
-R0 (scaffold and data foundation) and R1 (ReAct harness + detector) are complete. R2 (Colab
-A100 pilot) is prepared: [`notebooks/colab_a100_vllm.ipynb`](notebooks/colab_a100_vllm.ipynb)
-and [`COLAB.md`](COLAB.md) run L3 smoothing, the smoothed detector refit and the sharded
-100-task pilot; the GPU execution itself is the operator's step. R3 follows. The design is in
-[`PROJECT.md`](PROJECT.md), the rebuild plan is in [`PLAN.md`](PLAN.md), the R0 data artifact
-is in [`results/levels/`](results/levels/), and the R1 detector artifact is in
+R0 (scaffold and data foundation), R1 (ReAct harness + detector) and R2 (Colab A100 pilot)
+are complete, and R3's measured pilot paper is written; the 300 held-out final study remains
+future work. The measured R2 artifacts are under
+[`results/runs/r2-pilot/`](results/runs/r2-pilot/), the full report is
+[`paper/main.pdf`](paper/main.pdf), and the revised two-page-body milestone is
+[`paper/milestone/main.pdf`](paper/milestone/main.pdf); the submitted milestone is preserved
+byte-identically under [`paper/milestone/submitted/`](paper/milestone/submitted/). The design
+is in [`PROJECT.md`](PROJECT.md), the rebuild plan is in [`PLAN.md`](PLAN.md), the R0 data
+artifact is in [`results/levels/`](results/levels/), and the R1 detector artifact is in
 [`results/detector/`](results/detector/).
 
-## Current state: R0 + R1, R2 preparation
+## Current state: R2 measured, R3 paper
 
 R0:
 
@@ -48,17 +53,34 @@ R1:
   constraints AUROC 0.947 and `error_behaviour` AUROC 0.736 (63 train positives);
 - unit and end-to-end tests with a local fake vLLM endpoint; `make test` needs no network.
 
-R2 preparation (GPU execution pending):
+R2 (complete, measured):
 
-- [`notebooks/colab_a100_vllm.ipynb`](notebooks/colab_a100_vllm.ipynb) and
-  [`COLAB.md`](COLAB.md): clone/materialize/start vLLM, probe native and text tool transports,
-  smooth the 500 train + 100 pilot wishes, refit the detector, dry-run 5 tasks × 9
-  conditions, run the 100 × 3 × 9 pilot in config-stable shards, report and bundle;
-- runner `--smoothed` / `--detector` / `--shard/--shards`, API-error retry on resume and the
-  new `wishrec.harness.report` pass@1/recovery/per-category/failure-bucket aggregation;
-- `scripts/local_fake_dry_run.py`: the same path against a fake endpoint with the real
-  committed levels and CPU encoder (no GPU, no paid API). The vLLM/A100 path itself is what
-  the operator verifies.
+- 100 development tasks × 9 conditions × 3 samples = 2,700/2,700 units, no held-out task,
+  2.509 GPU-hours on one A100-SXM4-80GB, $0 paid API; provenance and headline numbers are in
+  [`results/runs/r2-pilot/README.md`](results/runs/r2-pilot/README.md);
+- the executed notebook is
+  [`results/runs/r2-pilot/colab_a100_vllm.ipynb`](results/runs/r2-pilot/colab_a100_vllm.ipynb);
+  [`notebooks/colab_a100_vllm.ipynb`](notebooks/colab_a100_vllm.ipynb) remains the clean
+  template and [`COLAB.md`](COLAB.md) the runbook;
+- measured result: B1 58.3% vs H0 47.7% (+10.7 pp, 95% CI [+2.7, +18.7]); H3 48.7%
+  vs H2 49.0% and H4 49.3% (both intervals cross zero); H1 38.0%, DISCARD 42.0%,
+  B2 48.3% (pass@5 52.3%), B3 31.7%; smoothed detector macro-F1 0.772, constraints
+  AUROC 0.931, error behaviour AUROC 0.739;
+- [`results/runs/r2-pilot/bootstrap.json`](results/runs/r2-pilot/bootstrap.json) holds the
+  paired task-level bootstrap recomputed from `results.jsonl`; the per-category grouping,
+  failure buckets and smoothing refit are in the same run directory.
+
+R3 (complete):
+
+- [`paper/main.tex`](paper/main.tex) / [`paper/main.pdf`](paper/main.pdf) is the full measured
+  report with all nine conditions, the eight paired contrasts, per-category grouping, detector
+  table, failure analysis and limitations;
+- [`paper/milestone/main.tex`](paper/milestone/main.tex) /
+  [`paper/milestone/main.pdf`](paper/milestone/main.pdf) is the short artifact-backed
+  revision, with a two-page body and references on page 3; the submitted version is preserved
+  under [`paper/milestone/submitted/`](paper/milestone/submitted/);
+- no empirical number in the revised milestone or the report is illustrative: both trace to
+  the committed R2 run.
 
 ## Commands
 
@@ -84,7 +106,7 @@ vllm serve Qwen/Qwen3-8B-AWQ --max-model-len 16384 --gpu-memory-utilization 0.90
 used to validate BigCodeBench canonical solutions, and materializes the gitignored hidden
 tests under `data/derived/levels/`. The harness needs those files; `make test` does not.
 
-### R2 command (GPU execution is the operator's step)
+### R2 command (complete; reproduction path)
 
 `make levels` must complete first. Then, with the vLLM server running:
 
@@ -104,6 +126,12 @@ PYTHONPATH=src uv run python -m wishrec.harness.runner pilot \
 
 # pass@1, recovery, per-category recovery and failure buckets.
 PYTHONPATH=src uv run python -m wishrec.harness.report results/runs/r2-pilot
+
+# paired task-level bootstrap (2,000 resamples, seed 20261121).
+PYTHONPATH=src uv run python -m wishrec.harness.bootstrap \
+  results/runs/r2-pilot/results.jsonl \
+  --output results/runs/r2-pilot/bootstrap.json \
+  --markdown results/runs/r2-pilot/bootstrap.md
 ```
 
 The [Colab notebook](notebooks/colab_a100_vllm.ipynb) and [runbook](COLAB.md) wrap these

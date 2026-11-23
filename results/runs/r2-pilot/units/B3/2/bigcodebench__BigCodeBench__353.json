@@ -1,0 +1,95 @@
+{
+  "api_error": "",
+  "bucket": "KeyError",
+  "condition": "B3",
+  "config_hash": "018cdb8142b46d425670ff7a4f4b0b56f946ca4b3e328fb16337dec5a9a86c00",
+  "created_at": "2026-11-22T23:54:00+00:00",
+  "detector_questions": [],
+  "duration_s": 2.616,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "KeyError",
+    "duration_s": 0.577,
+    "exception": "KeyError",
+    "output_tail": "  raise KeyError(key)\nKeyError: 'category'\n\n======================================================================\nERROR: test_case_6 (hidden_test.TestCases.test_case_6)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-561vk3jx/hidden_test.py\", line 49, in test_case_6\n    report = task_func([self.products[0]], self.categories, 10, 10)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-561vk3jx/solution.py\", line 9, in task_func\n    df['category'] = df['category'].astype(str)\n                     ~~^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/range.py\", line 549, in get_loc\n    raise KeyError(key)\nKeyError: 'category'\n\n======================================================================\nERROR: test_case_7 (hidden_test.TestCases.test_case_7)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-561vk3jx/hidden_test.py\", line 58, in test_case_7\n    report = task_func([self.products[0]], self.categories, 10, 100)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-561vk3jx/solution.py\", line 9, in task_func\n    df['category'] = df['category'].astype(str)\n                     ~~^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/range.py\", line 549, in get_loc\n    raise KeyError(key)\nKeyError: 'category'\n\n======================================================================\nERROR: test_case_8 (hidden_test.TestCases.test_case_8)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-561vk3jx/hidden_test.py\", line 65, in test_case_8\n    report = task_func(self.products[40:60], self.categories, 100, 200)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-561vk3jx/solution.py\", line 9, in task_func\n    df['category'] = df['category'].astype(str)\n                     ~~^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/range.py\", line 549, in get_loc\n    raise KeyError(key)\nKeyError: 'category'\n\n----------------------------------------------------------------------\nRan 8 tests in 0.012s\n\nFAILED (errors=8)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import pandas as pd\nimport random\n\ndef task_func(product_list, categories, min_value=10, max_value=100):\n    # Create a DataFrame from the product list\n    df = pd.DataFrame(product_list)\n    \n    # Ensure the 'category' column exists and is properly mapped\n    df['category'] = df['category'].astype(str)\n    df['category'] = df['category'].apply(lambda x: categories.get(x, 'Uncategorized'))\n    \n    # Generate random quantities and prices for each product\n    df['quantity_sold'] = [random.randint(min_value, max_value) for _ in range(len(df))]\n    df['price'] = [round(random.uniform(10.0, 100.0), 2) for _ in range(len(df))]\n    \n    # Calculate revenue per product\n    df['revenue'] = df['quantity_sold'] * df['price']\n    \n    # Calculate total revenue per category\n    category_revenue = df.groupby('category')['revenue'].sum().reset_index()\n    category_revenue.columns = ['Category', 'Total Revenue']\n    \n    # Merge with original product data to include all product details\n    result = df.merge(category_revenue, on='category', how='left')\n    \n    # Sort by category and then by product name\n    result = result.sort_values(by=['category', 'product'])\n    \n    # Rename columns for clarity\n    result.rename(columns={'product': 'Product', 'quantity_sold': 'Quantity Sold', 'price': 'Price', 'revenue': 'Revenue'}, inplace=True)\n    \n    # Return the result as a DataFrame\n    return result\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "  raise KeyError(key)\nKeyError: 'category'\n\n======================================================================\nERROR: test_case_6 (hidden_test.TestCases.test_case_6)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-561vk3jx/hidden_test.py\", line 49, in test_case_6\n    report = task_func([self.products[0]], self.categories, 10, 10)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-561vk3jx/solution.py\", line 9, in task_func\n    df['category'] = df['category'].astype(str)\n                     ~~^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/range.py\", line 549, in get_loc\n    raise KeyError(key)\nKeyError: 'category'\n\n======================================================================\nERROR: test_case_7 (hidden_test.TestCases.test_case_7)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-561vk3jx/hidden_test.py\", line 58, in test_case_7\n    report = task_func([self.products[0]], self.categories, 10, 100)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-561vk3jx/solution.py\", line 9, in task_func\n    df['category'] = df['category'].astype(str)\n                     ~~^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/range.py\", line 549, in get_loc\n    raise KeyError(key)\nKeyError: 'category'\n\n======================================================================\nERROR: test_case_8 (hidden_test.TestCases.test_case_8)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-561vk3jx/hidden_test.py\", line 65, in test_case_8\n    report = task_func(self.products[40:60], self.categories, 100, 200)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-561vk3jx/solution.py\", line 9, in task_func\n    df['category'] = df['category'].astype(str)\n                     ~~^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/range.py\", line 549, in get_loc\n    raise KeyError(key)\nKeyError: 'category'\n\n----------------------------------------------------------------------\nRan 8 tests in 0.012s\n\nFAILED (errors=8)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport pandas as pd\nimport random\n\ndef task_func(product_list, categories, min_value=10, max_value=100):\n    # Create a DataFrame from the product list\n    df = pd.DataFrame(product_list)\n    \n    # Ensure the 'category' column exists and is properly mapped\n    df['category'] = df['category'].astype(str)\n    df['category'] = df['category'].apply(lambda x: categories.get(x, 'Uncategorized'))\n    \n    # Generate random quantities and prices for each product\n    df['quantity_sold'] = [random.randint(min_value, max_value) for _ in range(len(df))]\n    df['price'] = [round(random.uniform(10.0, 100.0), 2) for _ in range(len(df))]\n    \n    # Calculate revenue per product\n    df['revenue'] = df['quantity_sold'] * df['price']\n    \n    # Calculate total revenue per category\n    category_revenue = df.groupby('category')['revenue'].sum().reset_index()\n    category_revenue.columns = ['Category', 'Total Revenue']\n    \n    # Merge with original product data to include all product details\n    result = df.merge(category_revenue, on='category', how='left')\n    \n    # Sort by category and then by product name\n    result = result.sort_values(by=['category', 'product'])\n    \n    # Rename columns for clarity\n    result.rename(columns={'product': 'Product', 'quantity_sold': 'Quantity Sold', 'price': 'Price', 'revenue': 'Revenue'}, inplace=True)\n    \n    # Return the result as a DataFrame\n    return result\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b3_frontier",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 143,
+        "output_tokens": 347,
+        "total_tokens": 490
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2-pilot",
+  "sample_index": 2,
+  "samples": [
+    {
+      "bucket": "KeyError",
+      "code": "import pandas as pd\nimport random\n\ndef task_func(product_list, categories, min_value=10, max_value=100):\n    # Create a DataFrame from the product list\n    df = pd.DataFrame(product_list)\n    \n    # Ensure the 'category' column exists and is properly mapped\n    df['category'] = df['category'].astype(str)\n    df['category'] = df['category'].apply(lambda x: categories.get(x, 'Uncategorized'))\n    \n    # Generate random quantities and prices for each product\n    df['quantity_sold'] = [random.randint(min_value, max_value) for _ in range(len(df))]\n    df['price'] = [round(random.uniform(10.0, 100.0), 2) for _ in range(len(df))]\n    \n    # Calculate revenue per product\n    df['revenue'] = df['quantity_sold'] * df['price']\n    \n    # Calculate total revenue per category\n    category_revenue = df.groupby('category')['revenue'].sum().reset_index()\n    category_revenue.columns = ['Category', 'Total Revenue']\n    \n    # Merge with original product data to include all product details\n    result = df.merge(category_revenue, on='category', how='left')\n    \n    # Sort by category and then by product name\n    result = result.sort_values(by=['category', 'product'])\n    \n    # Rename columns for clarity\n    result.rename(columns={'product': 'Product', 'quantity_sold': 'Quantity Sold', 'price': 'Price', 'revenue': 'Revenue'}, inplace=True)\n    \n    # Return the result as a DataFrame\n    return result\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "KeyError",
+        "duration_s": 0.577,
+        "exception": "KeyError",
+        "output_tail": "  raise KeyError(key)\nKeyError: 'category'\n\n======================================================================\nERROR: test_case_6 (hidden_test.TestCases.test_case_6)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-561vk3jx/hidden_test.py\", line 49, in test_case_6\n    report = task_func([self.products[0]], self.categories, 10, 10)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-561vk3jx/solution.py\", line 9, in task_func\n    df['category'] = df['category'].astype(str)\n                     ~~^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/range.py\", line 549, in get_loc\n    raise KeyError(key)\nKeyError: 'category'\n\n======================================================================\nERROR: test_case_7 (hidden_test.TestCases.test_case_7)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-561vk3jx/hidden_test.py\", line 58, in test_case_7\n    report = task_func([self.products[0]], self.categories, 10, 100)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-561vk3jx/solution.py\", line 9, in task_func\n    df['category'] = df['category'].astype(str)\n                     ~~^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/range.py\", line 549, in get_loc\n    raise KeyError(key)\nKeyError: 'category'\n\n======================================================================\nERROR: test_case_8 (hidden_test.TestCases.test_case_8)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-561vk3jx/hidden_test.py\", line 65, in test_case_8\n    report = task_func(self.products[40:60], self.categories, 100, 200)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-561vk3jx/solution.py\", line 9, in task_func\n    df['category'] = df['category'].astype(str)\n                     ~~^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/range.py\", line 549, in get_loc\n    raise KeyError(key)\nKeyError: 'category'\n\n----------------------------------------------------------------------\nRan 8 tests in 0.012s\n\nFAILED (errors=8)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function from a short wish. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nGenerate a sales report that lists products from various categories, including the quantity sold, revenue for each individual product, and the total revenue generated.\n\n## Function stub (solution.py)\n\n```python\nimport pandas as pd\n\nimport random\n\ndef task_func(product_list, categories, min_value=10, max_value=100):\n    # TODO: implement this function.\n    pass\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 143,
+        "output_tokens": 347,
+        "total_tokens": 490
+      }
+    }
+  ],
+  "seed": 20261123,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/353",
+  "started_at": "2026-11-22T23:54:00+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/353",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 1,
+    "input_tokens": 143,
+    "output_tokens": 347,
+    "total_tokens": 490
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 1
+}

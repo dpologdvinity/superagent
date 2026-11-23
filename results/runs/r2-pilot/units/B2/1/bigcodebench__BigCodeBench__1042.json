@@ -1,0 +1,275 @@
+{
+  "api_error": "",
+  "bucket": "AssertionError",
+  "condition": "B2",
+  "config_hash": "018cdb8142b46d425670ff7a4f4b0b56f946ca4b3e328fb16337dec5a9a86c00",
+  "created_at": "2026-11-22T23:40:05+00:00",
+  "detector_questions": [],
+  "duration_s": 8.639,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 0.137,
+    "exception": "AssertionError",
+    "output_tail": "Failed to send email: (421, 'Failed to connect to the server')\n\n.FFF.\n======================================================================\nFAIL: test_smtp_server_connection_error (hidden_test.TestCases.test_smtp_server_connection_error)\nTest behavior when there is a network error (e.g., SMTP server unreachable).\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-x_ynubu4/hidden_test.py\", line 69, in test_smtp_server_connection_error\n    with self.assertRaises(smtplib.SMTPConnectError):\nAssertionError: SMTPConnectError not raised\n\n======================================================================\nFAIL: test_socket_closes_after_operation (hidden_test.TestCases.test_socket_closes_after_operation)\nTest if the socket is properly closed after the operation.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-x_ynubu4/hidden_test.py\", line 88, in test_socket_closes_after_operation\n    client_socket.close.assert_called_once()\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 923, in assert_called_once\n    raise AssertionError(msg)\nAssertionError: Expected 'close' to have been called once. Called 0 times.\n\n======================================================================\nFAIL: test_successful_email_dispatch (hidden_test.TestCases.test_successful_email_dispatch)\nTest if the email is successfully composed and sent with valid inputs.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-x_ynubu4/hidden_test.py\", line 109, in test_successful_email_dispatch\n    client_socket.send.assert_called_with(success_response.encode(\"utf-8\"))\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 935, in assert_called_with\n    raise AssertionError(error_message)\nAssertionError: expected call not found.\nExpected: send(b'Message sent.')\n  Actual: not called.\n\n----------------------------------------------------------------------\nRan 5 tests in 0.021s\n\nFAILED (failures=3)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # Receive the message from the client\n    message_bytes = client_socket.recv(BUFFER_SIZE)\n    if not message_bytes:\n        return\n    \n    message = message_bytes.decode('utf-8')\n    \n    # Get email credentials\n    sender_email = getpass.getpass(\"Enter sender email: \")\n    recipient_email = getpass.getpass(\"Enter recipient email: \")\n    password = getpass.getpass(\"Enter password: \")\n    \n    # Create the email message\n    email = EmailMessage()\n    email.set_content(message)\n    email['From'] = sender_email\n    email['To'] = recipient_email\n    email['Subject'] = 'Received message'\n    \n    # Send the email using SMTP\n    try:\n        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:\n            smtp.starttls()\n            smtp.login(sender_email, password)\n            smtp.send_message(email)\n    except smtplib.SMTPException as e:\n        print(f\"Failed to send email: {e}\")\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "Failed to send email: (421, 'Failed to connect to the server')\n\n.FFF.\n======================================================================\nFAIL: test_smtp_server_connection_error (hidden_test.TestCases.test_smtp_server_connection_error)\nTest behavior when there is a network error (e.g., SMTP server unreachable).\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-x_ynubu4/hidden_test.py\", line 69, in test_smtp_server_connection_error\n    with self.assertRaises(smtplib.SMTPConnectError):\nAssertionError: SMTPConnectError not raised\n\n======================================================================\nFAIL: test_socket_closes_after_operation (hidden_test.TestCases.test_socket_closes_after_operation)\nTest if the socket is properly closed after the operation.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-x_ynubu4/hidden_test.py\", line 88, in test_socket_closes_after_operation\n    client_socket.close.assert_called_once()\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 923, in assert_called_once\n    raise AssertionError(msg)\nAssertionError: Expected 'close' to have been called once. Called 0 times.\n\n======================================================================\nFAIL: test_successful_email_dispatch (hidden_test.TestCases.test_successful_email_dispatch)\nTest if the email is successfully composed and sent with valid inputs.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-x_ynubu4/hidden_test.py\", line 109, in test_successful_email_dispatch\n    client_socket.send.assert_called_with(success_response.encode(\"utf-8\"))\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 935, in assert_called_with\n    raise AssertionError(error_message)\nAssertionError: expected call not found.\nExpected: send(b'Message sent.')\n  Actual: not called.\n\n----------------------------------------------------------------------\nRan 5 tests in 0.021s\n\nFAILED (failures=3)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # Receive the message from the client\n    message_bytes = client_socket.recv(BUFFER_SIZE)\n    if not message_bytes:\n        return\n    \n    message = message_bytes.decode('utf-8')\n    \n    # Get email credentials\n    sender_email = getpass.getpass(\"Enter sender email: \")\n    recipient_email = getpass.getpass(\"Enter recipient email: \")\n    password = getpass.getpass(\"Enter password: \")\n    \n    # Create the email message\n    email = EmailMessage()\n    email.set_content(message)\n    email['From'] = sender_email\n    email['To'] = recipient_email\n    email['Subject'] = 'Received message'\n    \n    # Send the email using SMTP\n    try:\n        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:\n            smtp.starttls()\n            smtp.login(sender_email, password)\n            smtp.send_message(email)\n    except smtplib.SMTPException as e:\n        print(f\"Failed to send email: {e}\")\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 674,
+        "output_tokens": 269,
+        "total_tokens": 943
+      }
+    },
+    {
+      "content": "```python\nimport smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # Receive the message from the client\n    message_bytes = client_socket.recv(BUFFER_SIZE)\n    if not message_bytes:\n        return\n    \n    message = message_bytes.decode('utf-8').strip()\n    \n    if not message:\n        return\n    \n    # Get email credentials\n    sender_email = getpass.getpass(\"Enter sender email: \")\n    recipient_email = getpass.getpass(\"Enter recipient email: \")\n    password = getpass.getpass(\"Enter password: \")\n    \n    # Create the email message\n    email = EmailMessage()\n    email.set_content(message)\n    email['Subject'] = 'Received Message'\n    email['From'] = sender_email\n    email['To'] = recipient_email\n    \n    # Send the email\n    try:\n        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:\n            smtp.starttls()\n            smtp.login(sender_email, password)\n            smtp.send_message(email)\n    except smtplib.SMTPException as e:\n        print(f\"Failed to send email: {e}\")\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 674,
+        "output_tokens": 276,
+        "total_tokens": 950
+      }
+    },
+    {
+      "content": "```python\nimport smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # Receive the message from the client\n    message = client_socket.recv(BUFFER_SIZE)\n    if not message:\n        return\n    \n    # Decode the message\n    message_str = message.decode('utf-8')\n    \n    # Get email credentials\n    sender_email = getpass.getpass(\"Enter sender email: \")\n    recipient_email = getpass.getpass(\"Enter recipient email: \")\n    password = getpass.getpass(\"Enter password: \")\n    \n    # Create the email message\n    email = EmailMessage()\n    email.set_content(message_str)\n    email['From'] = sender_email\n    email['To'] = recipient_email\n    email['Subject'] = 'Received from client'\n    \n    # Send the email using SMTP\n    try:\n        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:\n            smtp.starttls()\n            smtp.login(sender_email, password)\n            smtp.send_message(email)\n    except smtplib.SMTPConnectError as e:\n        raise e\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 674,
+        "output_tokens": 268,
+        "total_tokens": 942
+      }
+    },
+    {
+      "content": "```python\nimport smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # Receive message from client\n    message_bytes = client_socket.recv(BUFFER_SIZE)\n    if not message_bytes:\n        return\n    \n    message = message_bytes.decode('utf-8')\n    \n    # Get email credentials\n    sender_email = getpass.getpass(\"Enter sender email: \")\n    recipient_email = getpass.getpass(\"Enter recipient email: \")\n    password = getpass.getpass(\"Enter password: \")\n    \n    # Create email message\n    email = EmailMessage()\n    email.set_content(message)\n    email['Subject'] = 'Received Message'\n    email['From'] = sender_email\n    email['To'] = recipient_email\n    \n    # Send email via SMTP\n    try:\n        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:\n            smtp.starttls()\n            smtp.login(sender_email, password)\n            smtp.send_message(email)\n    except smtplib.SMTPConnectError as e:\n        raise e\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 674,
+        "output_tokens": 257,
+        "total_tokens": 931
+      }
+    },
+    {
+      "content": "```python\nimport smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # Receive message from client\n    message = client_socket.recv(BUFFER_SIZE)\n    if not message:\n        return\n    \n    # Decode the received message\n    decoded_message = message.decode('utf-8')\n    \n    # Get email details from user\n    sender_email = getpass.getpass(\"Enter sender email: \")\n    recipient_email = getpass.getpass(\"Enter recipient email: \")\n    password = getpass.getpass(\"Enter email password: \")\n    \n    # Create email message\n    email = EmailMessage()\n    email.set_content(decoded_message)\n    email['Subject'] = 'Received Message'\n    email['From'] = sender_email\n    email['To'] = recipient_email\n    \n    # Send email via SMTP\n    try:\n        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:\n            smtp.starttls()\n            smtp.login(sender_email, password)\n            smtp.send_message(email)\n    except smtplib.SMTPConnectError as e:\n        print(f\"SMTP connection error: {e}\")\n        raise\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 674,
+        "output_tokens": 276,
+        "total_tokens": 950
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2-pilot",
+  "sample_index": 1,
+  "samples": [
+    {
+      "bucket": "AssertionError",
+      "code": "import smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # Receive the message from the client\n    message_bytes = client_socket.recv(BUFFER_SIZE)\n    if not message_bytes:\n        return\n    \n    message = message_bytes.decode('utf-8')\n    \n    # Get email credentials\n    sender_email = getpass.getpass(\"Enter sender email: \")\n    recipient_email = getpass.getpass(\"Enter recipient email: \")\n    password = getpass.getpass(\"Enter password: \")\n    \n    # Create the email message\n    email = EmailMessage()\n    email.set_content(message)\n    email['From'] = sender_email\n    email['To'] = recipient_email\n    email['Subject'] = 'Received message'\n    \n    # Send the email using SMTP\n    try:\n        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:\n            smtp.starttls()\n            smtp.login(sender_email, password)\n            smtp.send_message(email)\n    except smtplib.SMTPException as e:\n        print(f\"Failed to send email: {e}\")\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.137,
+        "exception": "AssertionError",
+        "output_tail": "Failed to send email: (421, 'Failed to connect to the server')\n\n.FFF.\n======================================================================\nFAIL: test_smtp_server_connection_error (hidden_test.TestCases.test_smtp_server_connection_error)\nTest behavior when there is a network error (e.g., SMTP server unreachable).\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-x_ynubu4/hidden_test.py\", line 69, in test_smtp_server_connection_error\n    with self.assertRaises(smtplib.SMTPConnectError):\nAssertionError: SMTPConnectError not raised\n\n======================================================================\nFAIL: test_socket_closes_after_operation (hidden_test.TestCases.test_socket_closes_after_operation)\nTest if the socket is properly closed after the operation.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-x_ynubu4/hidden_test.py\", line 88, in test_socket_closes_after_operation\n    client_socket.close.assert_called_once()\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 923, in assert_called_once\n    raise AssertionError(msg)\nAssertionError: Expected 'close' to have been called once. Called 0 times.\n\n======================================================================\nFAIL: test_successful_email_dispatch (hidden_test.TestCases.test_successful_email_dispatch)\nTest if the email is successfully composed and sent with valid inputs.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-x_ynubu4/hidden_test.py\", line 109, in test_successful_email_dispatch\n    client_socket.send.assert_called_with(success_response.encode(\"utf-8\"))\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 935, in assert_called_with\n    raise AssertionError(error_message)\nAssertionError: expected call not found.\nExpected: send(b'Message sent.')\n  Actual: not called.\n\n----------------------------------------------------------------------\nRan 5 tests in 0.021s\n\nFAILED (failures=3)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nReceive a message from a client socket and send it as an email through an SMTP server.\n\n## Starting file (solution.py)\n\n```python\nimport smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nfrom unittest.mock import patch, MagicMock\nimport smtplib\nfrom email.message import EmailMessage\nimport getpass\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for task_func\"\"\"\n\n    @patch('socket.socket')\n    @patch('smtplib.SMTP')\n    @patch('getpass.getpass')\n    def test_successful_email_send(self, mock_getpass, mock_smtp, mock_socket):\n        \"\"\"\n        Test if the email is successfully sent with valid inputs.\n        \"\"\"\n        mock_socket.return_value.recv.return_value = b'Test message'\n        mock_getpass.side_effect = ['sender@example.com', 'recipient@example.com', 'password']\n        task_func(mock_socket())\n        mock_smtp.assert_called_with('smtp.gmail.com', 587)\n\n    @patch('socket.socket')\n    @patch('smtplib.SMTP')\n    @patch('getpass.getpass')\n    def test_email_with_empty_message(self, mock_getpass, mock_smtp, mock_socket):\n        \"\"\"\n        Test behavior when an empty message is received.\n        \"\"\"\n        mock_socket.return_value.recv.return_value = b''\n        mock_getpass.side_effect = ['sender@example.com', 'recipient@example.com', 'password']\n        mock_smtp_instance = MagicMock()\n        mock_smtp.return_value = mock_smtp_instance\n        client_socket = MagicMock()\n        client_socket.recv.return_value.decode.return_value = ''\n        task_func(client_socket)\n        mock_smtp_instance.send_message.assert_not_called()\n\n    @patch('socket.socket')\n    @patch('smtplib.SMTP')\n    @patch('getpass.getpass')\n    def test_smtp_server_connection_error(self, mock_getpass, mock_smtp, mock_socket):\n        \"\"\"\n        Test behavior when there is a network error (e.g., SMTP server unreachable).\n        \"\"\"\n        client_socket = MagicMock()\n        client_socket.recv.return_value = b'Test message'\n        mock_getpass.side_effect = ['sender@example.com', 'recipient@example.com', 'password']\n        mock_smtp.side_effect = smtplib.SMTPConnectError(421, 'Failed to connect to the server')\n        with self.assertRaises(smtplib.SMTPConnectError):\n            task_func(client_socket)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261122,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 674,
+        "output_tokens": 269,
+        "total_tokens": 943
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # Receive the message from the client\n    message_bytes = client_socket.recv(BUFFER_SIZE)\n    if not message_bytes:\n        return\n    \n    message = message_bytes.decode('utf-8').strip()\n    \n    if not message:\n        return\n    \n    # Get email credentials\n    sender_email = getpass.getpass(\"Enter sender email: \")\n    recipient_email = getpass.getpass(\"Enter recipient email: \")\n    password = getpass.getpass(\"Enter password: \")\n    \n    # Create the email message\n    email = EmailMessage()\n    email.set_content(message)\n    email['Subject'] = 'Received Message'\n    email['From'] = sender_email\n    email['To'] = recipient_email\n    \n    # Send the email\n    try:\n        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:\n            smtp.starttls()\n            smtp.login(sender_email, password)\n            smtp.send_message(email)\n    except smtplib.SMTPException as e:\n        print(f\"Failed to send email: {e}\")\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.134,
+        "exception": "AssertionError",
+        "output_tail": "Failed to send email: (421, 'Failed to connect to the server')\n\n.FFF.\n======================================================================\nFAIL: test_smtp_server_connection_error (hidden_test.TestCases.test_smtp_server_connection_error)\nTest behavior when there is a network error (e.g., SMTP server unreachable).\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-_564cq1s/hidden_test.py\", line 69, in test_smtp_server_connection_error\n    with self.assertRaises(smtplib.SMTPConnectError):\nAssertionError: SMTPConnectError not raised\n\n======================================================================\nFAIL: test_socket_closes_after_operation (hidden_test.TestCases.test_socket_closes_after_operation)\nTest if the socket is properly closed after the operation.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-_564cq1s/hidden_test.py\", line 88, in test_socket_closes_after_operation\n    client_socket.close.assert_called_once()\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 923, in assert_called_once\n    raise AssertionError(msg)\nAssertionError: Expected 'close' to have been called once. Called 0 times.\n\n======================================================================\nFAIL: test_successful_email_dispatch (hidden_test.TestCases.test_successful_email_dispatch)\nTest if the email is successfully composed and sent with valid inputs.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-_564cq1s/hidden_test.py\", line 109, in test_successful_email_dispatch\n    client_socket.send.assert_called_with(success_response.encode(\"utf-8\"))\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 935, in assert_called_with\n    raise AssertionError(error_message)\nAssertionError: expected call not found.\nExpected: send(b'Message sent.')\n  Actual: not called.\n\n----------------------------------------------------------------------\nRan 5 tests in 0.019s\n\nFAILED (failures=3)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nReceive a message from a client socket and send it as an email through an SMTP server.\n\n## Starting file (solution.py)\n\n```python\nimport smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nfrom unittest.mock import patch, MagicMock\nimport smtplib\nfrom email.message import EmailMessage\nimport getpass\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for task_func\"\"\"\n\n    @patch('socket.socket')\n    @patch('smtplib.SMTP')\n    @patch('getpass.getpass')\n    def test_successful_email_send(self, mock_getpass, mock_smtp, mock_socket):\n        \"\"\"\n        Test if the email is successfully sent with valid inputs.\n        \"\"\"\n        mock_socket.return_value.recv.return_value = b'Test message'\n        mock_getpass.side_effect = ['sender@example.com', 'recipient@example.com', 'password']\n        task_func(mock_socket())\n        mock_smtp.assert_called_with('smtp.gmail.com', 587)\n\n    @patch('socket.socket')\n    @patch('smtplib.SMTP')\n    @patch('getpass.getpass')\n    def test_email_with_empty_message(self, mock_getpass, mock_smtp, mock_socket):\n        \"\"\"\n        Test behavior when an empty message is received.\n        \"\"\"\n        mock_socket.return_value.recv.return_value = b''\n        mock_getpass.side_effect = ['sender@example.com', 'recipient@example.com', 'password']\n        mock_smtp_instance = MagicMock()\n        mock_smtp.return_value = mock_smtp_instance\n        client_socket = MagicMock()\n        client_socket.recv.return_value.decode.return_value = ''\n        task_func(client_socket)\n        mock_smtp_instance.send_message.assert_not_called()\n\n    @patch('socket.socket')\n    @patch('smtplib.SMTP')\n    @patch('getpass.getpass')\n    def test_smtp_server_connection_error(self, mock_getpass, mock_smtp, mock_socket):\n        \"\"\"\n        Test behavior when there is a network error (e.g., SMTP server unreachable).\n        \"\"\"\n        client_socket = MagicMock()\n        client_socket.recv.return_value = b'Test message'\n        mock_getpass.side_effect = ['sender@example.com', 'recipient@example.com', 'password']\n        mock_smtp.side_effect = smtplib.SMTPConnectError(421, 'Failed to connect to the server')\n        with self.assertRaises(smtplib.SMTPConnectError):\n            task_func(client_socket)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 674,
+        "output_tokens": 276,
+        "total_tokens": 950
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # Receive the message from the client\n    message = client_socket.recv(BUFFER_SIZE)\n    if not message:\n        return\n    \n    # Decode the message\n    message_str = message.decode('utf-8')\n    \n    # Get email credentials\n    sender_email = getpass.getpass(\"Enter sender email: \")\n    recipient_email = getpass.getpass(\"Enter recipient email: \")\n    password = getpass.getpass(\"Enter password: \")\n    \n    # Create the email message\n    email = EmailMessage()\n    email.set_content(message_str)\n    email['From'] = sender_email\n    email['To'] = recipient_email\n    email['Subject'] = 'Received from client'\n    \n    # Send the email using SMTP\n    try:\n        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:\n            smtp.starttls()\n            smtp.login(sender_email, password)\n            smtp.send_message(email)\n    except smtplib.SMTPConnectError as e:\n        raise e\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.135,
+        "exception": "AssertionError",
+        "output_tail": "..FF.\n======================================================================\nFAIL: test_socket_closes_after_operation (hidden_test.TestCases.test_socket_closes_after_operation)\nTest if the socket is properly closed after the operation.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-lfa6h256/hidden_test.py\", line 88, in test_socket_closes_after_operation\n    client_socket.close.assert_called_once()\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 923, in assert_called_once\n    raise AssertionError(msg)\nAssertionError: Expected 'close' to have been called once. Called 0 times.\n\n======================================================================\nFAIL: test_successful_email_dispatch (hidden_test.TestCases.test_successful_email_dispatch)\nTest if the email is successfully composed and sent with valid inputs.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-lfa6h256/hidden_test.py\", line 109, in test_successful_email_dispatch\n    client_socket.send.assert_called_with(success_response.encode(\"utf-8\"))\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 935, in assert_called_with\n    raise AssertionError(error_message)\nAssertionError: expected call not found.\nExpected: send(b'Message sent.')\n  Actual: not called.\n\n----------------------------------------------------------------------\nRan 5 tests in 0.021s\n\nFAILED (failures=2)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nReceive a message from a client socket and send it as an email through an SMTP server.\n\n## Starting file (solution.py)\n\n```python\nimport smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nfrom unittest.mock import patch, MagicMock\nimport smtplib\nfrom email.message import EmailMessage\nimport getpass\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for task_func\"\"\"\n\n    @patch('socket.socket')\n    @patch('smtplib.SMTP')\n    @patch('getpass.getpass')\n    def test_successful_email_send(self, mock_getpass, mock_smtp, mock_socket):\n        \"\"\"\n        Test if the email is successfully sent with valid inputs.\n        \"\"\"\n        mock_socket.return_value.recv.return_value = b'Test message'\n        mock_getpass.side_effect = ['sender@example.com', 'recipient@example.com', 'password']\n        task_func(mock_socket())\n        mock_smtp.assert_called_with('smtp.gmail.com', 587)\n\n    @patch('socket.socket')\n    @patch('smtplib.SMTP')\n    @patch('getpass.getpass')\n    def test_email_with_empty_message(self, mock_getpass, mock_smtp, mock_socket):\n        \"\"\"\n        Test behavior when an empty message is received.\n        \"\"\"\n        mock_socket.return_value.recv.return_value = b''\n        mock_getpass.side_effect = ['sender@example.com', 'recipient@example.com', 'password']\n        mock_smtp_instance = MagicMock()\n        mock_smtp.return_value = mock_smtp_instance\n        client_socket = MagicMock()\n        client_socket.recv.return_value.decode.return_value = ''\n        task_func(client_socket)\n        mock_smtp_instance.send_message.assert_not_called()\n\n    @patch('socket.socket')\n    @patch('smtplib.SMTP')\n    @patch('getpass.getpass')\n    def test_smtp_server_connection_error(self, mock_getpass, mock_smtp, mock_socket):\n        \"\"\"\n        Test behavior when there is a network error (e.g., SMTP server unreachable).\n        \"\"\"\n        client_socket = MagicMock()\n        client_socket.recv.return_value = b'Test message'\n        mock_getpass.side_effect = ['sender@example.com', 'recipient@example.com', 'password']\n        mock_smtp.side_effect = smtplib.SMTPConnectError(421, 'Failed to connect to the server')\n        with self.assertRaises(smtplib.SMTPConnectError):\n            task_func(client_socket)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261124,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 674,
+        "output_tokens": 268,
+        "total_tokens": 942
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # Receive message from client\n    message_bytes = client_socket.recv(BUFFER_SIZE)\n    if not message_bytes:\n        return\n    \n    message = message_bytes.decode('utf-8')\n    \n    # Get email credentials\n    sender_email = getpass.getpass(\"Enter sender email: \")\n    recipient_email = getpass.getpass(\"Enter recipient email: \")\n    password = getpass.getpass(\"Enter password: \")\n    \n    # Create email message\n    email = EmailMessage()\n    email.set_content(message)\n    email['Subject'] = 'Received Message'\n    email['From'] = sender_email\n    email['To'] = recipient_email\n    \n    # Send email via SMTP\n    try:\n        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:\n            smtp.starttls()\n            smtp.login(sender_email, password)\n            smtp.send_message(email)\n    except smtplib.SMTPConnectError as e:\n        raise e\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.133,
+        "exception": "AssertionError",
+        "output_tail": "..FF.\n======================================================================\nFAIL: test_socket_closes_after_operation (hidden_test.TestCases.test_socket_closes_after_operation)\nTest if the socket is properly closed after the operation.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-jd359sqk/hidden_test.py\", line 88, in test_socket_closes_after_operation\n    client_socket.close.assert_called_once()\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 923, in assert_called_once\n    raise AssertionError(msg)\nAssertionError: Expected 'close' to have been called once. Called 0 times.\n\n======================================================================\nFAIL: test_successful_email_dispatch (hidden_test.TestCases.test_successful_email_dispatch)\nTest if the email is successfully composed and sent with valid inputs.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-jd359sqk/hidden_test.py\", line 109, in test_successful_email_dispatch\n    client_socket.send.assert_called_with(success_response.encode(\"utf-8\"))\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 935, in assert_called_with\n    raise AssertionError(error_message)\nAssertionError: expected call not found.\nExpected: send(b'Message sent.')\n  Actual: not called.\n\n----------------------------------------------------------------------\nRan 5 tests in 0.020s\n\nFAILED (failures=2)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nReceive a message from a client socket and send it as an email through an SMTP server.\n\n## Starting file (solution.py)\n\n```python\nimport smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nfrom unittest.mock import patch, MagicMock\nimport smtplib\nfrom email.message import EmailMessage\nimport getpass\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for task_func\"\"\"\n\n    @patch('socket.socket')\n    @patch('smtplib.SMTP')\n    @patch('getpass.getpass')\n    def test_successful_email_send(self, mock_getpass, mock_smtp, mock_socket):\n        \"\"\"\n        Test if the email is successfully sent with valid inputs.\n        \"\"\"\n        mock_socket.return_value.recv.return_value = b'Test message'\n        mock_getpass.side_effect = ['sender@example.com', 'recipient@example.com', 'password']\n        task_func(mock_socket())\n        mock_smtp.assert_called_with('smtp.gmail.com', 587)\n\n    @patch('socket.socket')\n    @patch('smtplib.SMTP')\n    @patch('getpass.getpass')\n    def test_email_with_empty_message(self, mock_getpass, mock_smtp, mock_socket):\n        \"\"\"\n        Test behavior when an empty message is received.\n        \"\"\"\n        mock_socket.return_value.recv.return_value = b''\n        mock_getpass.side_effect = ['sender@example.com', 'recipient@example.com', 'password']\n        mock_smtp_instance = MagicMock()\n        mock_smtp.return_value = mock_smtp_instance\n        client_socket = MagicMock()\n        client_socket.recv.return_value.decode.return_value = ''\n        task_func(client_socket)\n        mock_smtp_instance.send_message.assert_not_called()\n\n    @patch('socket.socket')\n    @patch('smtplib.SMTP')\n    @patch('getpass.getpass')\n    def test_smtp_server_connection_error(self, mock_getpass, mock_smtp, mock_socket):\n        \"\"\"\n        Test behavior when there is a network error (e.g., SMTP server unreachable).\n        \"\"\"\n        client_socket = MagicMock()\n        client_socket.recv.return_value = b'Test message'\n        mock_getpass.side_effect = ['sender@example.com', 'recipient@example.com', 'password']\n        mock_smtp.side_effect = smtplib.SMTPConnectError(421, 'Failed to connect to the server')\n        with self.assertRaises(smtplib.SMTPConnectError):\n            task_func(client_socket)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261125,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 674,
+        "output_tokens": 257,
+        "total_tokens": 931
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # Receive message from client\n    message = client_socket.recv(BUFFER_SIZE)\n    if not message:\n        return\n    \n    # Decode the received message\n    decoded_message = message.decode('utf-8')\n    \n    # Get email details from user\n    sender_email = getpass.getpass(\"Enter sender email: \")\n    recipient_email = getpass.getpass(\"Enter recipient email: \")\n    password = getpass.getpass(\"Enter email password: \")\n    \n    # Create email message\n    email = EmailMessage()\n    email.set_content(decoded_message)\n    email['Subject'] = 'Received Message'\n    email['From'] = sender_email\n    email['To'] = recipient_email\n    \n    # Send email via SMTP\n    try:\n        with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as smtp:\n            smtp.starttls()\n            smtp.login(sender_email, password)\n            smtp.send_message(email)\n    except smtplib.SMTPConnectError as e:\n        print(f\"SMTP connection error: {e}\")\n        raise\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.141,
+        "exception": "AssertionError",
+        "output_tail": "SMTP connection error: (421, 'Failed to connect to the server')\n\n..FF.\n======================================================================\nFAIL: test_socket_closes_after_operation (hidden_test.TestCases.test_socket_closes_after_operation)\nTest if the socket is properly closed after the operation.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-fiwa2msu/hidden_test.py\", line 88, in test_socket_closes_after_operation\n    client_socket.close.assert_called_once()\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 923, in assert_called_once\n    raise AssertionError(msg)\nAssertionError: Expected 'close' to have been called once. Called 0 times.\n\n======================================================================\nFAIL: test_successful_email_dispatch (hidden_test.TestCases.test_successful_email_dispatch)\nTest if the email is successfully composed and sent with valid inputs.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-fiwa2msu/hidden_test.py\", line 109, in test_successful_email_dispatch\n    client_socket.send.assert_called_with(success_response.encode(\"utf-8\"))\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 935, in assert_called_with\n    raise AssertionError(error_message)\nAssertionError: expected call not found.\nExpected: send(b'Message sent.')\n  Actual: not called.\n\n----------------------------------------------------------------------\nRan 5 tests in 0.021s\n\nFAILED (failures=2)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nReceive a message from a client socket and send it as an email through an SMTP server.\n\n## Starting file (solution.py)\n\n```python\nimport smtplib\n\nfrom email.message import EmailMessage\n\nimport getpass\n\nSERVER_ADDRESS = 'localhost'\n\nSERVER_PORT = 25\n\nBUFFER_SIZE = 1024\n\nSMTP_SERVER = 'smtp.gmail.com'\n\nSMTP_PORT = 587\n\ndef task_func(client_socket):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nfrom unittest.mock import patch, MagicMock\nimport smtplib\nfrom email.message import EmailMessage\nimport getpass\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for task_func\"\"\"\n\n    @patch('socket.socket')\n    @patch('smtplib.SMTP')\n    @patch('getpass.getpass')\n    def test_successful_email_send(self, mock_getpass, mock_smtp, mock_socket):\n        \"\"\"\n        Test if the email is successfully sent with valid inputs.\n        \"\"\"\n        mock_socket.return_value.recv.return_value = b'Test message'\n        mock_getpass.side_effect = ['sender@example.com', 'recipient@example.com', 'password']\n        task_func(mock_socket())\n        mock_smtp.assert_called_with('smtp.gmail.com', 587)\n\n    @patch('socket.socket')\n    @patch('smtplib.SMTP')\n    @patch('getpass.getpass')\n    def test_email_with_empty_message(self, mock_getpass, mock_smtp, mock_socket):\n        \"\"\"\n        Test behavior when an empty message is received.\n        \"\"\"\n        mock_socket.return_value.recv.return_value = b''\n        mock_getpass.side_effect = ['sender@example.com', 'recipient@example.com', 'password']\n        mock_smtp_instance = MagicMock()\n        mock_smtp.return_value = mock_smtp_instance\n        client_socket = MagicMock()\n        client_socket.recv.return_value.decode.return_value = ''\n        task_func(client_socket)\n        mock_smtp_instance.send_message.assert_not_called()\n\n    @patch('socket.socket')\n    @patch('smtplib.SMTP')\n    @patch('getpass.getpass')\n    def test_smtp_server_connection_error(self, mock_getpass, mock_smtp, mock_socket):\n        \"\"\"\n        Test behavior when there is a network error (e.g., SMTP server unreachable).\n        \"\"\"\n        client_socket = MagicMock()\n        client_socket.recv.return_value = b'Test message'\n        mock_getpass.side_effect = ['sender@example.com', 'recipient@example.com', 'password']\n        mock_smtp.side_effect = smtplib.SMTPConnectError(421, 'Failed to connect to the server')\n        with self.assertRaises(smtplib.SMTPConnectError):\n            task_func(client_socket)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261126,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 674,
+        "output_tokens": 276,
+        "total_tokens": 950
+      }
+    }
+  ],
+  "seed": 20261122,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/1042",
+  "started_at": "2026-11-22T23:40:05+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/1042",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 5,
+    "input_tokens": 3370,
+    "output_tokens": 1346,
+    "total_tokens": 4716
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 5
+}

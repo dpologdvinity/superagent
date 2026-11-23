@@ -12,9 +12,13 @@ clarification questions. The milestone contract is
 [`paper/milestone/main.tex`](paper/milestone/main.tex).
 
 This repository is the clean rebuild of the implementation to that design. R0 (data
-foundation) and R1 (ReAct harness + five-label detector) are complete; R2 (GPU pilot) and
-R3 (paper) follow. Earlier work survives only in git history and is not part of the
-rebuild.
+foundation), R1 (ReAct harness + five-label detector), R2 (A100 pilot) and R3 (measured
+paper) are complete. The measured run and its artifacts are in
+[`results/runs/r2-pilot/`](results/runs/r2-pilot/); the full report is
+[`paper/main.pdf`](paper/main.pdf), and the revised measured milestone is
+[`paper/milestone/main.pdf`](paper/milestone/main.pdf) (submitted version preserved under
+`paper/milestone/submitted/`). Earlier work survives only in git history and is not part of
+the rebuild.
 
 ## Milestone design
 

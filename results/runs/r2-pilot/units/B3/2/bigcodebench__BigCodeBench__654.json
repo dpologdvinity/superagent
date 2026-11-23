@@ -1,0 +1,95 @@
+{
+  "api_error": "",
+  "bucket": "TypeError",
+  "condition": "B3",
+  "config_hash": "018cdb8142b46d425670ff7a4f4b0b56f946ca4b3e328fb16337dec5a9a86c00",
+  "created_at": "2026-11-23T01:08:07+00:00",
+  "detector_questions": [],
+  "duration_s": 2.83,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "TypeError",
+    "duration_s": 1.783,
+    "exception": "TypeError",
+    "output_tail": "st.TestCases.test_not_enough_points)\nTest with not enough points for fitting.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-997zosh1/hidden_test.py\", line 32, in test_not_enough_points\n    task_func(small_array, '332')\n  File \"/tmp/wish-eval-997zosh1/solution.py\", line 11, in task_func\n    y = array[matching_indices, 1]\n        ~~~~~^^^^^^^^^^^^^^^^^^^^^\nIndexError: index 1 is out of bounds for axis 1 with size 1\n\n======================================================================\nERROR: test_return_types (hidden_test.TestCases.test_return_types)\nTest the return types of the function.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-997zosh1/hidden_test.py\", line 17, in test_return_types\n    coeffs, ax = task_func(self.array, '332')\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-997zosh1/solution.py\", line 18, in task_func\n    params, _ = optimize.curve_fit(exponential_decay, x, y)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/optimize/_minpack_py.py\", line 1024, in curve_fit\n    res = leastsq(func, p0, Dfun=jac, full_output=True, **kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/optimize/_minpack_py.py\", line 430, in leastsq\n    raise TypeError(f\"Improper input: func input vector length N={n} must\"\nTypeError: Improper input: func input vector length N=2 must not exceed func output vector length M=1\n\n======================================================================\nERROR: test_target_value_found (hidden_test.TestCases.test_target_value_found)\nTest when the target value is found.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-997zosh1/hidden_test.py\", line 22, in test_target_value_found\n    coeffs, _ = task_func(self.array, '332')\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-997zosh1/solution.py\", line 18, in task_func\n    params, _ = optimize.curve_fit(exponential_decay, x, y)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/optimize/_minpack_py.py\", line 1024, in curve_fit\n    res = leastsq(func, p0, Dfun=jac, full_output=True, **kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/optimize/_minpack_py.py\", line 430, in leastsq\n    raise TypeError(f\"Improper input: func input vector length N={n} must\"\nTypeError: Improper input: func input vector length N=2 must not exceed func output vector length M=1\n\n----------------------------------------------------------------------\nRan 5 tests in 0.004s\n\nFAILED (errors=4)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import matplotlib.pyplot as plt\nimport scipy.optimize as optimize\nimport numpy as np\n\ndef task_func(array, target_value):\n    # Filter the array to get indices where the first column matches the target value\n    matching_indices = np.where(array[:, 0] == target_value)\n    \n    # Extract the corresponding x and y values\n    x = array[matching_indices, 0]\n    y = array[matching_indices, 1]\n    \n    # Fit an exponential decay function of the form y = A * exp(-k * x)\n    def exponential_decay(x, A, k):\n        return A * np.exp(-k * x)\n    \n    # Perform the curve fitting\n    params, _ = optimize.curve_fit(exponential_decay, x, y)\n    \n    # Return the fitted parameters A and k\n    return params\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "st.TestCases.test_not_enough_points)\nTest with not enough points for fitting.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-997zosh1/hidden_test.py\", line 32, in test_not_enough_points\n    task_func(small_array, '332')\n  File \"/tmp/wish-eval-997zosh1/solution.py\", line 11, in task_func\n    y = array[matching_indices, 1]\n        ~~~~~^^^^^^^^^^^^^^^^^^^^^\nIndexError: index 1 is out of bounds for axis 1 with size 1\n\n======================================================================\nERROR: test_return_types (hidden_test.TestCases.test_return_types)\nTest the return types of the function.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-997zosh1/hidden_test.py\", line 17, in test_return_types\n    coeffs, ax = task_func(self.array, '332')\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-997zosh1/solution.py\", line 18, in task_func\n    params, _ = optimize.curve_fit(exponential_decay, x, y)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/optimize/_minpack_py.py\", line 1024, in curve_fit\n    res = leastsq(func, p0, Dfun=jac, full_output=True, **kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/optimize/_minpack_py.py\", line 430, in leastsq\n    raise TypeError(f\"Improper input: func input vector length N={n} must\"\nTypeError: Improper input: func input vector length N=2 must not exceed func output vector length M=1\n\n======================================================================\nERROR: test_target_value_found (hidden_test.TestCases.test_target_value_found)\nTest when the target value is found.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-997zosh1/hidden_test.py\", line 22, in test_target_value_found\n    coeffs, _ = task_func(self.array, '332')\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-997zosh1/solution.py\", line 18, in task_func\n    params, _ = optimize.curve_fit(exponential_decay, x, y)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/optimize/_minpack_py.py\", line 1024, in curve_fit\n    res = leastsq(func, p0, Dfun=jac, full_output=True, **kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/optimize/_minpack_py.py\", line 430, in leastsq\n    raise TypeError(f\"Improper input: func input vector length N={n} must\"\nTypeError: Improper input: func input vector length N=2 must not exceed func output vector length M=1\n\n----------------------------------------------------------------------\nRan 5 tests in 0.004s\n\nFAILED (errors=4)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport matplotlib.pyplot as plt\nimport scipy.optimize as optimize\nimport numpy as np\n\ndef task_func(array, target_value):\n    # Filter the array to get indices where the first column matches the target value\n    matching_indices = np.where(array[:, 0] == target_value)\n    \n    # Extract the corresponding x and y values\n    x = array[matching_indices, 0]\n    y = array[matching_indices, 1]\n    \n    # Fit an exponential decay function of the form y = A * exp(-k * x)\n    def exponential_decay(x, A, k):\n        return A * np.exp(-k * x)\n    \n    # Perform the curve fitting\n    params, _ = optimize.curve_fit(exponential_decay, x, y)\n    \n    # Return the fitted parameters A and k\n    return params\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b3_frontier",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 131,
+        "output_tokens": 176,
+        "total_tokens": 307
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2-pilot",
+  "sample_index": 2,
+  "samples": [
+    {
+      "bucket": "TypeError",
+      "code": "import matplotlib.pyplot as plt\nimport scipy.optimize as optimize\nimport numpy as np\n\ndef task_func(array, target_value):\n    # Filter the array to get indices where the first column matches the target value\n    matching_indices = np.where(array[:, 0] == target_value)\n    \n    # Extract the corresponding x and y values\n    x = array[matching_indices, 0]\n    y = array[matching_indices, 1]\n    \n    # Fit an exponential decay function of the form y = A * exp(-k * x)\n    def exponential_decay(x, A, k):\n        return A * np.exp(-k * x)\n    \n    # Perform the curve fitting\n    params, _ = optimize.curve_fit(exponential_decay, x, y)\n    \n    # Return the fitted parameters A and k\n    return params\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "TypeError",
+        "duration_s": 1.783,
+        "exception": "TypeError",
+        "output_tail": "st.TestCases.test_not_enough_points)\nTest with not enough points for fitting.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-997zosh1/hidden_test.py\", line 32, in test_not_enough_points\n    task_func(small_array, '332')\n  File \"/tmp/wish-eval-997zosh1/solution.py\", line 11, in task_func\n    y = array[matching_indices, 1]\n        ~~~~~^^^^^^^^^^^^^^^^^^^^^\nIndexError: index 1 is out of bounds for axis 1 with size 1\n\n======================================================================\nERROR: test_return_types (hidden_test.TestCases.test_return_types)\nTest the return types of the function.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-997zosh1/hidden_test.py\", line 17, in test_return_types\n    coeffs, ax = task_func(self.array, '332')\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-997zosh1/solution.py\", line 18, in task_func\n    params, _ = optimize.curve_fit(exponential_decay, x, y)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/optimize/_minpack_py.py\", line 1024, in curve_fit\n    res = leastsq(func, p0, Dfun=jac, full_output=True, **kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/optimize/_minpack_py.py\", line 430, in leastsq\n    raise TypeError(f\"Improper input: func input vector length N={n} must\"\nTypeError: Improper input: func input vector length N=2 must not exceed func output vector length M=1\n\n======================================================================\nERROR: test_target_value_found (hidden_test.TestCases.test_target_value_found)\nTest when the target value is found.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-997zosh1/hidden_test.py\", line 22, in test_target_value_found\n    coeffs, _ = task_func(self.array, '332')\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-997zosh1/solution.py\", line 18, in task_func\n    params, _ = optimize.curve_fit(exponential_decay, x, y)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/optimize/_minpack_py.py\", line 1024, in curve_fit\n    res = leastsq(func, p0, Dfun=jac, full_output=True, **kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/scipy/optimize/_minpack_py.py\", line 430, in leastsq\n    raise TypeError(f\"Improper input: func input vector length N={n} must\"\nTypeError: Improper input: func input vector length N=2 must not exceed func output vector length M=1\n\n----------------------------------------------------------------------\nRan 5 tests in 0.004s\n\nFAILED (errors=4)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function from a short wish. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nFit an exponential decay function to the indices in the array where the first column matches the target value.\n\n## Function stub (solution.py)\n\n```python\nimport matplotlib.pyplot as plt\n\nimport scipy.optimize as optimize\n\nimport numpy as np\n\ndef task_func(array, target_value):\n    # TODO: implement this function.\n    pass\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 131,
+        "output_tokens": 176,
+        "total_tokens": 307
+      }
+    }
+  ],
+  "seed": 20261123,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/654",
+  "started_at": "2026-11-23T01:08:07+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/654",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 1,
+    "input_tokens": 131,
+    "output_tokens": 176,
+    "total_tokens": 307
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 1
+}
