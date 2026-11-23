@@ -45,7 +45,10 @@ $-0.7$ pp [$-7.3$, $+6.3$]). Acceptance tests first hurt (H1 38.0\%), withholdin
 answers drops below H3 (DISCARD 42.0\%), extra samples do not close the gap (B2 48.3\%
 pass@1, 52.3\% over five samples), and a one-call baseline is weak (B3 31.7\%). The detector
 is useful but uneven (macro-F1 0.772; AUROC 0.931 constraints, 0.739 error behaviour), and a
-good ranking did not translate into recovered requirements. We report this negative result
+good ranking did not translate into recovered requirements. The wish, stub and visible tests
+already carry most of the requirement (H0 reaches 82\% of B1), while the parser makes intent
+the first sentence and the visible tests re-supply examples; the null is consistent with this
+operationalization, not evidence that elicitation cannot work in principle. We report it
 plainly and state what the full 300-task, multi-seed study must test.
 \end{abstract}
 
@@ -111,12 +114,17 @@ Every specification is parsed mechanically into five fields: intent, signature a
 examples, constraints and edge cases, and error behaviour. Levels are built by deleting
 fields. L0 is the full specification; L1 drops examples and type detail; L2 additionally
 drops constraints and error behaviour; L3 keeps only intent. A field is never invented, and
-an empty field stays empty. The hidden suite is byte-identical across levels, so an L0--L3
-difference is information loss rather than test variation. The labels for the detector are
+an empty field stays empty. The parser takes the first sentence of the docstring prose as the
+intent; a requirement stated in a later sentence is filed as a constraint and deleted at L3
+(Section~\ref{sec:limitations}). The hidden suite is byte-identical across levels, so an
+L0--L3 difference is information loss rather than test variation. The labels for the detector are
 field presence in L0: a positive means the category has content the wish omits. Single-field
 drops L2$_c$ would attribute recovery to a category, but the nine-condition pilot does not run
 them, so the per-category analysis below groups tasks by the L0 field their wish omits rather
-than by an L2$_c$ contrast.
+than by an L2$_c$ contrast. The examples field is not effectively deleted: the visible tests
+keep the first three worked examples (HumanEval+ \texttt{(inputs, results)} pairs, MBPP+
+assertions, BigCodeBench test methods) and every loop prompt prints them, so L1--L3 and an
+L2$_c$ examples drop still expose three examples to the agent.
 
 L3 is smoothed by the generator before the pilot: 500 train and 100 pilot wishes were rewritten
 into natural one-paragraph wishes with the same endpoint, and 18 of 600 fell back to the raw
@@ -264,7 +272,9 @@ samples are not a substitute for specification. B3 is a weak one-call baseline a
 
 Table~\ref{tab:categories} groups tasks by an L0 field their wish omits. The pilot does not run
 the separate L2$_c$ single-field-drop conditions, so this grouping is attribution by task
-subset, not a controlled one-field deletion. H3 recovery is positive only for signature and
+subset, not a controlled one-field deletion. The examples row is further confounded: even when
+the examples field is deleted, the visible tests keep three worked examples, so that subset
+does not isolate the examples category. H3 recovery is positive only for signature and
 types (0.094, all 100 tasks) and negative for examples ($-0.074$, 97 tasks), constraints
 ($-0.094$, 64 tasks) and error behaviour ($-0.499$, 13 tasks). The error-behaviour subset is
 small: 13 tasks, 39 units, 9 passes in H3. Of its 30 failed H3 units, 17 end in
@@ -297,8 +307,11 @@ category is not the same as eliciting a usable answer or turning it into code.
 \subsection{Detector results}
 
 Table~\ref{tab:detector} gives five-fold out-of-fold detection on the 500 smoothed train
-wishes. The encoder reaches macro-F1 0.772 (0.621 over the three varying labels), AUROC 0.803
-on examples, 0.931 on constraints and 0.739 on error behaviour. TF-IDF is slightly stronger on
+wishes. The head has five labels, but two are constant: intent and signature/types are
+positive on all 500 train tasks, so their AUROC is undefined. It is effectively a three-label
+head with 317 constraints, 487 examples and 63 error-behaviour positives, and only those three
+AUROCs are usable. It reaches macro-F1 0.772 (0.621 over the three varying labels), AUROC
+0.803 on examples, 0.931 on constraints and 0.739 on error behaviour. TF-IDF is slightly stronger on
 the aggregate (macro-F1 0.777) and on examples/constraints (0.746/0.944), while the encoder is
 slightly stronger on error behaviour (0.739 vs 0.699); calibration is comparable (Brier 0.045
 vs 0.044, ECE 0.015 vs 0.009). The encoder's practical advantage is that it scores a raw wish
@@ -352,7 +365,8 @@ the categories the detector ranks best (constraints) may be the ones the model c
 partly infer from the stub and visible tests, so the marginal value of an answer is low.
 Third, the weakest category (error behaviour) has only 13 tasks in the pilot, so the subset
 that most needs targeted clarification is the least powered. The full study should separate
-these mechanisms with L2$_c$ conditions and a larger error-behaviour sample.
+these mechanisms with L2$_c$ conditions, a larger error-behaviour sample, and the
+parser/visible-test fixes above.
 
 \section{Limitations}
 \label{sec:limitations}
@@ -383,25 +397,44 @@ is small, and its error-behaviour F1 at 0.5 is zero. L3 is smoothed by the gener
 L2$_c$ single-field-drop conditions, so per-category attribution is by task subset. H5 is not
 implemented.
 
+\textbf{Operationalization threats.} The parser takes the first sentence of the docstring prose
+as intent; a requirement stated in the second sentence is filed as a constraint and deleted at
+L3. On the 100 pilot tasks, no raw intent falls under five whitespace tokens (the minimum is
+six), but 6 fall under nine words, including HumanEval/80 (``You are given a string s.''), /160
+and /56. When the requirement is in the second sentence, the L3 wish omits the actual task,
+which attenuates H0 and any measured asking effect; the null is therefore consistent with this
+operationalization, not evidence that elicitation cannot work in principle. Two related bounds
+apply. The visible tests re-supply the first three worked examples in every loop prompt, so
+the examples field is never effectively deleted and an L2$_c$ examples contrast would be
+confounded. The detector has five labels but only three varying ones: intent and
+signature/types are positive on 500/500 train tasks (AUROC undefined), leaving 317
+constraints, 487 examples and 63 error-behaviour positives, so no AUROC is reported for those
+two labels.
+
 \textbf{Recovery denominator.} Recovery uses B1 and H0 measured on the same 100 tasks, so the
 denominator is itself noisy. We report paired task-level intervals for contrasts and treat
 recovery as a descriptive normalization, not a precise effect size.
 
 \section{Conclusion and future work}
 
-The measured pilot supports one strong claim and one negative one. The specification gap is
-real: removing the full specification costs 10.7 points, and that interval excludes zero.
-Targeted clarification does not close it: a detector that ranks missing categories well enough
-to target constraints produced no measurable advantage over generic questions or sibling-code
-context, while acceptance tests first hurt, withholding answers hurt more, extra samples did
-not substitute, and the one-call baseline was weak.
+The measured pilot supports one strong claim and one null. The specification gap is real:
+removing the full specification costs 10.7 points, and that interval excludes zero. But the
+null in the clarification conditions is narrower than ``elicitation does not work''. The wish,
+stub and visible tests already carry most of the requirement---H0 reaches 82\% of B1---and two
+operationalization choices shrink what is actually deleted: the parser files second-sentence
+requirements as constraints that L3 removes, and the visible tests re-supply examples even when
+the examples field is gone. Asking therefore has little room to add: H3 is statistically
+indistinguishable from H2 and H4, H4 is at best a $+1.7$ pp nudge whose interval crosses zero,
+H1 costs 9.7 pp, and withholding answers costs 6.7 pp against H3. The null is consistent with
+this operationalization, not evidence that elicitation cannot work in principle.
 
-The full study should run the 300 held-out tasks with more seeds, add the L2$_c$ single-field
-conditions to attribute recovery to categories, enlarge the error-behaviour sample, and test
-H5. It should also report the same paired task-level intervals so that a null result remains
-distinguishable from an underpowered one. If the negative result persists, the implication is
-that requirement recovery is not only a detection problem: the bottleneck is turning an answer
-into code, which is a harness problem rather than a question-selection problem.
+The full study should fix the intent and visible-test operationalization before scaling: run
+the 300 held-out tasks with more seeds, add the L2$_c$ single-field conditions with examples
+truly removed, enlarge the error-behaviour sample, and test H5. It should also report the same
+paired task-level intervals so that a null result remains distinguishable from an underpowered
+one. If the null persists after these fixes, question selection alone is not the bottleneck;
+the cleaner deletion contrast will show whether a harness that turns answers into code can
+recover the remaining gap.
 
 \section{Reproducibility and artifact map}
 \label{sec:reproduce}
