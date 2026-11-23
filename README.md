@@ -14,8 +14,9 @@ was rebuilt from scratch to that design. The revised measured milestone is
   disjoint 100-task pilot;
 - pilot: 100 development tasks, three samples.
 
-R0 (scaffold and data foundation), R1 (ReAct harness + detector), R2 (Colab A100 pilot) and
-R3 (measured paper) are complete. The measured R2 artifacts are under
+R0 (scaffold and data foundation), R1 (ReAct harness + detector) and R2 (Colab A100 pilot)
+are complete, and R3's measured pilot paper is written; the 300 held-out final study remains
+future work. The measured R2 artifacts are under
 [`results/runs/r2-pilot/`](results/runs/r2-pilot/), the full report is
 [`paper/main.pdf`](paper/main.pdf), and the revised two-page-body milestone is
 [`paper/milestone/main.pdf`](paper/milestone/main.pdf); the submitted milestone is preserved

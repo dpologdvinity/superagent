@@ -2,8 +2,9 @@
 
 The submitted milestone is
 [`paper/milestone/submitted/main.pdf`](paper/milestone/submitted/main.pdf). The rebuild ran in
-four phases, and all four are complete: R0 (data), R1 (harness + detector), R2 (the operator's
-A100 pilot) and R3 (the measured paper). The revised measured milestone is
+four phases: R0 (data), R1 (harness + detector) and R2 (the operator's A100 pilot) are complete,
+and R3's measured pilot paper is written; the 300 held-out final study remains future work. The
+revised measured milestone is
 [`paper/milestone/main.pdf`](paper/milestone/main.pdf) and the full report is
 [`paper/main.pdf`](paper/main.pdf).
 
@@ -167,7 +168,7 @@ or H4 49.3% (both intervals cross zero); H1 38.0%, DISCARD 42.0%, B2 48.3% (pass
 B3 31.7%. The paired task-level bootstrap, per-category grouping, failure buckets and
 smoothed detector refit are in the same run directory.
 
-## R3: measured paper (complete)
+## R3: measured paper (pilot complete; held-out study pending)
 
 **Goal.** Replace the milestone's illustrative numbers with the measured pilot results and the
 full-run plan.
