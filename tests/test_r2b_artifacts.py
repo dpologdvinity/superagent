@@ -96,13 +96,14 @@ def test_r2b_summary_matches_the_unit_table():
         )
 
     for category, item in summary["by_category"].items():
-        for condition, values in item["conditions"].items():
+        assert item["tasks"] > 0
+        for values in item["conditions"].values():
             # The category-to-task mapping is not in results.jsonl, so only the overall
             # condition aggregates are cross-checked here; the per-category rows are
             # checked against the committed summary by the bootstrap test below.
-            assert values["units"] > 0
+            assert values["units"] == item["tasks"] * 3
             assert 0.0 <= values["pass_at_1"] <= 1.0
-            assert category
+            assert 0.0 <= values["pass_rate"] <= 1.0
 
 
 def test_r2b_units_reproduce_the_result_table():
