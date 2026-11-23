@@ -2,9 +2,10 @@
 
 Measured nine-condition pilot on the disjoint 100-task development split, run under the
 corrected R2b protocol. This directory is the committed evidence for R6; the operator
-produced it in one Colab A100 session and R6 integrated the artifact bundle unchanged,
-apart from recomputing [`bootstrap.json`](bootstrap.json) / [`bootstrap.md`](bootstrap.md)
-from [`results.jsonl`](results.jsonl) and writing this README.
+produced it in one Colab A100 session, with the executed notebook attached separately, and
+R6 integrated the artifact bundle unchanged, apart from recomputing
+[`bootstrap.json`](bootstrap.json) / [`bootstrap.md`](bootstrap.md) from
+[`results.jsonl`](results.jsonl) and writing this README.
 
 **Correction to R2.** The R2 artifacts in `../r2-pilot/` are the earlier measurement on
 the superseded levels. Their intent was the first docstring sentence and their

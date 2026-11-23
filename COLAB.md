@@ -10,10 +10,13 @@ notebook is [`notebooks/colab_a100_vllm.ipynb`](notebooks/colab_a100_vllm.ipynb)
 belong to the later held-out study. No paid API is used: the only endpoint is the local vLLM
 server (or a tunnel to it).
 
+**Status: complete.** The operator ran this notebook on 2026-11-23 and the corrected
+artifacts are integrated under `results/runs/r2b-pilot/`; the paper and milestone now report
+those numbers.
+
 **R2 vs R2b.** The committed R2 pilot artifacts in `results/runs/r2-pilot/` were measured on
-the previous levels and remain the earlier result. Corrected numbers replace the R2 pilot only
-after the operator runs this notebook and the results are merged; do not mix R2 and R2b
-numbers in one table.
+the previous levels and remain the earlier result. R2b is the current measurement; do not mix
+R2 and R2b numbers in one table.
 
 ## What is verified locally vs by the operator
 
@@ -483,9 +486,10 @@ Record each answer in the PR/issue thread:
 - [ ] `r2b-artifacts.zip` downloaded and/or a results branch/PR opened; it contains no token.
 - [ ] BigCodeBench's assertion-based visible tests (examples still visible) are recorded as a
       limitation; the report does not claim a full examples deletion.
-- [ ] Corrected R2b numbers are reported separately from R2 and replace them only after this
-      run is merged.
-- [ ] The 300 held-out tasks were not run; `paper/milestone/` was not modified.
+- [ ] Corrected R2b numbers are reported separately from R2; the R6 revision is the
+      integration step that replaces the paper and milestone numbers.
+- [ ] The 300 held-out tasks were not run by this runbook; the paper/milestone update is the
+      separate R6 step.
 
 ## 8. Artifact inventory
 
