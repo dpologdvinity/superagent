@@ -1,22 +1,17 @@
 # R2b corrected GPU pilot artifacts
 
 Measured nine-condition pilot on the disjoint 100-task development split, run under the
-corrected R2b protocol. This directory is the committed evidence for R6; the operator
-produced it in one Colab A100 session, with the executed notebook attached separately, and
-R6 integrated the artifact bundle unchanged, apart from recomputing
-[`bootstrap.json`](bootstrap.json) / [`bootstrap.md`](bootstrap.md) from
-[`results.jsonl`](results.jsonl) and writing this README.
+corrected protocol. This directory is the committed evidence for the measured pilot; the
+operator produced the bundle in one Colab A100 session and attached the executed notebook.
+This README was written after the run; the artifact bundle is otherwise unchanged, apart from
+recomputing [`bootstrap.json`](bootstrap.json) / [`bootstrap.md`](bootstrap.md) from
+[`results.jsonl`](results.jsonl).
 
-**Correction to R2.** The R2 artifacts in `../r2-pilot/` are the earlier measurement on
-the superseded levels. Their intent was the first docstring sentence and their
-HumanEval+/MBPP+ visible tests carried expected values, so the R2 numbers must not be
-mixed with these. R2b keeps the whole docstring prose before the examples as the intent
-block and renders HumanEval+/MBPP+ visible tests as inputs only (observed output printed,
-no expected values); BigCodeBench visible tests remain assertion-based because its
-unittest methods assert expectations rather than listing `(inputs, results)` pairs.
-[`results/levels/`](../../levels/) holds the corrected levels, and
-[`results/levels_pre_r2b_split.json`](../../levels_pre_r2b_split.json) archives the split
-the R2 run used.
+**Corrected protocol.** The committed levels keep the whole docstring prose before the
+examples as the intent block and render HumanEval+/MBPP+ visible tests as inputs only
+(observed output printed, no expected values); BigCodeBench visible tests remain
+assertion-based because its unittest methods assert expectations rather than listing
+`(inputs, results)` pairs. [`results/levels/`](../../levels/) holds the corrected levels.
 
 ## Provenance
 
@@ -60,7 +55,7 @@ condition, 300 units per condition. Recovery is the fraction of the B1-H0 gap cl
 | H4 | 0.517 | 0.517 | -0.032 | 0.00 | 4.74 |
 | B2 | 0.513 | 0.547 | -0.065 | 0.00 | 5.00 |
 | B3 | 0.310 | 0.310 | -2.033 | 0.00 | 1.00 |
-| DISCARD | 0.427 | 0.427 | -0.903 | 2.48 | 4.09 |
+| H3⁻ | 0.427 | 0.427 | -0.903 | 2.48 | 4.09 |
 
 B2's pass rate is the fraction of tasks where any of its five direct samples passes; its
 pass@1 is the first of those five. The pilot source mix is 54 BigCodeBench, 34 MBPP+ and
@@ -84,14 +79,14 @@ column); the condition pass rates in that grouping are checked against `results.
 | H1-H0 | -23.3 | [-31.3, -15.7] | yes |
 | H3-H2 | +9.3 | [+1.7, +17.0] | yes |
 | H3-H4 | +2.0 | [-6.3, +9.7] | no |
-| DISCARD-H3 | -11.0 | [-18.7, -2.7] | yes |
+| H3⁻-H3 | -11.0 | [-18.7, -2.7] | yes |
 | B2-H0 | -0.7 | [-6.7, +5.0] | no |
 
 The operator's independent check agrees on every point estimate. Its percentile
 endpoints were computed with a different resampling random stream and agree to within
 1.0 pp. The one definitional difference is B2-H0: the independent check applies B2's
 five-sample pass rate (54.7% vs 52.0%, +2.7 pp), while this directory follows the
-committed pass@1 protocol first defined for R3 (-0.7 pp).
+committed pass@1 protocol (-0.7 pp).
 
 ## Per-category grouping
 
@@ -109,7 +104,7 @@ Source: [`summary.json`](summary.json), `by_category`.
 
 ## Detector refit
 
-[`detector-smoothed/`](detector-smoothed/) holds the R2b refit on the 500 smoothed train
+[`detector-smoothed/`](detector-smoothed/) holds the corrected refit on the 500 smoothed train
 wishes: frozen `Qwen3-Embedding-0.6B`, five-label linear head, 5-fold out-of-fold
 evaluation. Key numbers from [`detector-smoothed/report.md`](detector-smoothed/report.md):
 macro-F1 0.792 (0.654 over the three varying labels), AUROC 0.632 examples, 0.952

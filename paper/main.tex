@@ -63,16 +63,16 @@ politeness. The design asks whether a small detector over the specification fiel
 that elicitation targeted: if the detector knows which category a wish omits, the agent can
 ask about that category instead of spending a fixed question budget on generic prompts.
 
-This report is the corrected measured version of that design. An earlier R2 run produced a
+This report is the corrected measured version of that design. An earlier run produced a
 null for targeted clarification, but its parser took only the first docstring sentence as the
 intent, so a requirement stated later was filed as a constraint and deleted at L3, and its
 HumanEval+/MBPP+ visible tests carried expected values, so the examples field was silently
-restored. The committed levels were rebuilt for R2b: the intent is the whole prose block
+restored. The committed levels use the corrected protocol: the intent is the whole prose block
 before the examples, later unlabelled prose is part of the request, and HumanEval+/MBPP+
 visible tests print observed output instead of expected values. BigCodeBench visible tests
-stay assertion-based and are a stated residual. The operator re-ran the same nine conditions
-on the corrected levels; this report integrates that run and recomputes every headline
-number from the committed unit traces.
+stay assertion-based and are a stated residual. The same nine conditions were re-run on the
+corrected levels; this report integrates that run and recomputes every headline number from
+the committed unit traces.
 
 The corrected answer is more useful than the earlier null. The specification gap is real and
 about the same size: deleting the specification costs 10.3 points. Targeted clarification
@@ -139,8 +139,8 @@ unlabelled sentences are part of that request, not hidden constraints; explicit
 \emph{Constraints}/\emph{Raises} labels and sentences carrying an error cue are additionally
 classified into the constraint and error-behaviour fields, while the prose itself remains the
 intent. This matters at L3: the corrected wish is a natural request rather than the first
-sentence with later requirements deleted. R2 used the first sentence and therefore
-attenuated both H0 and any asking effect; R2b fixes that.
+sentence with later requirements deleted. The earlier levels used only the first sentence and
+therefore attenuated both H0 and any asking effect; the corrected protocol fixes that.
 
 L3 is smoothed by the generator before the pilot: 500 train and 100 pilot wishes were
 rewritten into natural one-paragraph wishes with the same endpoint, and 12 of 600 fell back to
@@ -180,7 +180,7 @@ questions up front, compiles the answers into a \emph{Requirements} block that c
 code prompt, and then runs one self-check-and-repair call. H4 adds five sibling functions with
 doctests to the workspace. B2 draws five direct samples instead of asking. B3 calls the
 endpoint once with only the wish and stub; with no separate frontier endpoint configured, it
-uses the same Qwen3-8B at temperature 0.7. H3-NA (stored as \texttt{DISCARD} in the artifacts) asks H3's questions but withholds the
+uses the same Qwen3-8B at temperature 0.7. H3$^-$ asks H3's questions but withholds the
 answers, separating asking from knowing. H5, offline harness evolution, remains a plan item
 and is not in this pilot.
 
@@ -251,7 +251,7 @@ beats another one: H3 $-$ H2 is $+9.3$ pp [$+1.7$, $+17.0$], while H2 is 7.7 poi
 \emph{below} H0 (44.3\%, [$-14.3$, $-1.0$]). The targeted condition does not reach the
 ceiling and its difference from H0 is $+1.7$ pp [$-5.7$, $+9.0$], which crosses zero; H4 is
 statistically indistinguishable from H3 (H3 $-$ H4 $+2.0$ pp [$-6.3$, $+9.7$]) and from H0
-($-0.3$ pp [$-6.0$, $+5.3$]). H3-NA is 11.0 points below H3 (42.7\%, [$-18.7$, $-2.7$]),
+($-0.3$ pp [$-6.0$, $+5.3$]). H3$^-$ is 11.0 points below H3 (42.7\%, [$-18.7$, $-2.7$]),
 so knowing the answers matters more than the act of asking them, but asking generically
 appears to cost more than it gains. H1 is 23.3 points below H0 (28.7\%), a result that is
 partly a protocol effect under inputs-only visible tests. B2's five samples raise its pass
@@ -282,7 +282,7 @@ spends the budget on generic prompts that may not address the missing field.
     H4 & sibling functions with doctests & 0.517 & 0.517 & $-0.032$ & 0.00 & 4.74 & 300 \\
     B2 & five direct samples instead of questions & 0.513 & 0.547 & $-0.065$ & 0.00 & 5.00 & 300 \\
     B3 & one-call baseline, wish and stub only & 0.310 & 0.310 & $-2.033$ & 0.00 & 1.00 & 300 \\
-    H3-NA & H3's questions, answers withheld & 0.427 & 0.427 & $-0.903$ & 2.48 & 4.09 & 300 \\
+    H3$^-$ & H3's questions, answers withheld & 0.427 & 0.427 & $-0.903$ & 2.48 & 4.09 & 300 \\
     \bottomrule
   \end{tabular}
   \caption{Measured 100-task pilot under the corrected protocol, three samples per condition
@@ -307,12 +307,12 @@ spends the budget on generic prompts that may not address the missing field.
     H1 $-$ H0 & $-23.3$ & [$-31.3$, $-15.7$] \\
     H3 $-$ H2 & $+9.3$ & [$+1.7$, $+17.0$] \\
     H3 $-$ H4 & $+2.0$ & [$-6.3$, $+9.7$] \\
-    H3-NA $-$ H3 & $-11.0$ & [$-18.7$, $-2.7$] \\
+    H3$^-$ $-$ H3 & $-11.0$ & [$-18.7$, $-2.7$] \\
     B2 $-$ H0 & $-0.7$ & [$-6.7$, $+5.0$] \\
     \bottomrule
   \end{tabular}
   \caption{Paired task-level bootstrap, 2{,}000 resamples, seed \texttt{20261121}, mean over
-  each task's three pass@1 samples. Only B1--H0, H2--H0, H1--H0, H3--H2 and H3-NA--H3
+  each task's three pass@1 samples. Only B1--H0, H2--H0, H1--H0, H3--H2 and H3$^-$--H3
   exclude zero. Source: \protect\path{results/runs/r2b-pilot/bootstrap.json}.}
   \label{tab:bootstrap}
 \end{table}
@@ -412,7 +412,7 @@ failures are semantic, not infrastructure. Only 26 units time out and 8 end in
 \texttt{XMLSyntaxError}.
 
 The corrected negative and positive results should be read together. Targeting is doing
-something: H3 beats H2 and recovers 16\% of the measured gap, and H3-NA is clearly below H3,
+something: H3 beats H2 and recovers 16\% of the measured gap, and H3$^-$ is clearly below H3,
 so the dialogue channel matters. It is not doing enough: H3 is within 1.7 points of H0 and
 2.0 points of H4, and both intervals cross zero. Three mechanisms are plausible. First, the
 categories the detector ranks best may be the ones the model can already partly infer from the
@@ -438,9 +438,9 @@ vLLM 0.34.0 and the JSON text protocol because native tool calls were unavailabl
 build. Results may differ under native tool calling, a different vLLM build, a larger GPU or
 multiple sessions.
 
-\textbf{Compute and budget.} The run used 2.902 GPU-hours, far below the planned approximately
-18 GPU-hours for the full study, and \$0 paid API. The pilot is therefore a measured
-development run, not the final evaluation.
+\textbf{Compute and budget.} The run used 2.902 GPU-hours on one A100-SXM4-40GB and \$0 paid
+API. The pilot is therefore a measured development run, not the final evaluation; the full
+study remains future work.
 
 \textbf{Benchmark composition and the BigCodeBench residual.} BigCodeBench supplies 54 of the
 100 pilot tasks. HumanEval+ (12) and MBPP+ (34) are small and may not represent the library
@@ -472,9 +472,9 @@ The corrected measured pilot supports one strong claim and one relative claim. T
 specification gap is real: removing the full specification costs 10.3 points, and that
 interval excludes zero. Targeted clarification beats generic clarification by 9.3 points and
 is the only condition that recovers any of the gap at the point estimate (recovery 0.16). That
-is a positive result for detector-targeted elicitation and a reversal of the earlier R2 null,
-which was measured under a parser that deleted later prose from L3 and visible tests that
-restored expected values. But targeting does not beat the ceiling or sibling-function
+is a positive result for detector-targeted elicitation, where the earlier measurement found a
+null under a parser that deleted later prose from L3 and visible tests that restored expected
+values. But targeting does not beat the ceiling or sibling-function
 context, its differences from H0 and H4 cross zero, generic questions hurt, withholding the
 targeted answers hurts more, and acceptance tests first is catastrophic under inputs-only
 visible tests. The detector ranks constraints well but its error-behaviour label remains
@@ -490,7 +490,7 @@ than generic questioning on this 100-task pilot, and the specification gap remai
 \section{Reproducibility and artifact map}
 \label{sec:reproduce}
 
-All empirical numbers in this report come from the corrected R2b run under
+All empirical numbers in this report come from the corrected run under
 \path{results/runs/r2b-pilot/}:
 
 \begin{itemize}
@@ -511,12 +511,10 @@ All empirical numbers in this report come from the corrected R2b run under
 \end{itemize}
 
 Data counts, split sizes and the corrected protocol come from \path{results/levels/stats.json}
-and \path{results/levels/manifest.json}; the detector source recipe is recorded in
-\path{results/runs/r2b-pilot/detector-smoothed/metrics.json}. The R2 artifacts remain under
-\path{results/runs/r2-pilot/} as the earlier measurement and are not mixed with R2b. The R2
-milestone snapshot is preserved under \path{paper/milestone/r2/}, and the originally submitted
-milestone under \path{paper/milestone/submitted/}. The paper is compiled with pdf\LaTeX{} and
-BibTeX from \path{paper/main.tex}.
+and \path{results/levels/manifest.json}; the detector artifact is under
+\path{results/detector-smoothed/}. The originally submitted milestone is preserved under
+\path{paper/milestone/submitted/}. The paper is compiled with pdf\LaTeX{} and BibTeX from
+\path{paper/main.tex}.
 
 \bibliographystyle{unsrt}
 \bibliography{references}

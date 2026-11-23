@@ -1,155 +1,82 @@
-# Operationalization notes: measured-pilot caveats
+# Operationalization notes: final-pilot caveats
 
-Status: R4 disclosure (2026-11-23), applying to the measured R2 pilot at commit
-`24c0f7c` with parser version `0.1.0`. The measured numbers are unchanged; this ticket
-did not re-parse, re-run the detector or re-run the GPU pilot. These notes record the
-code-level issues so the revised milestone and report can disclose them and the final
-study can fix them.
+Status: disclosure for the final milestone (2026-11-23), applying to the measured R2b run in
+`results/runs/r2b-pilot/` and the corrected levels in `results/levels/` (parser version
+`0.2.0`, `visible_tests = inputs_only`). The headline numbers are unchanged by these notes;
+the notes record what the protocol does and does not hold fixed.
 
-## 1. Intent is the first sentence
+## 1. Intent is the whole prose block
 
-`src/wishrec/parse.py::_classify_prose` (lines 211--235) sets
+The earlier levels took the first docstring sentence as the intent and filed every later
+sentence into `constraints` or `error_behaviour`, so a requirement stated in a second sentence
+was deleted at L3 and the wish understated the task. The corrected parser keeps the whole
+prose block before the examples as the intent; later unlabelled sentences stay part of the
+request, while explicit `Constraints`/`Raises` labels and sentences carrying an error cue are
+additionally classified into the constraint and error-behaviour fields.
 
-```python
-intent = re.sub(r"^\s*Task\s+", "", sentences[0]).strip()   # line 216
-```
+Consequence: L3 is a natural request rather than the first sentence with later requirements
+deleted. A parser bug that drops the later prose therefore no longer attenuates H0 or the
+measured asking effect. The corrected build parsed 1,651 of 1,682 source rows (31 parse
+exclusions) and validated 1,549, keeping 1,100 tasks. The parse exclusions are recorded in the
+manifest, not silently dropped.
 
-and files every later sentence into `constraints` or `error_behaviour`. `parse_mbppplus`
-repeats the pattern (`parse.py:487--495`: `intent = sentences[0]`). L3 keeps only the
-intent (`src/wishrec/levels.py:9`, `render_level` at lines 64--100; `src/wishrec/artifacts.py:159`
-asserts `L3 == fields["intent"]`). A requirement stated in the second sentence is
-therefore classified as a constraint and deleted at L3.
+## 2. Visible tests and the examples field
 
-Quantification on the 100 pilot tasks (`results/runs/r2-pilot/smoothing/wishes.jsonl`,
-`split == "pilot"`; `raw_wish` is the parser intent):
+Under the corrected protocol, HumanEval+ and MBPP+ visible tests exercise the same first three
+inputs but print the observed output; expected values are removed. The agent therefore cannot
+recover the examples field from the visible suite, which is what the level deletion assumes.
+The harness still prints the visible program in every loop prompt, but it no longer contains
+the expected results.
 
-- **0/100** raw intents have fewer than 5 whitespace tokens (minimum 6).
-- **6/100** have fewer than 9 words: HumanEval/80, /160, /56, /58, /92 and
-  BigCodeBench/467.
-- Input-only examples: HumanEval/80 is exactly `You are given a string s.`; /160 is
-  `Given two lists operator, and operand.`; /56 is `brackets is a string of "<" and ">".`
-  The requirement is in the deleted constraint text (e.g. HumanEval/80's L0 constraint
-  says to check whether the string is happy).
-- The smoothed pilot wishes give **0/100 under five tokens and 8/100 under nine words**;
-  smoothing does not restore the requirement that the parser put in constraints.
-
-**Direction:** this attenuates H0 (the wish understates the task) and dilutes any measured
-asking effect. The null should not be read as evidence that elicitation cannot work in
-principle. The measured artifacts remain from parser `0.1.0`; a separate parser change
-(whole-prose intent plus an `inputs_only` visible-test mode) merged as PR #22
-(`15c7646f`) after this measurement. R5 rebuilt `results/levels/` and prepared the
-corrected R2b run; see the update at the end of these notes.
-
-## 2. Visible tests re-supply examples
-
-`src/wishrec/parse.py::_humaneval_visible_test` (lines 309--354) truncates the `check()`
-`inputs` and `results` lists to the first three pairs (lines 330--336), then builds the
-visible test and `visible_asserts` from those pairs. `parse_mbppplus` uses
-`visible_asserts = "\n".join(test_list[:3])` (`parse.py:501`), and `_bcb_visible_test`
-keeps the first three `test_*` methods (`parse.py:626--670`, `selected = tests[:3]` at
-line 636).
-
-The harness prints the visible test in every loop prompt
-(`src/wishrec/harness/prompts.py::visible_block`, lines 76--82, included at line 182);
-B3 is the only condition that omits it (`src/wishrec/harness/loop.py:449`). Example: the
-H0 HumanEval/80 prompt in `results/runs/r2-pilot/units/H0/0/humanevalplus__HumanEval__80.json`
-shows `inputs = [['a'], ['aa'], ['abcd']]` and `results = [False, False, True]`.
-
-Consequence: the examples field is effectively never deleted in loop conditions. All 100
-pilot tasks have `visible_asserts_count == 3` and 97/100 carry an `examples` field at L0
-(`results/levels/tasks.jsonl`). Deleting examples at L1/L2/L3 or in an L2$_c$ examples drop
-still leaves three input/expected-result pairs with the agent, so an examples effect cannot
-be attributed cleanly.
+BigCodeBench is the stated residual. Its visible suite is a selection of `unittest` methods
+whose expectations are hard-coded assertions rather than literal `(inputs, results)` pairs,
+so `inputs_only` cannot remove them without breaking the suite. BigCodeBench's examples
+therefore remain visible in both protocols; the examples field is not fully deleted for that
+subset, and the per-category examples row is confounded accordingly. The papers state this
+limitation rather than claiming a full examples deletion.
 
 ## 3. Five-label head, two labels constant
 
-`results/runs/r2-pilot/detector-smoothed/metrics.json` records
-`data.label_counts = {intent: 500, signature_types: 500, examples: 487, constraints: 317,
-error_behaviour: 63}` over the 500 train tasks. `detection.encoder.per_label.intent.auroc`
-and `detection.encoder.per_label.signature_types.auroc` are both `null`, because those
-labels are positive on every task.
+The detector has a five-label head, but `intent` and `signature_types` are positive on all 500
+train tasks, so their AUROC is undefined and the detector is effectively a three-label model.
+The committed smoothed refit records 293 constraints, 491 examples and 85 error-behaviour
+positives. The usable ranking metrics are constraints AUROC 0.952, error-behaviour AUROC 0.744
+and examples AUROC 0.632 (only 9 negatives, so the examples AUROC is not informative);
+macro-F1 is 0.792 overall and 0.654 over the three varying labels. The error-behaviour F1 at
+the deployed 0.5 threshold is 0.046 because the calibrated probability stays near the 17%
+base rate; AUROC and average precision are the informative ranking metrics for that label.
 
-The detector is therefore a **five-label head with two constant labels**, effectively a
-three-label model; only the examples/constraints/error-behaviour AUROCs are usable, and
-constraints (317 positives) and error behaviour (63) are sparse. The milestone and report
-describe a five-label head with two constant labels rather than implying five usable AUROCs.
+## 4. Reading the measured result
 
-## Reading the measured null
+The honest reading is not that elicitation works in general. The wish, stub and visible tests
+already carry much of the requirement, and the pilot has 100 development tasks, one seed base
+and one A100-40GB session. Under that protocol:
 
-The honest reading is not "elicitation does not work". The wish, stub and visible tests
-already carry most of the requirement (H0 reaches 82% of B1), the parser deletes
-second-sentence requirements at L3, and the visible tests re-supply examples. Under that
-operationalization asking does not add: H3 is within noise of H2 and H4, H4 is at best a
-+1.7 pp nudge (95% CI crosses zero), H1 costs 9.7 pp, and withholding answers costs 6.7 pp
-against H3. These numbers trace to `results/runs/r2-pilot/summary.json`,
-`bootstrap.json` and `report.md`.
+- B1 reaches 62.3% and H0 52.0%, so the specification gap is +10.3 pp [+3.0, +17.7].
+- H3 reaches 53.7% (recovery 0.16) and beats generic H2 (44.3%) by +9.3 pp [+1.7, +17.0].
+- H3 is not distinguishable from H0 (+1.7 pp [−5.7, +9.0]) or H4 (51.7%; +2.0 pp
+  [−6.3, +9.7]).
+- Withholding H3's answers (H3⁻, 42.7%) costs 11.0 pp [−18.7, −2.7] against H3.
+- Generic questions cost 7.7 pp and acceptance tests first cost 23.3 pp against H0; H1's
+  result is partly a protocol effect under inputs-only visible tests.
 
-## Reproduce
+The defensible claim is relative: targeting beats generic asking, but it does not close the
+specification gap.
+
+## 5. Reproduce the caveats
+
+From a fresh clone:
 
 ```bash
-cd results/runs/r2-pilot
-python3 - <<'PY'
-import json, re
-pilot = [json.loads(line) for line in open("smoothing/wishes.jsonl")]
-pilot = [row for row in pilot if row["split"] == "pilot"]
-words = lambda text: re.findall(r"[A-Za-z0-9_']+", text)
-for field in ("raw_wish", "smoothed_wish"):
-    under5 = [row["task_key"] for row in pilot if len(row[field].split()) < 5]
-    under9 = [row["task_key"] for row in pilot if len(words(row[field])) < 9]
-    print(field, "under5", len(under5), under5)
-    print(field, "under9", len(under9), under9)
-PY
+uv sync --frozen
+make test
+make levels
+make detector-smoothed
 ```
 
-The PDFs are rebuilt from `paper/milestone/` and `paper/` with
-`TEXINPUTS=..:$TEXINPUTS BIBINPUTS=..:$BIBINPUTS latexmk -pdf main.tex` (milestone) and
-`latexmk -pdf main.tex` (report).
-
-## Submitted-milestone edits verified (do not regress)
-
-The five text edits from the submitted-milestone audit are present in
-`paper/milestone/main.tex` and are preserved:
-
-1. Table 1 is the measured table (pass@1/recovery/questions/turns, $n=300$, source
-   `results/runs/r2-pilot/`).
-2. No 59/19 framing; the abstract uses the measured 58.3/47.7 and null contrasts.
-3. The five-field code category list (intent, signature and types, examples, constraints and
-   edge cases, error behaviour).
-4. Detector metrics and failure attribution (macro-F1 0.772; AUROC 0.931 constraints,
-   0.739 error behaviour; F1 at 0.5 is 0.000 with 63 positives and AP 0.276).
-5. 2.509 GPU-hours, A100-SXM4-80GB, and the one-call B3 baseline (31.7%).
-
-## Update: corrected protocol prepared (R5)
-
-The parser fix for issue 1 merged as PR #22 (`15c7646f`, parser 0.2.0): the intent is the
-whole prose block before the examples, so a requirement in a later sentence stays in L3. It
-also adds `visible_tests=inputs_only`, which prints observed outputs for HumanEval+ and MBPP+
-and removes the expected-result comparison from those visible tests (issue 2 for those
-sources). R5 rebuilt `results/levels/` with `make levels VISIBLE_TESTS=inputs_only` and
-prepared the corrected R2b A100 run in `COLAB.md` and the notebook; see that runbook for the
-counts, the exact operator steps and the current limitations.
-
-Two boundaries matter when reading the corrected run:
-
-- The R2 measurement above is unchanged and stays tied to parser 0.1.0 and the previous
-  split; `results/levels_pre_r2b_split.json` archives that split.
-- The BigCodeBench residual remains: its visible tests are assertion-based `unittest`
-  methods, so its `examples` stay visible in the corrected protocol too. The corrected
-  protocol is not a full examples deletion.
-
-
-## Update: corrected run integrated (R6)
-
-The R2b A100 run is complete and integrated under
-[`results/runs/r2b-pilot/`](../../results/runs/r2b-pilot/): 2,700/2,700 units, no held-out
-task, 2.902 GPU-hours, A100-SXM4-40GB. Issue 1 is fixed by the whole-prose intent (a later
-prose requirement stays in L3), and issue 2 is fixed for HumanEval+/MBPP+ by `inputs_only`
-visible tests; the BigCodeBench assertion-based residual remains and is stated in both papers.
-The corrected headline result changes the reading: B1 62.3% vs H0 52.0% (+10.3 pp
-[+3.0, +17.7]); H3 53.7% beats H2 44.3% (+9.3 pp [+1.7, +17.0]) and is the only condition
-that recovers any gap at the point estimate (recovery 0.16), though H3−H0 (+1.7 pp
-[−5.7, +9.0]) and H3−H4 (+2.0 pp [−6.3, +9.7]) cross zero; H2, DISCARD and H1 are below H0.
-The detector refit now has 85 error-behaviour positives and macro-F1 0.792 (constraints
-AUROC 0.952, error behaviour 0.744). The "Submitted-milestone edits verified" list above
-describes the R2 revision preserved at `paper/milestone/r2/`, not the current milestone; the
-submitted milestone itself is still byte-identical.
+`make levels` rebuilds the committed inputs-only levels from the pinned sources
+(`results/levels/tasks.jsonl` SHA-256
+`e4cf7564b38e17c040b8a37837c4757a8b5d4045791a1621331c91a15cd36436`). The detector refit is
+CPU-only and uses the committed smoothed wishes under
+`results/runs/r2b-pilot/smoothing/wishes.jsonl`; the pilot itself is the one step that needs a
+GPU, and its committed traces are the evidence for every number above.
