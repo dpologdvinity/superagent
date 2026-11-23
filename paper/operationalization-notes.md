@@ -71,7 +71,7 @@ labels are positive on every task.
 The detector is therefore a **five-label head with two constant labels**, effectively a
 three-label model; only the examples/constraints/error-behaviour AUROCs are usable, and
 constraints (317 positives) and error behaviour (63) are sparse. The milestone and report
-say "five-label head, two labels constant" rather than implying five usable AUROCs.
+describe a five-label head with two constant labels rather than implying five usable AUROCs.
 
 ## Reading the measured null
 
