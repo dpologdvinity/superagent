@@ -85,11 +85,11 @@ def test_train_split_has_the_expected_counts_and_no_heldout():
     assert dataset["label_counts"] == {
         "intent": 500,
         "signature_types": 500,
-        "examples": 487,
-        "constraints": 317,
-        "error_behaviour": 63,
+        "examples": 491,
+        "constraints": 293,
+        "error_behaviour": 85,
     }
-    assert kept_label_counts()["error_behaviour"] == 147
+    assert kept_label_counts()["error_behaviour"] == 158
     assert split_counts() == {"train": 500, "evolution": 200, "heldout": 300, "pilot": 100}
     assert all(not key.startswith("synthetic/heldout") for key in dataset["keys"])
 

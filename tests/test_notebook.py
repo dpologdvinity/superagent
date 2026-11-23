@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from pathlib import Path
 
 NOTEBOOK = Path("notebooks/colab_a100_vllm.ipynb")
 RUNBOOK = Path("COLAB.md")
+LEVELS = Path("results/levels")
 
 
 def _sources() -> list[str]:
@@ -27,7 +29,7 @@ def test_notebook_is_valid_json_with_compiling_code_cells():
         compile(source, f"notebook-code-{index}", "exec")
 
 
-def test_notebook_covers_the_r2_pipeline_steps():
+def test_notebook_covers_the_corrected_r2b_pipeline_steps():
     sources = _sources()
     text = "\n".join(sources)
     for marker in (
@@ -45,11 +47,11 @@ def test_notebook_covers_the_r2_pipeline_steps():
         "--shards",
         "--smoothed",
         "files.download",
-        "r2-artifacts",
+        "r2b-artifacts",
         "EXPECTED_LEVELS_SHA256",
         "ALLOW_LEVELS_DRIFT",
         "levels tasks.jsonl sha256",
-        "derived coverage",
+        "derived hidden/visible",
         "INSTALL_VALIDATION_REQUIREMENTS",
         "requirements-validation.txt",
         "MPLBACKEND",
@@ -60,6 +62,13 @@ def test_notebook_covers_the_r2_pipeline_steps():
         "CLEAR_CACHE_FOR_DRY_RUN",
         "dry run finished in",
         "data_provenance.json",
+        "r2b-pilot",
+        "VISIBLE_TESTS",
+        "inputs_only",
+        "--visible-tests",
+        "BigCodeBench visible tests",
+        "run_visible_tests",
+        "Printed output",
     ):
         assert marker in text, marker
     assert "--split heldout" not in text
@@ -98,9 +107,22 @@ def test_runbook_covers_resume_troubleshooting_and_operator_checks():
         "make levels",
         "vLLM",
         "token",
+        "r2b-pilot",
+        "inputs_only",
+        "BigCodeBench",
+        "visible tests",
     ):
         assert marker in text, marker
     assert "18 GPU-hours" in text
+
+
+def test_notebook_pins_the_committed_corrected_levels():
+    manifest = json.loads((LEVELS / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["parsing"] == {"visible_tests": "inputs_only"}
+    sha = hashlib.sha256((LEVELS / "tasks.jsonl").read_bytes()).hexdigest()
+    text = "\n".join(_sources())
+    assert f'EXPECTED_LEVELS_SHA256 = "{sha}"' in text
+    assert f'VISIBLE_TESTS = "inputs_only"' in text
 
 
 def test_repo_docs_point_at_the_r2_notebook_and_runbook():

@@ -4,6 +4,14 @@ Measured 9-condition pilot on the disjoint 100-task development split. This dire
 the committed evidence for R3; the operator produced it in one Colab A100 session and the
 R3 ticket integrated it unchanged.
 
+**Data revision (R2b).** These R2 numbers were measured on the levels committed at the time.
+The committed `results/levels/` was later rebuilt for the corrected R2b protocol (whole-prose
+intent and inputs-only HumanEval+/MBPP+ visible tests); the R2 artifacts are the earlier
+measurement and must not be mixed with R2b numbers.
+[`results/levels_pre_r2b_split.json`](../../levels_pre_r2b_split.json) archives the
+task-to-split mapping and the old `tasks.jsonl` SHA-256 that these units used, so the held-out
+audit remains checkable.
+
 ## Provenance
 
 | field | value |

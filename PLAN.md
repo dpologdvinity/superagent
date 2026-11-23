@@ -194,6 +194,18 @@ byte-identically under [`paper/milestone/submitted/`](paper/milestone/submitted/
 held-out tasks and the second seed remain for the full study: the pilot reports a measured
 negative result, not the final evaluation.
 
+## R4/R5: operationalization disclosure and corrected re-run (prepared)
+
+R4 disclosed the measured pilot's intent/visible-test operationalization issues in the paper
+and [`paper/operationalization-notes.md`](paper/operationalization-notes.md). R5 rebuilt
+[`results/levels/`](results/levels/) against the merged parser fix (`15c7646f`, parser 0.2.0)
+with whole-prose intent and `VISIBLE_TESTS=inputs_only` for HumanEval+/MBPP+, keeping the
+BigCodeBench assertion-based visible-test residual. The superseded R0/R2 split is archived in
+[`results/levels_pre_r2b_split.json`](results/levels_pre_r2b_split.json), so the R2 artifacts
+remain auditable. The corrected R2b A100 run is prepared in
+[`notebooks/colab_a100_vllm.ipynb`](notebooks/colab_a100_vllm.ipynb) and [`COLAB.md`](COLAB.md);
+the A100 execution and the paper update that replaces the R2 pilot are separate.
+
 ## Risks and mitigations
 
 - **Dependency drift in BigCodeBench validation.** Pinned sources are stable, but canonical
