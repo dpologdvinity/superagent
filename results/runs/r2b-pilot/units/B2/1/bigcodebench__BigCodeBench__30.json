@@ -1,0 +1,275 @@
+{
+  "api_error": "",
+  "bucket": "TypeError",
+  "condition": "B2",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T13:58:12+00:00",
+  "detector_questions": [],
+  "duration_s": 9.528,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "TypeError",
+    "duration_s": 0.082,
+    "exception": "TypeError",
+    "output_tail": "E.EEE\n======================================================================\nERROR: test_case_invalid_email_format (hidden_test.TestCases.test_case_invalid_email_format)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-fp0dep5u/hidden_test.py\", line 39, in test_case_invalid_email_format\n    task_func(self.filepath, 'email')\n  File \"/tmp/wish-eval-fp0dep5u/solution.py\", line 17, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n======================================================================\nERROR: test_case_non_existent_file (hidden_test.TestCases.test_case_non_existent_file)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-fp0dep5u/hidden_test.py\", line 57, in test_case_non_existent_file\n    task_func('/tmp/non_existent.json', 'name')\n  File \"/tmp/wish-eval-fp0dep5u/solution.py\", line 7, in task_func\n    with open(file_path, 'r') as file:\n         ^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/non_existent.json'\n\n======================================================================\nERROR: test_case_retrieve_age (hidden_test.TestCases.test_case_retrieve_age)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-fp0dep5u/hidden_test.py\", line 52, in test_case_retrieve_age\n    result = task_func(self.filepath, 'age')\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-fp0dep5u/solution.py\", line 17, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n======================================================================\nERROR: test_case_valid_json (hidden_test.TestCases.test_case_valid_json)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-fp0dep5u/hidden_test.py\", line 31, in test_case_valid_json\n    result = task_func(self.filepath, 'name')\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-fp0dep5u/solution.py\", line 17, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n----------------------------------------------------------------------\nRan 5 tests in 0.003s\n\nFAILED (errors=4)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import json\nimport os\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # Read the JSON file\n    with open(file_path, 'r') as file:\n        data = json.load(file)\n    \n    # Check if the required fields exist\n    for field in INPUT_JSON['required']:\n        if field not in data:\n            raise ValueError(f\"Missing required field: {field}\")\n    \n    # Validate each field's type\n    for field, field_type in INPUT_JSON['properties'].items():\n        if not isinstance(data[field], field_type):\n            raise ValueError(f\"Invalid type for field {field}, expected {field_type.__name__}\")\n    \n    # Validate email format using regex\n    if 'email' in data:\n        if not re.match(EMAIL_REGEX, data['email']):\n            raise ValueError(\"Invalid email format\")\n    \n    # Return the specified attribute\n    return data[attribute]\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "E.EEE\n======================================================================\nERROR: test_case_invalid_email_format (hidden_test.TestCases.test_case_invalid_email_format)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-fp0dep5u/hidden_test.py\", line 39, in test_case_invalid_email_format\n    task_func(self.filepath, 'email')\n  File \"/tmp/wish-eval-fp0dep5u/solution.py\", line 17, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n======================================================================\nERROR: test_case_non_existent_file (hidden_test.TestCases.test_case_non_existent_file)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-fp0dep5u/hidden_test.py\", line 57, in test_case_non_existent_file\n    task_func('/tmp/non_existent.json', 'name')\n  File \"/tmp/wish-eval-fp0dep5u/solution.py\", line 7, in task_func\n    with open(file_path, 'r') as file:\n         ^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/non_existent.json'\n\n======================================================================\nERROR: test_case_retrieve_age (hidden_test.TestCases.test_case_retrieve_age)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-fp0dep5u/hidden_test.py\", line 52, in test_case_retrieve_age\n    result = task_func(self.filepath, 'age')\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-fp0dep5u/solution.py\", line 17, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n======================================================================\nERROR: test_case_valid_json (hidden_test.TestCases.test_case_valid_json)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-fp0dep5u/hidden_test.py\", line 31, in test_case_valid_json\n    result = task_func(self.filepath, 'name')\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-fp0dep5u/solution.py\", line 17, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n----------------------------------------------------------------------\nRan 5 tests in 0.003s\n\nFAILED (errors=4)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport json\nimport os\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # Read the JSON file\n    with open(file_path, 'r') as file:\n        data = json.load(file)\n    \n    # Check if the required fields exist\n    for field in INPUT_JSON['required']:\n        if field not in data:\n            raise ValueError(f\"Missing required field: {field}\")\n    \n    # Validate each field's type\n    for field, field_type in INPUT_JSON['properties'].items():\n        if not isinstance(data[field], field_type):\n            raise ValueError(f\"Invalid type for field {field}, expected {field_type.__name__}\")\n    \n    # Validate email format using regex\n    if 'email' in data:\n        if not re.match(EMAIL_REGEX, data['email']):\n            raise ValueError(\"Invalid email format\")\n    \n    # Return the specified attribute\n    return data[attribute]\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 585,
+        "output_tokens": 273,
+        "total_tokens": 858
+      }
+    },
+    {
+      "content": "```python\nimport json\nimport os\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # Load JSON data from file\n    try:\n        with open(file_path, 'r') as file:\n            data = json.load(file)\n    except Exception as e:\n        raise ValueError(f\"Error reading JSON file: {e}\")\n    \n    # Validate required fields\n    for required_field in INPUT_JSON['required']:\n        if required_field not in data:\n            raise ValueError(f\"Missing required field: {required_field}\")\n    \n    # Validate field types\n    for field, field_type in INPUT_JSON['properties'].items():\n        if field not in data:\n            continue\n        if not isinstance(data[field], field_type):\n            raise ValueError(f\"Field {field} has incorrect type. Expected {field_type}, got {type(data[field])}\")\n    \n    # Validate email format\n    if 'email' in data:\n        if not re.match(EMAIL_REGEX, data['email']):\n            raise ValueError(\"Invalid email format\")\n    \n    # Return the specified attribute\n    return data[attribute]\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 585,
+        "output_tokens": 307,
+        "total_tokens": 892
+      }
+    },
+    {
+      "content": "```python\nimport json\nimport os\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # Load JSON data from file\n    with open(file_path, 'r') as file:\n        data = json.load(file)\n    \n    # Validate required fields\n    for field in INPUT_JSON['required']:\n        if field not in data:\n            raise ValueError(f\"Missing required field: {field}\")\n    \n    # Validate each field's type\n    for field, schema in INPUT_JSON['properties'].items():\n        if not isinstance(data[field], schema['type']):\n            raise ValueError(f\"Invalid type for field {field}: expected {schema['type']}, got {type(data[field])}\")\n    \n    # Validate email format\n    if 'email' in data:\n        if not re.match(EMAIL_REGEX, data['email']):\n            raise ValueError(\"Invalid email format\")\n    \n    # Return the specified attribute\n    return data[attribute]\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 585,
+        "output_tokens": 275,
+        "total_tokens": 860
+      }
+    },
+    {
+      "content": "```python\nimport json\nimport os\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # Read JSON from file\n    with open(file_path, 'r') as file:\n        data = json.load(file)\n    \n    # Validate required fields\n    for field in INPUT_JSON['required']:\n        if field not in data:\n            raise ValueError(f\"Missing required field: {field}\")\n    \n    # Validate types\n    for field, field_type in INPUT_JSON['properties'].items():\n        if not isinstance(data[field], field_type):\n            raise ValueError(f\"Invalid type for field {field}. Expected {field_type}, got {type(data[field])}\")\n    \n    # Validate email format\n    if 'email' in data:\n        if not re.match(EMAIL_REGEX, data['email']):\n            raise ValueError(\"Invalid email format\")\n    \n    # Return the specified attribute\n    return data[attribute]\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 585,
+        "output_tokens": 269,
+        "total_tokens": 854
+      }
+    },
+    {
+      "content": "```python\nimport json\nimport os\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # Load JSON data from the file\n    with open(file_path, 'r') as file:\n        data = json.load(file)\n    \n    # Check if the required fields exist\n    for field in INPUT_JSON['required']:\n        if field not in data:\n            raise ValueError(f\"Missing required field: {field}\")\n    \n    # Validate each field's type\n    for field, field_type in INPUT_JSON['properties'].items():\n        if not isinstance(data[field], field_type):\n            raise ValueError(f\"Field {field} has incorrect type\")\n    \n    # Validate email format using regex\n    if 'email' in data:\n        if not re.match(EMAIL_REGEX, data['email']):\n            raise ValueError(\"Invalid email format\")\n    \n    # Return the specified attribute\n    return data[attribute]\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 585,
+        "output_tokens": 268,
+        "total_tokens": 853
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 1,
+  "samples": [
+    {
+      "bucket": "TypeError",
+      "code": "import json\nimport os\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # Read the JSON file\n    with open(file_path, 'r') as file:\n        data = json.load(file)\n    \n    # Check if the required fields exist\n    for field in INPUT_JSON['required']:\n        if field not in data:\n            raise ValueError(f\"Missing required field: {field}\")\n    \n    # Validate each field's type\n    for field, field_type in INPUT_JSON['properties'].items():\n        if not isinstance(data[field], field_type):\n            raise ValueError(f\"Invalid type for field {field}, expected {field_type.__name__}\")\n    \n    # Validate email format using regex\n    if 'email' in data:\n        if not re.match(EMAIL_REGEX, data['email']):\n            raise ValueError(\"Invalid email format\")\n    \n    # Return the specified attribute\n    return data[attribute]\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "TypeError",
+        "duration_s": 0.082,
+        "exception": "TypeError",
+        "output_tail": "E.EEE\n======================================================================\nERROR: test_case_invalid_email_format (hidden_test.TestCases.test_case_invalid_email_format)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-fp0dep5u/hidden_test.py\", line 39, in test_case_invalid_email_format\n    task_func(self.filepath, 'email')\n  File \"/tmp/wish-eval-fp0dep5u/solution.py\", line 17, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n======================================================================\nERROR: test_case_non_existent_file (hidden_test.TestCases.test_case_non_existent_file)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-fp0dep5u/hidden_test.py\", line 57, in test_case_non_existent_file\n    task_func('/tmp/non_existent.json', 'name')\n  File \"/tmp/wish-eval-fp0dep5u/solution.py\", line 7, in task_func\n    with open(file_path, 'r') as file:\n         ^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/non_existent.json'\n\n======================================================================\nERROR: test_case_retrieve_age (hidden_test.TestCases.test_case_retrieve_age)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-fp0dep5u/hidden_test.py\", line 52, in test_case_retrieve_age\n    result = task_func(self.filepath, 'age')\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-fp0dep5u/solution.py\", line 17, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n======================================================================\nERROR: test_case_valid_json (hidden_test.TestCases.test_case_valid_json)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-fp0dep5u/hidden_test.py\", line 31, in test_case_valid_json\n    result = task_func(self.filepath, 'name')\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-fp0dep5u/solution.py\", line 17, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n----------------------------------------------------------------------\nRan 5 tests in 0.003s\n\nFAILED (errors=4)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nValidate the structure and contents of a JSON file against predefined schema rules and retrieve a specified attribute, ensuring all required fields exist, match their defined types, and the email format is valid using a regular expression.\n\n## Starting file (solution.py)\n\n```python\nimport json\n\nimport os\n\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport json\nimport os\nimport re\nEMAIL_REGEX = '(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\\\.[a-zA-Z0-9-.]+$)'\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.filepath = '/tmp/test_data.json'\n        self.valid_data = {'name': 'John Doe', 'age': 30, 'email': 'john.doe@example.com'}\n        self.invalid_email_data = {'name': 'John Doe', 'age': 30, 'email': 'johndoe@example'}\n        with open(self.filepath, 'w') as file:\n            json.dump(self.valid_data, file)\n\n    def tearDown(self):\n        os.remove(self.filepath)\n\n    def test_case_valid_json(self):\n        result = task_func(self.filepath, 'name')\n        self.assertEqual(result, 'John Doe')\n\n    def test_case_invalid_email_format(self):\n        with open(self.filepath, 'w') as file:\n            json.dump(self.invalid_email_data, file)\n        with self.assertRaises(ValueError):\n            task_func(self.filepath, 'email')\n\n    def test_case_missing_attribute(self):\n        modified_data = self.valid_data.copy()\n        del modified_data['age']\n        with open(self.filepath, 'w') as file:\n            json.dump(modified_data, file)\n        with self.assertRaises(ValueError):\n            task_func(self.filepath, 'age')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261122,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 585,
+        "output_tokens": 273,
+        "total_tokens": 858
+      }
+    },
+    {
+      "bucket": "TypeError",
+      "code": "import json\nimport os\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # Load JSON data from file\n    try:\n        with open(file_path, 'r') as file:\n            data = json.load(file)\n    except Exception as e:\n        raise ValueError(f\"Error reading JSON file: {e}\")\n    \n    # Validate required fields\n    for required_field in INPUT_JSON['required']:\n        if required_field not in data:\n            raise ValueError(f\"Missing required field: {required_field}\")\n    \n    # Validate field types\n    for field, field_type in INPUT_JSON['properties'].items():\n        if field not in data:\n            continue\n        if not isinstance(data[field], field_type):\n            raise ValueError(f\"Field {field} has incorrect type. Expected {field_type}, got {type(data[field])}\")\n    \n    # Validate email format\n    if 'email' in data:\n        if not re.match(EMAIL_REGEX, data['email']):\n            raise ValueError(\"Invalid email format\")\n    \n    # Return the specified attribute\n    return data[attribute]\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "TypeError",
+        "duration_s": 0.063,
+        "exception": "TypeError",
+        "output_tail": "E..EE\n======================================================================\nERROR: test_case_invalid_email_format (hidden_test.TestCases.test_case_invalid_email_format)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yshty87g/hidden_test.py\", line 39, in test_case_invalid_email_format\n    task_func(self.filepath, 'email')\n  File \"/tmp/wish-eval-yshty87g/solution.py\", line 22, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n======================================================================\nERROR: test_case_retrieve_age (hidden_test.TestCases.test_case_retrieve_age)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yshty87g/hidden_test.py\", line 52, in test_case_retrieve_age\n    result = task_func(self.filepath, 'age')\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-yshty87g/solution.py\", line 22, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n======================================================================\nERROR: test_case_valid_json (hidden_test.TestCases.test_case_valid_json)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yshty87g/hidden_test.py\", line 31, in test_case_valid_json\n    result = task_func(self.filepath, 'name')\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-yshty87g/solution.py\", line 22, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n----------------------------------------------------------------------\nRan 5 tests in 0.002s\n\nFAILED (errors=3)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nValidate the structure and contents of a JSON file against predefined schema rules and retrieve a specified attribute, ensuring all required fields exist, match their defined types, and the email format is valid using a regular expression.\n\n## Starting file (solution.py)\n\n```python\nimport json\n\nimport os\n\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport json\nimport os\nimport re\nEMAIL_REGEX = '(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\\\.[a-zA-Z0-9-.]+$)'\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.filepath = '/tmp/test_data.json'\n        self.valid_data = {'name': 'John Doe', 'age': 30, 'email': 'john.doe@example.com'}\n        self.invalid_email_data = {'name': 'John Doe', 'age': 30, 'email': 'johndoe@example'}\n        with open(self.filepath, 'w') as file:\n            json.dump(self.valid_data, file)\n\n    def tearDown(self):\n        os.remove(self.filepath)\n\n    def test_case_valid_json(self):\n        result = task_func(self.filepath, 'name')\n        self.assertEqual(result, 'John Doe')\n\n    def test_case_invalid_email_format(self):\n        with open(self.filepath, 'w') as file:\n            json.dump(self.invalid_email_data, file)\n        with self.assertRaises(ValueError):\n            task_func(self.filepath, 'email')\n\n    def test_case_missing_attribute(self):\n        modified_data = self.valid_data.copy()\n        del modified_data['age']\n        with open(self.filepath, 'w') as file:\n            json.dump(modified_data, file)\n        with self.assertRaises(ValueError):\n            task_func(self.filepath, 'age')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 585,
+        "output_tokens": 307,
+        "total_tokens": 892
+      }
+    },
+    {
+      "bucket": "FileNotFoundError",
+      "code": "import json\nimport os\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # Load JSON data from file\n    with open(file_path, 'r') as file:\n        data = json.load(file)\n    \n    # Validate required fields\n    for field in INPUT_JSON['required']:\n        if field not in data:\n            raise ValueError(f\"Missing required field: {field}\")\n    \n    # Validate each field's type\n    for field, schema in INPUT_JSON['properties'].items():\n        if not isinstance(data[field], schema['type']):\n            raise ValueError(f\"Invalid type for field {field}: expected {schema['type']}, got {type(data[field])}\")\n    \n    # Validate email format\n    if 'email' in data:\n        if not re.match(EMAIL_REGEX, data['email']):\n            raise ValueError(\"Invalid email format\")\n    \n    # Return the specified attribute\n    return data[attribute]\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "FileNotFoundError",
+        "duration_s": 0.062,
+        "exception": "FileNotFoundError",
+        "output_tail": "..E..\n======================================================================\nERROR: test_case_non_existent_file (hidden_test.TestCases.test_case_non_existent_file)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-e93yjl57/hidden_test.py\", line 57, in test_case_non_existent_file\n    task_func('/tmp/non_existent.json', 'name')\n  File \"/tmp/wish-eval-e93yjl57/solution.py\", line 7, in task_func\n    with open(file_path, 'r') as file:\n         ^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/non_existent.json'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.002s\n\nFAILED (errors=1)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nValidate the structure and contents of a JSON file against predefined schema rules and retrieve a specified attribute, ensuring all required fields exist, match their defined types, and the email format is valid using a regular expression.\n\n## Starting file (solution.py)\n\n```python\nimport json\n\nimport os\n\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport json\nimport os\nimport re\nEMAIL_REGEX = '(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\\\.[a-zA-Z0-9-.]+$)'\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.filepath = '/tmp/test_data.json'\n        self.valid_data = {'name': 'John Doe', 'age': 30, 'email': 'john.doe@example.com'}\n        self.invalid_email_data = {'name': 'John Doe', 'age': 30, 'email': 'johndoe@example'}\n        with open(self.filepath, 'w') as file:\n            json.dump(self.valid_data, file)\n\n    def tearDown(self):\n        os.remove(self.filepath)\n\n    def test_case_valid_json(self):\n        result = task_func(self.filepath, 'name')\n        self.assertEqual(result, 'John Doe')\n\n    def test_case_invalid_email_format(self):\n        with open(self.filepath, 'w') as file:\n            json.dump(self.invalid_email_data, file)\n        with self.assertRaises(ValueError):\n            task_func(self.filepath, 'email')\n\n    def test_case_missing_attribute(self):\n        modified_data = self.valid_data.copy()\n        del modified_data['age']\n        with open(self.filepath, 'w') as file:\n            json.dump(modified_data, file)\n        with self.assertRaises(ValueError):\n            task_func(self.filepath, 'age')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261124,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 585,
+        "output_tokens": 275,
+        "total_tokens": 860
+      }
+    },
+    {
+      "bucket": "TypeError",
+      "code": "import json\nimport os\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # Read JSON from file\n    with open(file_path, 'r') as file:\n        data = json.load(file)\n    \n    # Validate required fields\n    for field in INPUT_JSON['required']:\n        if field not in data:\n            raise ValueError(f\"Missing required field: {field}\")\n    \n    # Validate types\n    for field, field_type in INPUT_JSON['properties'].items():\n        if not isinstance(data[field], field_type):\n            raise ValueError(f\"Invalid type for field {field}. Expected {field_type}, got {type(data[field])}\")\n    \n    # Validate email format\n    if 'email' in data:\n        if not re.match(EMAIL_REGEX, data['email']):\n            raise ValueError(\"Invalid email format\")\n    \n    # Return the specified attribute\n    return data[attribute]\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "TypeError",
+        "duration_s": 0.063,
+        "exception": "TypeError",
+        "output_tail": "E.EEE\n======================================================================\nERROR: test_case_invalid_email_format (hidden_test.TestCases.test_case_invalid_email_format)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-t9_euj2j/hidden_test.py\", line 39, in test_case_invalid_email_format\n    task_func(self.filepath, 'email')\n  File \"/tmp/wish-eval-t9_euj2j/solution.py\", line 17, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n======================================================================\nERROR: test_case_non_existent_file (hidden_test.TestCases.test_case_non_existent_file)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-t9_euj2j/hidden_test.py\", line 57, in test_case_non_existent_file\n    task_func('/tmp/non_existent.json', 'name')\n  File \"/tmp/wish-eval-t9_euj2j/solution.py\", line 7, in task_func\n    with open(file_path, 'r') as file:\n         ^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/non_existent.json'\n\n======================================================================\nERROR: test_case_retrieve_age (hidden_test.TestCases.test_case_retrieve_age)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-t9_euj2j/hidden_test.py\", line 52, in test_case_retrieve_age\n    result = task_func(self.filepath, 'age')\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-t9_euj2j/solution.py\", line 17, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n======================================================================\nERROR: test_case_valid_json (hidden_test.TestCases.test_case_valid_json)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-t9_euj2j/hidden_test.py\", line 31, in test_case_valid_json\n    result = task_func(self.filepath, 'name')\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-t9_euj2j/solution.py\", line 17, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n----------------------------------------------------------------------\nRan 5 tests in 0.002s\n\nFAILED (errors=4)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nValidate the structure and contents of a JSON file against predefined schema rules and retrieve a specified attribute, ensuring all required fields exist, match their defined types, and the email format is valid using a regular expression.\n\n## Starting file (solution.py)\n\n```python\nimport json\n\nimport os\n\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport json\nimport os\nimport re\nEMAIL_REGEX = '(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\\\.[a-zA-Z0-9-.]+$)'\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.filepath = '/tmp/test_data.json'\n        self.valid_data = {'name': 'John Doe', 'age': 30, 'email': 'john.doe@example.com'}\n        self.invalid_email_data = {'name': 'John Doe', 'age': 30, 'email': 'johndoe@example'}\n        with open(self.filepath, 'w') as file:\n            json.dump(self.valid_data, file)\n\n    def tearDown(self):\n        os.remove(self.filepath)\n\n    def test_case_valid_json(self):\n        result = task_func(self.filepath, 'name')\n        self.assertEqual(result, 'John Doe')\n\n    def test_case_invalid_email_format(self):\n        with open(self.filepath, 'w') as file:\n            json.dump(self.invalid_email_data, file)\n        with self.assertRaises(ValueError):\n            task_func(self.filepath, 'email')\n\n    def test_case_missing_attribute(self):\n        modified_data = self.valid_data.copy()\n        del modified_data['age']\n        with open(self.filepath, 'w') as file:\n            json.dump(modified_data, file)\n        with self.assertRaises(ValueError):\n            task_func(self.filepath, 'age')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261125,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 585,
+        "output_tokens": 269,
+        "total_tokens": 854
+      }
+    },
+    {
+      "bucket": "TypeError",
+      "code": "import json\nimport os\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # Load JSON data from the file\n    with open(file_path, 'r') as file:\n        data = json.load(file)\n    \n    # Check if the required fields exist\n    for field in INPUT_JSON['required']:\n        if field not in data:\n            raise ValueError(f\"Missing required field: {field}\")\n    \n    # Validate each field's type\n    for field, field_type in INPUT_JSON['properties'].items():\n        if not isinstance(data[field], field_type):\n            raise ValueError(f\"Field {field} has incorrect type\")\n    \n    # Validate email format using regex\n    if 'email' in data:\n        if not re.match(EMAIL_REGEX, data['email']):\n            raise ValueError(\"Invalid email format\")\n    \n    # Return the specified attribute\n    return data[attribute]\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "TypeError",
+        "duration_s": 0.064,
+        "exception": "TypeError",
+        "output_tail": "E.EEE\n======================================================================\nERROR: test_case_invalid_email_format (hidden_test.TestCases.test_case_invalid_email_format)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-sig_31ai/hidden_test.py\", line 39, in test_case_invalid_email_format\n    task_func(self.filepath, 'email')\n  File \"/tmp/wish-eval-sig_31ai/solution.py\", line 17, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n======================================================================\nERROR: test_case_non_existent_file (hidden_test.TestCases.test_case_non_existent_file)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-sig_31ai/hidden_test.py\", line 57, in test_case_non_existent_file\n    task_func('/tmp/non_existent.json', 'name')\n  File \"/tmp/wish-eval-sig_31ai/solution.py\", line 7, in task_func\n    with open(file_path, 'r') as file:\n         ^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/non_existent.json'\n\n======================================================================\nERROR: test_case_retrieve_age (hidden_test.TestCases.test_case_retrieve_age)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-sig_31ai/hidden_test.py\", line 52, in test_case_retrieve_age\n    result = task_func(self.filepath, 'age')\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-sig_31ai/solution.py\", line 17, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n======================================================================\nERROR: test_case_valid_json (hidden_test.TestCases.test_case_valid_json)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-sig_31ai/hidden_test.py\", line 31, in test_case_valid_json\n    result = task_func(self.filepath, 'name')\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-sig_31ai/solution.py\", line 17, in task_func\n    if not isinstance(data[field], field_type):\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: isinstance() arg 2 must be a type, a tuple of types, or a union\n\n----------------------------------------------------------------------\nRan 5 tests in 0.002s\n\nFAILED (errors=4)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nValidate the structure and contents of a JSON file against predefined schema rules and retrieve a specified attribute, ensuring all required fields exist, match their defined types, and the email format is valid using a regular expression.\n\n## Starting file (solution.py)\n\n```python\nimport json\n\nimport os\n\nimport re\n\ndef task_func(file_path, attribute, INPUT_JSON={'type': 'object', 'properties': {'name': {'type': str}, 'age': {'type': int}, 'email': {'type': str}}, 'required': ['name', 'age', 'email']}, EMAIL_REGEX='^[a-z0-9]+[\\\\._]?[a-z0-9]+[@]\\\\w+[.]\\\\w{2,3}$'):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport json\nimport os\nimport re\nEMAIL_REGEX = '(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\\\.[a-zA-Z0-9-.]+$)'\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.filepath = '/tmp/test_data.json'\n        self.valid_data = {'name': 'John Doe', 'age': 30, 'email': 'john.doe@example.com'}\n        self.invalid_email_data = {'name': 'John Doe', 'age': 30, 'email': 'johndoe@example'}\n        with open(self.filepath, 'w') as file:\n            json.dump(self.valid_data, file)\n\n    def tearDown(self):\n        os.remove(self.filepath)\n\n    def test_case_valid_json(self):\n        result = task_func(self.filepath, 'name')\n        self.assertEqual(result, 'John Doe')\n\n    def test_case_invalid_email_format(self):\n        with open(self.filepath, 'w') as file:\n            json.dump(self.invalid_email_data, file)\n        with self.assertRaises(ValueError):\n            task_func(self.filepath, 'email')\n\n    def test_case_missing_attribute(self):\n        modified_data = self.valid_data.copy()\n        del modified_data['age']\n        with open(self.filepath, 'w') as file:\n            json.dump(modified_data, file)\n        with self.assertRaises(ValueError):\n            task_func(self.filepath, 'age')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261126,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 585,
+        "output_tokens": 268,
+        "total_tokens": 853
+      }
+    }
+  ],
+  "seed": 20261122,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/30",
+  "started_at": "2026-11-23T13:58:12+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/30",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 5,
+    "input_tokens": 2925,
+    "output_tokens": 1392,
+    "total_tokens": 4317
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 5
+}

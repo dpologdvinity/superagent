@@ -1,0 +1,275 @@
+{
+  "api_error": "",
+  "bucket": "None",
+  "condition": "B2",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T13:56:19+00:00",
+  "detector_questions": [],
+  "duration_s": 20.268,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 2.821,
+    "exception": "AssertionError",
+    "output_tail": "F..F.F\n======================================================================\nFAIL: test_case_1 (hidden_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-j8hbx3fq/hidden_test.py\", line 25, in test_case_1\n    self.assertEqual(saved_words, expected_words)\nAssertionError: Lists differ: ['$abc def ', '$efg ', '$hij klm ', '$abc ', '$abc ', '$hij ', '$hij'] != ['$abc', '$efg', '$hij', '$abc', '$abc', '$hij', '$hij']\n\nFirst differing element 0:\n'$abc def '\n'$abc'\n\n- ['$abc def ', '$efg ', '$hij klm ', '$abc ', '$abc ', '$hij ', '$hij']\n?       -----        -        -----        -        -        -\n\n+ ['$abc', '$efg', '$hij', '$abc', '$abc', '$hij', '$hij']\n\n======================================================================\nFAIL: test_case_4 (hidden_test.TestCases.test_case_4)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-j8hbx3fq/hidden_test.py\", line 55, in test_case_4\n    self.assertEqual(saved_words, expected_words)\nAssertionError: Lists differ: ['$hello ', '$world', '$test'] != ['$hello', '$world', '$test']\n\nFirst differing element 0:\n'$hello '\n'$hello'\n\n- ['$hello ', '$world', '$test']\n?         -\n\n+ ['$hello', '$world', '$test']\n\n======================================================================\nFAIL: test_save_dollar_prefixed_words_to_file (hidden_test.TestCases.test_save_dollar_prefixed_words_to_file)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-j8hbx3fq/hidden_test.py\", line 83, in test_save_dollar_prefixed_words_to_file\n    self.assertEqual(content, expected_output)\nAssertionError: '$example \\n$valid word \\n$1234\\n' != '$example\\n$valid\\n$1234\\n'\n- $example \n?         -\n+ $example\n- $valid word \n+ $valid\n  $1234\n\n\n----------------------------------------------------------------------\nRan 6 tests in 0.004s\n\nFAILED (failures=3)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "from nltk.tokenize import RegexpTokenizer\nfrom string import punctuation\nimport os\n\ndef task_func(text, output_filename):\n    # Define a regex pattern to match words starting with '$' and followed by at least one non-punctuation character\n    pattern = r'\\$[^$' + punctuation + ']+'\n    tokenizer = RegexpTokenizer(pattern)\n    \n    # Extract words starting with '$'\n    words = tokenizer.tokenize(text)\n    \n    # Filter out words that consist only of punctuation (though they start with '$', they may be invalid)\n    # Since the pattern ensures at least one non-punctuation character, this step is redundant but included for safety\n    filtered_words = [word for word in words if word[0] == '$' and any(c.isalnum() for c in word)]\n    \n    # Write the filtered words to the specified file\n    with open(output_filename, 'w') as file:\n        for word in filtered_words:\n            file.write(word + '\\n')\n    \n    return output_filename\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "F..F.F\n======================================================================\nFAIL: test_case_1 (hidden_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-j8hbx3fq/hidden_test.py\", line 25, in test_case_1\n    self.assertEqual(saved_words, expected_words)\nAssertionError: Lists differ: ['$abc def ', '$efg ', '$hij klm ', '$abc ', '$abc ', '$hij ', '$hij'] != ['$abc', '$efg', '$hij', '$abc', '$abc', '$hij', '$hij']\n\nFirst differing element 0:\n'$abc def '\n'$abc'\n\n- ['$abc def ', '$efg ', '$hij klm ', '$abc ', '$abc ', '$hij ', '$hij']\n?       -----        -        -----        -        -        -\n\n+ ['$abc', '$efg', '$hij', '$abc', '$abc', '$hij', '$hij']\n\n======================================================================\nFAIL: test_case_4 (hidden_test.TestCases.test_case_4)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-j8hbx3fq/hidden_test.py\", line 55, in test_case_4\n    self.assertEqual(saved_words, expected_words)\nAssertionError: Lists differ: ['$hello ', '$world', '$test'] != ['$hello', '$world', '$test']\n\nFirst differing element 0:\n'$hello '\n'$hello'\n\n- ['$hello ', '$world', '$test']\n?         -\n\n+ ['$hello', '$world', '$test']\n\n======================================================================\nFAIL: test_save_dollar_prefixed_words_to_file (hidden_test.TestCases.test_save_dollar_prefixed_words_to_file)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-j8hbx3fq/hidden_test.py\", line 83, in test_save_dollar_prefixed_words_to_file\n    self.assertEqual(content, expected_output)\nAssertionError: '$example \\n$valid word \\n$1234\\n' != '$example\\n$valid\\n$1234\\n'\n- $example \n?         -\n+ $example\n- $valid word \n+ $valid\n  $1234\n\n\n----------------------------------------------------------------------\nRan 6 tests in 0.004s\n\nFAILED (failures=3)",
+  "llm_calls": [
+    {
+      "content": "```python\nfrom nltk.tokenize import RegexpTokenizer\nfrom string import punctuation\nimport os\n\ndef task_func(text, output_filename):\n    # Define a regex pattern to match words starting with '$' and followed by at least one non-punctuation character\n    pattern = r'\\$[^$' + punctuation + ']+'\n    tokenizer = RegexpTokenizer(pattern)\n    \n    # Extract words starting with '$'\n    words = tokenizer.tokenize(text)\n    \n    # Filter out words that consist only of punctuation (though they start with '$', they may be invalid)\n    # Since the pattern ensures at least one non-punctuation character, this step is redundant but included for safety\n    filtered_words = [word for word in words if word[0] == '$' and any(c.isalnum() for c in word)]\n    \n    # Write the filtered words to the specified file\n    with open(output_filename, 'w') as file:\n        for word in filtered_words:\n            file.write(word + '\\n')\n    \n    return output_filename\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 571,
+        "output_tokens": 212,
+        "total_tokens": 783
+      }
+    },
+    {
+      "content": "```python\nfrom nltk.tokenize import RegexpTokenizer\nfrom string import punctuation\nimport os\n\ndef task_func(text, output_filename):\n    # Define a regex pattern to match words starting with '$' and followed by at least one alphanumeric character\n    pattern = r'\\$[\\w]+'\n    # Use the tokenizer to extract words matching the pattern\n    tokenizer = RegexpTokenizer(pattern)\n    words = tokenizer.tokenize(text)\n    \n    # Filter out words that consist only of punctuation\n    filtered_words = [word for word in words if not all(char in punctuation for char in word)]\n    \n    # Write the filtered words to the specified file\n    with open(output_filename, 'w') as file:\n        for word in filtered_words:\n            file.write(word + '\\n')\n    \n    return output_filename\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 571,
+        "output_tokens": 166,
+        "total_tokens": 737
+      }
+    },
+    {
+      "content": "```python\nfrom nltk.tokenize import RegexpTokenizer\nfrom string import punctuation\nimport os\n\ndef task_func(text, output_filename):\n    # Define a regex pattern to match words starting with '$' and followed by at least one alphanumeric character\n    pattern = r'\\$[\\w]+'\n    # Find all matches in the text\n    matches = RegexpTokenizer(pattern).tokenize(text)\n    # Filter out words that consist only of punctuation (e.g., '$$')\n    filtered_matches = [word for word in matches if not all(char in punctuation for char in word)]\n    # Write the filtered matches to the specified output file\n    with open(output_filename, 'w') as file:\n        for word in filtered_matches:\n            file.write(word + '\\n')\n    # Return the path to the output file\n    return output_filename\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 571,
+        "output_tokens": 174,
+        "total_tokens": 745
+      }
+    },
+    {
+      "content": "```python\nfrom nltk.tokenize import RegexpTokenizer\nfrom string import punctuation\nimport os\n\ndef task_func(text, output_filename):\n    # Define a regex pattern to match words starting with '$' and followed by at least one alphanumeric character\n    pattern = r'\\$[\\w]+'\n    # Use the RegexpTokenizer to extract words matching the pattern\n    tokenizer = RegexpTokenizer(pattern)\n    words = tokenizer.tokenize(text)\n    \n    # Filter out words that consist only of punctuation (e.g., '$$')\n    filtered_words = [word for word in words if not all(char in punctuation for char in word)]\n    \n    # Write the filtered words to the specified output file\n    with open(output_filename, 'w') as file:\n        for word in filtered_words:\n            file.write(word + '\\n')\n    \n    return output_filename\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 571,
+        "output_tokens": 175,
+        "total_tokens": 746
+      }
+    },
+    {
+      "content": "```python\nfrom nltk.tokenize import RegexpTokenizer\n\nfrom string import punctuation\n\nimport os\n\ndef task_func(text, output_filename):\n    # Define a regex pattern to match words starting with '$' and followed by at least one alphanumeric character\n    pattern = r'\\$[\\w]+'\n    # Use the RegexpTokenizer to extract words matching the pattern\n    tokenizer = RegexpTokenizer(pattern)\n    words = tokenizer.tokenize(text)\n    \n    # Filter out words that consist only of punctuation (e.g., '$$' or '$!')\n    filtered_words = []\n    for word in words:\n        if word not in punctuation:\n            filtered_words.append(word)\n    \n    # Write the filtered words to the specified output file\n    with open(output_filename, 'w') as file:\n        for word in filtered_words:\n            file.write(word + '\\n')\n    \n    return output_filename\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 571,
+        "output_tokens": 181,
+        "total_tokens": 752
+      }
+    }
+  ],
+  "messages": [],
+  "pass": true,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 0,
+  "samples": [
+    {
+      "bucket": "AssertionError",
+      "code": "from nltk.tokenize import RegexpTokenizer\nfrom string import punctuation\nimport os\n\ndef task_func(text, output_filename):\n    # Define a regex pattern to match words starting with '$' and followed by at least one non-punctuation character\n    pattern = r'\\$[^$' + punctuation + ']+'\n    tokenizer = RegexpTokenizer(pattern)\n    \n    # Extract words starting with '$'\n    words = tokenizer.tokenize(text)\n    \n    # Filter out words that consist only of punctuation (though they start with '$', they may be invalid)\n    # Since the pattern ensures at least one non-punctuation character, this step is redundant but included for safety\n    filtered_words = [word for word in words if word[0] == '$' and any(c.isalnum() for c in word)]\n    \n    # Write the filtered words to the specified file\n    with open(output_filename, 'w') as file:\n        for word in filtered_words:\n            file.write(word + '\\n')\n    \n    return output_filename\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 2.821,
+        "exception": "AssertionError",
+        "output_tail": "F..F.F\n======================================================================\nFAIL: test_case_1 (hidden_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-j8hbx3fq/hidden_test.py\", line 25, in test_case_1\n    self.assertEqual(saved_words, expected_words)\nAssertionError: Lists differ: ['$abc def ', '$efg ', '$hij klm ', '$abc ', '$abc ', '$hij ', '$hij'] != ['$abc', '$efg', '$hij', '$abc', '$abc', '$hij', '$hij']\n\nFirst differing element 0:\n'$abc def '\n'$abc'\n\n- ['$abc def ', '$efg ', '$hij klm ', '$abc ', '$abc ', '$hij ', '$hij']\n?       -----        -        -----        -        -        -\n\n+ ['$abc', '$efg', '$hij', '$abc', '$abc', '$hij', '$hij']\n\n======================================================================\nFAIL: test_case_4 (hidden_test.TestCases.test_case_4)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-j8hbx3fq/hidden_test.py\", line 55, in test_case_4\n    self.assertEqual(saved_words, expected_words)\nAssertionError: Lists differ: ['$hello ', '$world', '$test'] != ['$hello', '$world', '$test']\n\nFirst differing element 0:\n'$hello '\n'$hello'\n\n- ['$hello ', '$world', '$test']\n?         -\n\n+ ['$hello', '$world', '$test']\n\n======================================================================\nFAIL: test_save_dollar_prefixed_words_to_file (hidden_test.TestCases.test_save_dollar_prefixed_words_to_file)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-j8hbx3fq/hidden_test.py\", line 83, in test_save_dollar_prefixed_words_to_file\n    self.assertEqual(content, expected_output)\nAssertionError: '$example \\n$valid word \\n$1234\\n' != '$example\\n$valid\\n$1234\\n'\n- $example \n?         -\n+ $example\n- $valid word \n+ $valid\n  $1234\n\n\n----------------------------------------------------------------------\nRan 6 tests in 0.004s\n\nFAILED (failures=3)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nExtract words starting with the '$' character from the input text and save them to a specified file, omitting words that consist only of punctuation.\n\n## Starting file (solution.py)\n\n```python\nfrom nltk.tokenize import RegexpTokenizer\n\nfrom string import punctuation\n\nimport os\n\ndef task_func(text, output_filename):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport os\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.filenames = []\n        for i in range(1, 7):\n            self.filenames.append('task_func_test_output_' + str(i) + '.txt')\n\n    def tearDown(self):\n        for filename in self.filenames:\n            if os.path.exists(filename):\n                os.remove(filename)\n\n    def test_case_1(self):\n        text = '$abc def $efg $hij klm $ $abc $abc $hij $hij'\n        filename = self.filenames[0]\n        expected_words = ['$abc', '$efg', '$hij', '$abc', '$abc', '$hij', '$hij']\n        output_path = task_func(text, filename)\n        with open(output_path, 'r') as file:\n            saved_words = file.read().splitlines()\n        self.assertEqual(saved_words, expected_words)\n        self.assertTrue(os.path.exists(output_path))\n\n    def test_case_2(self):\n        text = 'There are no dollar words here.'\n        filename = self.filenames[1]\n        expected_words = []\n        output_path = task_func(text, filename)\n        with open(output_path, 'r') as file:\n            saved_words = file.read().splitlines()\n        self.assertEqual(saved_words, expected_words)\n        self.assertTrue(os.path.exists(output_path))\n\n    def test_case_3(self):\n        text = '$$$$ $$ $$$$ $abc$ $def'\n        filename = self.filenames[2]\n        expected_words = ['$abc', '$def']\n        output_path = task_func(text, filename)\n        with open(output_path, 'r') as file:\n            saved_words = file.read().splitlines()\n        self.assertEqual(saved_words, expected_words)\n        self.assertTrue(os.path.exists(output_path))\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261121,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 571,
+        "output_tokens": 212,
+        "total_tokens": 783
+      }
+    },
+    {
+      "bucket": "None",
+      "code": "from nltk.tokenize import RegexpTokenizer\nfrom string import punctuation\nimport os\n\ndef task_func(text, output_filename):\n    # Define a regex pattern to match words starting with '$' and followed by at least one alphanumeric character\n    pattern = r'\\$[\\w]+'\n    # Use the tokenizer to extract words matching the pattern\n    tokenizer = RegexpTokenizer(pattern)\n    words = tokenizer.tokenize(text)\n    \n    # Filter out words that consist only of punctuation\n    filtered_words = [word for word in words if not all(char in punctuation for char in word)]\n    \n    # Write the filtered words to the specified file\n    with open(output_filename, 'w') as file:\n        for word in filtered_words:\n            file.write(word + '\\n')\n    \n    return output_filename\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "None",
+        "duration_s": 2.827,
+        "exception": "",
+        "output_tail": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.002s\n\nOK",
+        "pass": true,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nExtract words starting with the '$' character from the input text and save them to a specified file, omitting words that consist only of punctuation.\n\n## Starting file (solution.py)\n\n```python\nfrom nltk.tokenize import RegexpTokenizer\n\nfrom string import punctuation\n\nimport os\n\ndef task_func(text, output_filename):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport os\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.filenames = []\n        for i in range(1, 7):\n            self.filenames.append('task_func_test_output_' + str(i) + '.txt')\n\n    def tearDown(self):\n        for filename in self.filenames:\n            if os.path.exists(filename):\n                os.remove(filename)\n\n    def test_case_1(self):\n        text = '$abc def $efg $hij klm $ $abc $abc $hij $hij'\n        filename = self.filenames[0]\n        expected_words = ['$abc', '$efg', '$hij', '$abc', '$abc', '$hij', '$hij']\n        output_path = task_func(text, filename)\n        with open(output_path, 'r') as file:\n            saved_words = file.read().splitlines()\n        self.assertEqual(saved_words, expected_words)\n        self.assertTrue(os.path.exists(output_path))\n\n    def test_case_2(self):\n        text = 'There are no dollar words here.'\n        filename = self.filenames[1]\n        expected_words = []\n        output_path = task_func(text, filename)\n        with open(output_path, 'r') as file:\n            saved_words = file.read().splitlines()\n        self.assertEqual(saved_words, expected_words)\n        self.assertTrue(os.path.exists(output_path))\n\n    def test_case_3(self):\n        text = '$$$$ $$ $$$$ $abc$ $def'\n        filename = self.filenames[2]\n        expected_words = ['$abc', '$def']\n        output_path = task_func(text, filename)\n        with open(output_path, 'r') as file:\n            saved_words = file.read().splitlines()\n        self.assertEqual(saved_words, expected_words)\n        self.assertTrue(os.path.exists(output_path))\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": true,
+      "seed": 20261122,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 571,
+        "output_tokens": 166,
+        "total_tokens": 737
+      }
+    },
+    {
+      "bucket": "None",
+      "code": "from nltk.tokenize import RegexpTokenizer\nfrom string import punctuation\nimport os\n\ndef task_func(text, output_filename):\n    # Define a regex pattern to match words starting with '$' and followed by at least one alphanumeric character\n    pattern = r'\\$[\\w]+'\n    # Find all matches in the text\n    matches = RegexpTokenizer(pattern).tokenize(text)\n    # Filter out words that consist only of punctuation (e.g., '$$')\n    filtered_matches = [word for word in matches if not all(char in punctuation for char in word)]\n    # Write the filtered matches to the specified output file\n    with open(output_filename, 'w') as file:\n        for word in filtered_matches:\n            file.write(word + '\\n')\n    # Return the path to the output file\n    return output_filename\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "None",
+        "duration_s": 2.816,
+        "exception": "",
+        "output_tail": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.002s\n\nOK",
+        "pass": true,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nExtract words starting with the '$' character from the input text and save them to a specified file, omitting words that consist only of punctuation.\n\n## Starting file (solution.py)\n\n```python\nfrom nltk.tokenize import RegexpTokenizer\n\nfrom string import punctuation\n\nimport os\n\ndef task_func(text, output_filename):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport os\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.filenames = []\n        for i in range(1, 7):\n            self.filenames.append('task_func_test_output_' + str(i) + '.txt')\n\n    def tearDown(self):\n        for filename in self.filenames:\n            if os.path.exists(filename):\n                os.remove(filename)\n\n    def test_case_1(self):\n        text = '$abc def $efg $hij klm $ $abc $abc $hij $hij'\n        filename = self.filenames[0]\n        expected_words = ['$abc', '$efg', '$hij', '$abc', '$abc', '$hij', '$hij']\n        output_path = task_func(text, filename)\n        with open(output_path, 'r') as file:\n            saved_words = file.read().splitlines()\n        self.assertEqual(saved_words, expected_words)\n        self.assertTrue(os.path.exists(output_path))\n\n    def test_case_2(self):\n        text = 'There are no dollar words here.'\n        filename = self.filenames[1]\n        expected_words = []\n        output_path = task_func(text, filename)\n        with open(output_path, 'r') as file:\n            saved_words = file.read().splitlines()\n        self.assertEqual(saved_words, expected_words)\n        self.assertTrue(os.path.exists(output_path))\n\n    def test_case_3(self):\n        text = '$$$$ $$ $$$$ $abc$ $def'\n        filename = self.filenames[2]\n        expected_words = ['$abc', '$def']\n        output_path = task_func(text, filename)\n        with open(output_path, 'r') as file:\n            saved_words = file.read().splitlines()\n        self.assertEqual(saved_words, expected_words)\n        self.assertTrue(os.path.exists(output_path))\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": true,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 571,
+        "output_tokens": 174,
+        "total_tokens": 745
+      }
+    },
+    {
+      "bucket": "None",
+      "code": "from nltk.tokenize import RegexpTokenizer\nfrom string import punctuation\nimport os\n\ndef task_func(text, output_filename):\n    # Define a regex pattern to match words starting with '$' and followed by at least one alphanumeric character\n    pattern = r'\\$[\\w]+'\n    # Use the RegexpTokenizer to extract words matching the pattern\n    tokenizer = RegexpTokenizer(pattern)\n    words = tokenizer.tokenize(text)\n    \n    # Filter out words that consist only of punctuation (e.g., '$$')\n    filtered_words = [word for word in words if not all(char in punctuation for char in word)]\n    \n    # Write the filtered words to the specified output file\n    with open(output_filename, 'w') as file:\n        for word in filtered_words:\n            file.write(word + '\\n')\n    \n    return output_filename\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "None",
+        "duration_s": 2.911,
+        "exception": "",
+        "output_tail": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.002s\n\nOK",
+        "pass": true,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nExtract words starting with the '$' character from the input text and save them to a specified file, omitting words that consist only of punctuation.\n\n## Starting file (solution.py)\n\n```python\nfrom nltk.tokenize import RegexpTokenizer\n\nfrom string import punctuation\n\nimport os\n\ndef task_func(text, output_filename):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport os\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.filenames = []\n        for i in range(1, 7):\n            self.filenames.append('task_func_test_output_' + str(i) + '.txt')\n\n    def tearDown(self):\n        for filename in self.filenames:\n            if os.path.exists(filename):\n                os.remove(filename)\n\n    def test_case_1(self):\n        text = '$abc def $efg $hij klm $ $abc $abc $hij $hij'\n        filename = self.filenames[0]\n        expected_words = ['$abc', '$efg', '$hij', '$abc', '$abc', '$hij', '$hij']\n        output_path = task_func(text, filename)\n        with open(output_path, 'r') as file:\n            saved_words = file.read().splitlines()\n        self.assertEqual(saved_words, expected_words)\n        self.assertTrue(os.path.exists(output_path))\n\n    def test_case_2(self):\n        text = 'There are no dollar words here.'\n        filename = self.filenames[1]\n        expected_words = []\n        output_path = task_func(text, filename)\n        with open(output_path, 'r') as file:\n            saved_words = file.read().splitlines()\n        self.assertEqual(saved_words, expected_words)\n        self.assertTrue(os.path.exists(output_path))\n\n    def test_case_3(self):\n        text = '$$$$ $$ $$$$ $abc$ $def'\n        filename = self.filenames[2]\n        expected_words = ['$abc', '$def']\n        output_path = task_func(text, filename)\n        with open(output_path, 'r') as file:\n            saved_words = file.read().splitlines()\n        self.assertEqual(saved_words, expected_words)\n        self.assertTrue(os.path.exists(output_path))\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": true,
+      "seed": 20261124,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 571,
+        "output_tokens": 175,
+        "total_tokens": 746
+      }
+    },
+    {
+      "bucket": "None",
+      "code": "from nltk.tokenize import RegexpTokenizer\n\nfrom string import punctuation\n\nimport os\n\ndef task_func(text, output_filename):\n    # Define a regex pattern to match words starting with '$' and followed by at least one alphanumeric character\n    pattern = r'\\$[\\w]+'\n    # Use the RegexpTokenizer to extract words matching the pattern\n    tokenizer = RegexpTokenizer(pattern)\n    words = tokenizer.tokenize(text)\n    \n    # Filter out words that consist only of punctuation (e.g., '$$' or '$!')\n    filtered_words = []\n    for word in words:\n        if word not in punctuation:\n            filtered_words.append(word)\n    \n    # Write the filtered words to the specified output file\n    with open(output_filename, 'w') as file:\n        for word in filtered_words:\n            file.write(word + '\\n')\n    \n    return output_filename\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "None",
+        "duration_s": 2.827,
+        "exception": "",
+        "output_tail": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.002s\n\nOK",
+        "pass": true,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nExtract words starting with the '$' character from the input text and save them to a specified file, omitting words that consist only of punctuation.\n\n## Starting file (solution.py)\n\n```python\nfrom nltk.tokenize import RegexpTokenizer\n\nfrom string import punctuation\n\nimport os\n\ndef task_func(text, output_filename):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport os\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.filenames = []\n        for i in range(1, 7):\n            self.filenames.append('task_func_test_output_' + str(i) + '.txt')\n\n    def tearDown(self):\n        for filename in self.filenames:\n            if os.path.exists(filename):\n                os.remove(filename)\n\n    def test_case_1(self):\n        text = '$abc def $efg $hij klm $ $abc $abc $hij $hij'\n        filename = self.filenames[0]\n        expected_words = ['$abc', '$efg', '$hij', '$abc', '$abc', '$hij', '$hij']\n        output_path = task_func(text, filename)\n        with open(output_path, 'r') as file:\n            saved_words = file.read().splitlines()\n        self.assertEqual(saved_words, expected_words)\n        self.assertTrue(os.path.exists(output_path))\n\n    def test_case_2(self):\n        text = 'There are no dollar words here.'\n        filename = self.filenames[1]\n        expected_words = []\n        output_path = task_func(text, filename)\n        with open(output_path, 'r') as file:\n            saved_words = file.read().splitlines()\n        self.assertEqual(saved_words, expected_words)\n        self.assertTrue(os.path.exists(output_path))\n\n    def test_case_3(self):\n        text = '$$$$ $$ $$$$ $abc$ $def'\n        filename = self.filenames[2]\n        expected_words = ['$abc', '$def']\n        output_path = task_func(text, filename)\n        with open(output_path, 'r') as file:\n            saved_words = file.read().splitlines()\n        self.assertEqual(saved_words, expected_words)\n        self.assertTrue(os.path.exists(output_path))\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": true,
+      "seed": 20261125,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 571,
+        "output_tokens": 181,
+        "total_tokens": 752
+      }
+    }
+  ],
+  "seed": 20261121,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/1095",
+  "started_at": "2026-11-23T13:56:19+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/1095",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 5,
+    "input_tokens": 2855,
+    "output_tokens": 908,
+    "total_tokens": 3763
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 5
+}

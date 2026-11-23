@@ -1,0 +1,178 @@
+{
+  "api_error": "",
+  "bucket": "None",
+  "condition": "H0",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T13:14:18+00:00",
+  "detector_questions": [],
+  "duration_s": 1.538,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "None",
+    "duration_s": 0.072,
+    "exception": "",
+    "output_tail": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.003s\n\nOK",
+    "pass": true,
+    "timed_out": false
+  },
+  "final_solution": "import os\nimport shutil\n\ndef task_func(src_folder, backup_dir):\n    # Check if source folder exists\n    if not os.path.exists(src_folder):\n        raise ValueError(\"Source folder does not exist.\")\n\n    # Check if backup directory exists, if not create it\n    if not os.path.exists(backup_dir):\n        os.makedirs(backup_dir)\n\n    # Create a backup folder inside the backup directory\n    backup_folder = os.path.join(backup_dir, os.path.basename(src_folder))\n    shutil.copytree(src_folder, backup_folder)\n\n    # Remove the source folder\n    shutil.rmtree(src_folder)\n\n    # Return True to indicate success\n    return True",
+  "follow_up_questions": [],
+  "hidden_duration_s": 0.072,
+  "hidden_output_tail": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.003s\n\nOK",
+  "llm_calls": [
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import os\\nimport shutil\\n\\ndef task_func(src_folder, backup_dir):\\n    # Check if source folder exists\\n    if not os.path.exists(src_folder):\\n        raise ValueError(\\\"Source folder does not exist.\\\")\\n\\n    # Check if backup directory exists, if not create it\\n    if not os.path.exists(backup_dir):\\n        os.makedirs(backup_dir)\\n\\n    # Create a backup folder inside the backup directory\\n    backup_folder = os.path.join(backup_dir, os.path.basename(src_folder))\\n    shutil.copytree(src_folder, backup_folder)\\n\\n    # Remove the source folder\\n    shutil.rmtree(src_folder)\\n\\n    # Return True to indicate success\\n    return True\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 756,
+        "output_tokens": 173,
+        "total_tokens": 929
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 955,
+        "output_tokens": 14,
+        "total_tokens": 969
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 988,
+        "output_tokens": 7,
+        "total_tokens": 995
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. You cannot ask the stakeholder questions in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Wish\n\nBacks up the source folder to the backup directory and then removes the source folder.\n\n## Starting file (solution.py)\n\n```python\nimport os\n\nimport shutil\n\ndef task_func(src_folder, backup_dir):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport tempfile\nimport doctest\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.src_folder = tempfile.mkdtemp()\n        self.backup_dir = tempfile.mkdtemp()\n        with open(os.path.join(self.src_folder, 'sample.txt'), 'w') as f:\n            f.write('This is a sample file.')\n\n    def tearDown(self):\n        if os.path.exists(self.src_folder):\n            shutil.rmtree(self.src_folder)\n        if os.path.exists(self.backup_dir):\n            shutil.rmtree(self.backup_dir)\n\n    def test_case_1(self):\n        result = task_func(self.src_folder, self.backup_dir)\n        self.assertTrue(result)\n        self.assertFalse(os.path.exists(self.src_folder))\n        self.assertTrue(os.path.exists(os.path.join(self.backup_dir, os.path.basename(self.src_folder), 'sample.txt')))\n\n    def test_case_2(self):\n        shutil.rmtree(self.src_folder)\n        with self.assertRaises(ValueError):\n            task_func(self.src_folder, self.backup_dir)\n\n    def test_case_3(self):\n        os.rmdir(self.backup_dir)\n        result = task_func(self.src_folder, self.backup_dir)\n        self.assertTrue(result)\n        self.assertFalse(os.path.exists(self.src_folder))\n        self.assertTrue(os.path.exists(os.path.join(self.backup_dir, os.path.basename(self.src_folder), 'sample.txt')))\n```\n\nImplement `solution.py` from the wish, then run the visible tests.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import os\\nimport shutil\\n\\ndef task_func(src_folder, backup_dir):\\n    # Check if source folder exists\\n    if not os.path.exists(src_folder):\\n        raise ValueError(\\\"Source folder does not exist.\\\")\\n\\n    # Check if backup directory exists, if not create it\\n    if not os.path.exists(backup_dir):\\n        os.makedirs(backup_dir)\\n\\n    # Create a backup folder inside the backup directory\\n    backup_folder = os.path.join(backup_dir, os.path.basename(src_folder))\\n    shutil.copytree(src_folder, backup_folder)\\n\\n    # Remove the source folder\\n    shutil.rmtree(src_folder)\\n\\n    # Return True to indicate success\\n    return True\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 622 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests passed.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant"
+    }
+  ],
+  "pass": true,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 1,
+  "seed": 20261122,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/344",
+  "stakeholder_answers": [],
+  "started_at": "2026-11-23T13:14:17+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/344",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "import os\nimport shutil\n\ndef task_func(src_folder, backup_dir):\n    # Check if source folder exists\n    if not os.path.exists(src_folder):\n        raise ValueError(\"Source folder does not exist.\")\n\n    # Check if backup directory exists, if not create it\n    if not os.path.exists(backup_dir):\n        os.makedirs(backup_dir)\n\n    # Create a backup folder inside the backup directory\n    backup_folder = os.path.join(backup_dir, os.path.basename(src_folder))\n    shutil.copytree(src_folder, backup_folder)\n\n    # Remove the source folder\n    shutil.rmtree(src_folder)\n\n    # Return True to indicate success\n    return True",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 622 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests passed."
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 0.078,
+        "exception": "None",
+        "ok": true,
+        "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.002s\n\nOK"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 3,
+    "input_tokens": 2699,
+    "output_tokens": 194,
+    "total_tokens": 2893
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 3
+}

@@ -1,0 +1,12 @@
+# R2b corrected Colab run
+- commit: 6b236eb71d2aba4d00b5ad30b3a7412ae5f23b08
+- run id: r2b-pilot
+- visible tests: inputs_only
+- levels parsing: {'visible_tests': 'inputs_only'}
+- transport: text
+- pilot complete: True
+- units: 2700/2700
+- held-out used: 0
+- GPU: NVIDIA A100-SXM4-40GB
+- GPU-hours (shards): 2.902
+- paid API cost: $0.00

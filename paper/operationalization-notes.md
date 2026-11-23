@@ -137,3 +137,19 @@ Two boundaries matter when reading the corrected run:
   methods, so its `examples` stay visible in the corrected protocol too. The corrected
   protocol is not a full examples deletion.
 
+
+## Update: corrected run integrated (R6)
+
+The R2b A100 run is complete and integrated under
+[`results/runs/r2b-pilot/`](../../results/runs/r2b-pilot/): 2,700/2,700 units, no held-out
+task, 2.902 GPU-hours, A100-SXM4-40GB. Issue 1 is fixed by the whole-prose intent (a later
+prose requirement stays in L3), and issue 2 is fixed for HumanEval+/MBPP+ by `inputs_only`
+visible tests; the BigCodeBench assertion-based residual remains and is stated in both papers.
+The corrected headline result changes the reading: B1 62.3% vs H0 52.0% (+10.3 pp
+[+3.0, +17.7]); H3 53.7% beats H2 44.3% (+9.3 pp [+1.7, +17.0]) and is the only condition
+that recovers any gap at the point estimate (recovery 0.16), though H3−H0 (+1.7 pp
+[−5.7, +9.0]) and H3−H4 (+2.0 pp [−6.3, +9.7]) cross zero; H2, DISCARD and H1 are below H0.
+The detector refit now has 85 error-behaviour positives and macro-F1 0.792 (constraints
+AUROC 0.952, error behaviour 0.744). The "Submitted-milestone edits verified" list above
+describes the R2 revision preserved at `paper/milestone/r2/`, not the current milestone; the
+submitted milestone itself is still byte-identical.

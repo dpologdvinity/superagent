@@ -1,0 +1,178 @@
+{
+  "api_error": "",
+  "bucket": "None",
+  "condition": "H4",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T15:16:05+00:00",
+  "detector_questions": [],
+  "duration_s": 10.037,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "None",
+    "duration_s": 4.057,
+    "exception": "",
+    "output_tail": ".....\n----------------------------------------------------------------------\nRan 5 tests in 1.096s\n\nOK",
+    "pass": true,
+    "timed_out": false
+  },
+  "final_solution": "import matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\nimport seaborn as sns\n\nPRODUCTS = ['Product' + str(i) for i in range(1, 6)]\nMONTHS = ['Month' + str(i) for i in range(1, 13)]\n\ndef task_func():\n    # Create a DataFrame with monthly sales data\n    np.random.seed(42)\n    sales_data = np.random.randint(100, 1000, size=(12, 5))\n    df = pd.DataFrame(sales_data, index=MONTHS, columns=PRODUCTS)\n\n    # Plot total sales per product\n    plt.figure(figsize=(12, 6))\n    sns.lineplot(data=df)\n    plt.title('Total Sales by Product')\n    plt.xlabel('Month')\n    plt.ylabel('Sales')\n    plt.show()\n\n    # Plot sales heatmap\n    plt.figure(figsize=(10, 8))\n    sns.heatmap(df, annot=True, fmt='d', cmap='viridis')\n    plt.title('Sales Heatmap')\n    plt.xlabel('Product')\n    plt.ylabel('Month')\n    plt.show()\n\n    return df",
+  "follow_up_questions": [],
+  "hidden_duration_s": 4.057,
+  "hidden_output_tail": ".....\n----------------------------------------------------------------------\nRan 5 tests in 1.096s\n\nOK",
+  "llm_calls": [
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import matplotlib.pyplot as plt\\nimport numpy as np\\nimport pandas as pd\\nimport seaborn as sns\\n\\nPRODUCTS = ['Product' + str(i) for i in range(1, 6)]\\nMONTHS = ['Month' + str(i) for i in range(1, 13)]\\n\\ndef task_func():\\n    # Create a DataFrame with monthly sales data\\n    np.random.seed(42)\\n    sales_data = np.random.randint(100, 1000, size=(12, 5))\\n    df = pd.DataFrame(sales_data, index=MONTHS, columns=PRODUCTS)\\n\\n    # Plot total sales per product\\n    plt.figure(figsize=(12, 6))\\n    sns.lineplot(data=df)\\n    plt.title('Total Sales by Product')\\n    plt.xlabel('Month')\\n    plt.ylabel('Sales')\\n    plt.show()\\n\\n    # Plot sales heatmap\\n    plt.figure(figsize=(10, 8))\\n    sns.heatmap(df, annot=True, fmt='d', cmap='viridis')\\n    plt.title('Sales Heatmap')\\n    plt.xlabel('Product')\\n    plt.ylabel('Month')\\n    plt.show()\\n\\n    return df\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 3813,
+        "output_tokens": 310,
+        "total_tokens": 4123
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 4140,
+        "output_tokens": 16,
+        "total_tokens": 4156
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 4173,
+        "output_tokens": 7,
+        "total_tokens": 4180
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. You cannot ask the stakeholder questions in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Wish\n\nGenerate a DataFrame representing monthly sales of products and visualize the total sales by creating a line plot showing total sales per product and a heatmap visualizing sales figures across products and months.\n\n## Nearby functions in the codebase (context, not your task)\n\n### `task_func`\n\n```python\nimport matplotlib.pyplot as plt\nfrom scipy.optimize import curve_fit\n\n\ndef task_func(X, Y):\n    \"\"\"\n    Adjust a quadratic function to the given data (X, Y) and plot the data along with the fit.\n\n    Parameters:\n    - X (list or numpy.array): The X data points.\n    - Y (list or numpy.array): The Y data points.\n\n    Returns:\n    tuple:\n    - list: The optimized parameters of the quadratic function (a, b, c).\n    - matplotlib.axes.Axes: The plot showing the scatter data points and the quadratic fit.\n\n    Requirements:\n    - matplotlib.pyplot\n    - scipy.optimize.curve_fit\n\n    Example:\n    >>> import numpy as np\n    >>> np.random.seed(42)\n    >>> X = np.linspace(-10, 10, 100)\n    >>> Y = 3*X**2 + 2*X + 1 + np.random.normal(0, 20, len(X))\n    >>> params, ax = task_func(X, Y)\n    >>> params\n    [3.0366511660907975, 2.1379326607136035, -2.3233168384548284]\n    >>> type(ax)\n    <class 'matplotlib.axes._axes.Axes'>\n    \"\"\"\n\n    def func(x, a, b, c):\n        return a * x ** 2 + b * x + c\n\n    popt, pcov = curve_fit(func, X, Y)\n\n    fig, ax = plt.subplots()\n    ax.scatter(X, Y)\n    ax.plot(X, func(X, *popt), \"r-\")\n\n    return list(popt), ax\n```\n\n```python\n>>> import numpy as np\n>>> np.random.seed(42)\n>>> X = np.linspace(-10, 10, 100)\n>>> Y = 3*X**2 + 2*X + 1 + np.random.normal(0, 20, len(X))\n>>> params, ax = task_func(X, Y)\n>>> params\n[3.0366511660907975, 2.1379326607136035, -2.3233168384548284]\n>>> type(ax)\n<class 'matplotlib.axes._axes.Axes'>\n```\n\n### `task_func`\n\n```python\nfrom datetime import datetime\nimport pandas as pd\nimport numpy as np\n\n\ndef task_func(start_time, end_time, step, amplitude, period, seed=0):\n    \"\"\"\n    Generate a time series with a given seasonality from the start UTC time to the end UTC time\n    with a given step, and plot the time series with the seasonality.\n\n    Parameters:\n    - start_time (int): The start epoch time in milliseconds.\n    = end_time (int): The end epoch time in milliseconds.\n    - step (int): The step in milliseconds between each data point. Must be at least 1.\n    - amplitude (float): The amplitude of the seasonality.\n    - period (int): The period of the seasonality in milliseconds. Must be at least 0.\n    - seed (int): Random seed for reproducibility. Defaults to 0.\n\n    Returns:\n    matplotlib.pyplot.Axes: A plot of the generated 'Time Series with Seasonality',\n              with 'Timestamp' on x-axis and 'Value' on y-axis.\n\n    Requirements:\n    - datetime.datetime\n    - pandas\n    - numpy\n\n    Example:\n    >>> ax = task_func(0, 10000, 100, 1, 1000)\n    >>> type(ax)\n    <class 'matplotlib.axes._axes.Axes'>\n    >>> ax.get_xticklabels()\n    [Text(-20.0, 0, '1970-01-01 10:00:08.000000'), Text(0.0, 0, '1970-01-01 10:00:00.000000'), Text(20.0, 0, '1970-01-01 10:00:02.000000'), Text(40.0, 0, '1970-01-01 10:00:04.000000'), Text(60.0, 0, '1970-01-01 10:00:06.000000'), Text(80.0, 0, '1970-01-01 10:00:08.000000'), Text(100.0, 0, ''), Text(120.0, 0, '')]\n    \"\"\"\n    np.random.seed(seed)\n\n    if period <= 0 or step < 1:\n        raise ValueError(\"Invalid input values\")\n\n    COLUMNS = [\"Timestamp\", \"Value\"]\n\n    timestamps = np.arange(start_time, end_time, step)\n    df = pd.DataFrame(columns=COLUMNS)\n\n    if amplitude == 0:\n        values = [0] * len(timestamps)\n    else:\n        values = np.random.normal(size=len(timestamps))\n\n    data = []\n    for i, ts in enumerate(timestamps):\n        dt = datetime.utcfromtimestamp(ts / 1000).strftime(\"%Y-%m-%d %H:%M:%S.%f\")\n        value = values[i] + amplitude * np.sin(2 * np.pi * ts / period)\n        data.append([dt, value])\n\n    df = pd.DataFrame(data, columns=COLUMNS)\n\n    ax = df.plot(x=\"Timestamp\", y=\"Value\", title=\"Time Series with Seasonality\")\n    ax.set_ylabel(\"Value\")\n    return ax\n```\n\n```python\n>>> ax = task_func(0, 10000, 100, 1, 1000)\n>>> type(ax)\n<class 'matplotlib.axes._axes.Axes'>\n>>> ax.get_xticklabels()\n[Text(-20.0, 0, '1970-01-01 10:00:08.000000'), Text(0.0, 0, '1970-01-01 10:00:00.000000'), Text(20.0, 0, '1970-01-01 10:00:02.000000'), Text(40.0, 0, '1970-01-01 10:00:04.000000'), Text(60.0, 0, '1970-01-01 10:00:06.000000'), Text(80.0, 0, '1970-01-01 10:00:08.000000'), Text(100.0, 0, ''), Text(120.0, 0, '')]\n```\n\n### `task_func`\n\n```python\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    \"\"\"\n    Analyze and visualize statistical properties of a specified weather data column.\n\n    This function calculates the sum, mean, minimum, and maximum values of a specified column in the given data.\n    It also generates a histogram plot of the data in the column. The dataset is expected to be a list of weather\n    observations, where each observation includes date, temperature, humidity, wind speed, and precipitation values.\n    If the provided data list is empty, resulting in an empty DataFrame, the function handles it by setting:\n    - The 'mean' value to np.nan.\n    - The 'min' value to np.inf.\n    - The 'max' value to -np.inf.\n\n    Parameters:\n    column (str): The column to analyze. Valid columns include 'Temperature', 'Humidity', 'Wind Speed', and 'Precipitation'.\n    data (list of lists): The weather data where each inner list contains the following format:\n                          [Date (datetime object), Temperature (int), Humidity (int), Wind Speed (int), Precipitation (float)]\n\n    Returns:\n    - result (dict): A dictionary containing:\n        - 'sum': Sum of the values in the specified column.\n        - 'mean': Mean of the values in the specified column.\n        - 'min': Minimum value in the specified column.\n        - 'max': Maximum value in the specified column.\n        - 'plot': A matplotlib BarContainer object of the histogram plot for the specified column.\n\n    Requirements:\n    - pandas\n    - numpy\n    - matplotlib.pyplot\n\n    Example:\n    >>> data = [[datetime(2022, 1, 1), -5, 80, 10, 0], [datetime(2022, 1, 3), -2, 83, 15, 0]]\n    >>> result = task_func('Temperature', data)\n    >>> result['sum']\n    -7\n    >>> type(result['plot'])\n    <class 'matplotlib.container.BarContainer'>\n    \"\"\"\n    COLUMNS = [\"Date\", \"Temperature\", \"Humidity\", \"Wind Speed\", \"Precipitation\"]\n    df = pd.DataFrame(data, columns=COLUMNS)\n    column_data = df[column]\n\n    result = {\n        \"sum\": np.sum(column_data),\n        \"mean\": np.nan if df.empty else np.mean(column_data),\n        \"min\": np.inf if df.empty else np.min(column_data),\n        \"max\": -np.inf if df.empty else np.max(column_data),\n    }\n\n    _, _, ax = plt.hist(column_data)\n    plt.title(f\"Histogram of {column}\")\n\n    result[\"plot\"] = ax\n\n    return result\n```\n\n```python\n>>> data = [[datetime(2022, 1, 1), -5, 80, 10, 0], [datetime(2022, 1, 3), -2, 83, 15, 0]]\n>>> result = task_func('Temperature', data)\n>>> result['sum']\n-7\n>>> type(result['plot'])\n<class 'matplotlib.container.BarContainer'>\n```\n\n### `task_func`\n\n```python\nimport inspect\nimport types\nimport math\n\ndef task_func(f):\n    \"\"\"\n    Analyzes a given function 'f' and returns a dictionary containing its name, the square root of\n    the number of arguments, and the count of lambda functions present in its default values.\n    This function demonstrates introspection of Python functions and the use of mathematical\n    operations on the introspected data.\n\n    Parameters:\n    f (function): The function to inspect.\n\n    Returns:\n    dict: A dictionary containing the function's name, the square root of the number of arguments,\n          and the count of lambda functions in default values.\n\n    Requirements:\n    - inspect\n    - types\n    - math\n\n    Examples:\n    >>> def sample_function(x, y=2): return x + y\n    >>> result = task_func(sample_function)\n    >>> 'sample_function' == result['function_name'] and result['sqrt_args'] == math.sqrt(2)\n    True\n    >>> lambda_func = lambda x: x * 2\n    >>> task_func(lambda_func)['lambda_in_defaults'] == 0\n    True\n    \"\"\"\n    spec = inspect.getfullargspec(f)\n\n    info = {\n        'function_name': f.__name__,\n        'sqrt_args': math.sqrt(len(spec.args)),\n    }\n\n    if spec.defaults:\n        info['lambda_in_defaults'] = sum(1 for d in spec.defaults if isinstance(d, types.LambdaType))\n    else:\n        info['lambda_in_defaults'] = 0\n\n    return info\n```\n\n```python\nExamples:\n>>> def sample_function(x, y=2): return x + y\n>>> result = task_func(sample_function)\n>>> 'sample_function' == result['function_name'] and result['sqrt_args'] == math.sqrt(2)\nTrue\n>>> lambda_func = lambda x: x * 2\n>>> task_func(lambda_func)['lambda_in_defaults'] == 0\nTrue\n```\n\n### `task_func`\n\n```python\nimport rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\n\ndef task_func(directory):\n    \"\"\"\n    Generates RSA public and private keys, encrypts all files in the specified directory using the public key,\n    and saves the encrypted files into a zip file. It returns the public key and the name of the zip file.\n\n    Note: This method directly encrypts file data with RSA, which is not recommended for large files or\n    production use. Typically, RSA is used to encrypt a symmetric key (like AES), which is then used to\n    encrypt the actual data.\n\n    Parameters:\n    directory (str): The directory containing the files to be encrypted.\n\n    Returns:\n    rsa.PublicKey: The RSA public key.\n    str: The filename of the zip file containing the encrypted files.\n\n    Requirements:\n    - rsa\n    - os\n    - zipfile\n    - base64.b64encode\n\n    Examples:\n    >>> pub_key, zipfile_name = task_func('./')\n    >>> isinstance(pub_key, rsa.PublicKey)\n    'True'\n    >>> isinstance(zipfile_name, str)\n    'True'\n    \"\"\"\n    (pub_key, priv_key) = rsa.newkeys(512)\n    zipfile_name = 'encrypted_files.zip'\n\n    with zipfile.ZipFile(zipfile_name, 'w') as zipf:\n        for filename in os.listdir(directory):\n            filepath = os.path.join(directory, filename)\n            if os.path.isfile(filepath):\n                with open(filepath, 'rb') as f:\n                    data = f.read()\n                    encrypted_data = rsa.encrypt(data, pub_key)\n                    zipf.writestr(filename, b64encode(encrypted_data).decode('utf-8'))\n\n    return pub_key, zipfile_name\n```\n\n```python\nExamples:\n>>> pub_key, zipfile_name = task_func('./')\n>>> isinstance(pub_key, rsa.PublicKey)\n'True'\n>>> isinstance(zipfile_name, str)\n'True'\n```\n\n## Starting file (solution.py)\n\n```python\nimport matplotlib.pyplot as plt\n\nimport numpy as np\n\nimport pandas as pd\n\nimport seaborn as sns\n\nPRODUCTS = ['Product' + str(i) for i in range(1, 6)]\n\nMONTHS = ['Month' + str(i) for i in range(1, 13)]\n\ndef task_func():\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\n\nclass TestCases(unittest.TestCase):\n\n    def test_dataframe_shape(self):\n        \"\"\"Test if the DataFrame has the correct shape.\"\"\"\n        df = task_func()\n        self.assertEqual(df.shape, (12, 5))\n\n    def test_dataframe_columns(self):\n        \"\"\"Test if the DataFrame has the correct column names.\"\"\"\n        df = task_func()\n        expected_columns = PRODUCTS\n        self.assertListEqual(list(df.columns), expected_columns)\n\n    def test_dataframe_index(self):\n        \"\"\"Test if the DataFrame has the correct index.\"\"\"\n        df = task_func()\n        expected_index = MONTHS\n        self.assertListEqual(list(df.index), expected_index)\n```\n\nImplement `solution.py` from the wish, then run the visible tests.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import matplotlib.pyplot as plt\\nimport numpy as np\\nimport pandas as pd\\nimport seaborn as sns\\n\\nPRODUCTS = ['Product' + str(i) for i in range(1, 6)]\\nMONTHS = ['Month' + str(i) for i in range(1, 13)]\\n\\ndef task_func():\\n    # Create a DataFrame with monthly sales data\\n    np.random.seed(42)\\n    sales_data = np.random.randint(100, 1000, size=(12, 5))\\n    df = pd.DataFrame(sales_data, index=MONTHS, columns=PRODUCTS)\\n\\n    # Plot total sales per product\\n    plt.figure(figsize=(12, 6))\\n    sns.lineplot(data=df)\\n    plt.title('Total Sales by Product')\\n    plt.xlabel('Month')\\n    plt.ylabel('Sales')\\n    plt.show()\\n\\n    # Plot sales heatmap\\n    plt.figure(figsize=(10, 8))\\n    sns.heatmap(df, annot=True, fmt='d', cmap='viridis')\\n    plt.title('Sales Heatmap')\\n    plt.xlabel('Product')\\n    plt.ylabel('Month')\\n    plt.show()\\n\\n    return df\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 835 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests passed.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant"
+    }
+  ],
+  "pass": true,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 2,
+  "seed": 20261123,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/640",
+  "stakeholder_answers": [],
+  "started_at": "2026-11-23T15:15:55+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/640",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "import matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\nimport seaborn as sns\n\nPRODUCTS = ['Product' + str(i) for i in range(1, 6)]\nMONTHS = ['Month' + str(i) for i in range(1, 13)]\n\ndef task_func():\n    # Create a DataFrame with monthly sales data\n    np.random.seed(42)\n    sales_data = np.random.randint(100, 1000, size=(12, 5))\n    df = pd.DataFrame(sales_data, index=MONTHS, columns=PRODUCTS)\n\n    # Plot total sales per product\n    plt.figure(figsize=(12, 6))\n    sns.lineplot(data=df)\n    plt.title('Total Sales by Product')\n    plt.xlabel('Month')\n    plt.ylabel('Sales')\n    plt.show()\n\n    # Plot sales heatmap\n    plt.figure(figsize=(10, 8))\n    sns.heatmap(df, annot=True, fmt='d', cmap='viridis')\n    plt.title('Sales Heatmap')\n    plt.xlabel('Product')\n    plt.ylabel('Month')\n    plt.show()\n\n    return df",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 835 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests passed."
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 3.56,
+        "exception": "None",
+        "ok": true,
+        "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.680s\n\nOK"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 3,
+    "input_tokens": 12126,
+    "output_tokens": 333,
+    "total_tokens": 12459
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 3
+}

@@ -1,0 +1,178 @@
+{
+  "api_error": "",
+  "bucket": "AttributeError",
+  "condition": "H0",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T13:14:59+00:00",
+  "detector_questions": [],
+  "duration_s": 1.746,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AttributeError",
+    "duration_s": 0.058,
+    "exception": "AttributeError",
+    "output_tail": "......E..\n======================================================================\nERROR: test_non_function_input (hidden_test.TestCases.test_non_function_input)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-wru1hce5/hidden_test.py\", line 42, in test_non_function_input\n    task_func(\"This is not a function\")\n  File \"/tmp/wish-eval-wru1hce5/solution.py\", line 7, in task_func\n    function_name = f.__name__\n                    ^^^^^^^^^^\nAttributeError: 'str' object has no attribute '__name__'. Did you mean: '__ne__'?\n\n----------------------------------------------------------------------\nRan 9 tests in 0.002s\n\nFAILED (errors=1)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import inspect\nimport types\nimport math\n\ndef task_func(f):\n    # Get the function name\n    function_name = f.__name__\n    \n    # Get the number of arguments\n    signature = inspect.signature(f)\n    num_args = len(signature.parameters)\n    sqrt_args = math.sqrt(num_args) if num_args > 0 else 0\n    \n    # Count lambda functions in default values\n    lambda_in_defaults = 0\n    for param in signature.parameters.values():\n        default = param.default\n        if isinstance(default, types.LambdaType):\n            lambda_in_defaults += 1\n    \n    return {\n        'function_name': function_name,\n        'sqrt_args': sqrt_args,\n        'lambda_in_defaults': lambda_in_defaults\n    }",
+  "follow_up_questions": [],
+  "hidden_duration_s": 0.058,
+  "hidden_output_tail": "......E..\n======================================================================\nERROR: test_non_function_input (hidden_test.TestCases.test_non_function_input)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-wru1hce5/hidden_test.py\", line 42, in test_non_function_input\n    task_func(\"This is not a function\")\n  File \"/tmp/wish-eval-wru1hce5/solution.py\", line 7, in task_func\n    function_name = f.__name__\n                    ^^^^^^^^^^\nAttributeError: 'str' object has no attribute '__name__'. Did you mean: '__ne__'?\n\n----------------------------------------------------------------------\nRan 9 tests in 0.002s\n\nFAILED (errors=1)",
+  "llm_calls": [
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import inspect\\nimport types\\nimport math\\n\\ndef task_func(f):\\n    # Get the function name\\n    function_name = f.__name__\\n    \\n    # Get the number of arguments\\n    signature = inspect.signature(f)\\n    num_args = len(signature.parameters)\\n    sqrt_args = math.sqrt(num_args) if num_args > 0 else 0\\n    \\n    # Count lambda functions in default values\\n    lambda_in_defaults = 0\\n    for param in signature.parameters.values():\\n        default = param.default\\n        if isinstance(default, types.LambdaType):\\n            lambda_in_defaults += 1\\n    \\n    return {\\n        'function_name': function_name,\\n        'sqrt_args': sqrt_args,\\n        'lambda_in_defaults': lambda_in_defaults\\n    }\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 653,
+        "output_tokens": 204,
+        "total_tokens": 857
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 874,
+        "output_tokens": 14,
+        "total_tokens": 888
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 907,
+        "output_tokens": 7,
+        "total_tokens": 914
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. You cannot ask the stakeholder questions in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Wish\n\nAnalyze the function 'f' to retrieve its name, compute the square root of the number of its arguments, and count the lambda functions in its default values.\n\n## Starting file (solution.py)\n\n```python\nimport inspect\n\nimport types\n\nimport math\n\ndef task_func(f):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport math\n\nclass TestCases(unittest.TestCase):\n\n    def test_regular_function(self):\n\n        def sample_function(x, y, z=3):\n            pass\n        result = task_func(sample_function)\n        self.assertEqual(result['function_name'], 'sample_function')\n        self.assertEqual(result['sqrt_args'], math.sqrt(3))\n\n    def test_lambda_in_defaults(self):\n\n        def func_with_lambda(x, y=lambda a: a + 2):\n            pass\n        result = task_func(func_with_lambda)\n        self.assertEqual(result['lambda_in_defaults'], 1)\n\n    def test_no_arguments(self):\n\n        def no_arg_func():\n            pass\n        result = task_func(no_arg_func)\n        self.assertEqual(result['sqrt_args'], 0)\n```\n\nImplement `solution.py` from the wish, then run the visible tests.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import inspect\\nimport types\\nimport math\\n\\ndef task_func(f):\\n    # Get the function name\\n    function_name = f.__name__\\n    \\n    # Get the number of arguments\\n    signature = inspect.signature(f)\\n    num_args = len(signature.parameters)\\n    sqrt_args = math.sqrt(num_args) if num_args > 0 else 0\\n    \\n    # Count lambda functions in default values\\n    lambda_in_defaults = 0\\n    for param in signature.parameters.values():\\n        default = param.default\\n        if isinstance(default, types.LambdaType):\\n            lambda_in_defaults += 1\\n    \\n    return {\\n        'function_name': function_name,\\n        'sqrt_args': sqrt_args,\\n        'lambda_in_defaults': lambda_in_defaults\\n    }\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 683 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests passed.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant"
+    }
+  ],
+  "pass": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 1,
+  "seed": 20261122,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/569",
+  "stakeholder_answers": [],
+  "started_at": "2026-11-23T13:14:57+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/569",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "import inspect\nimport types\nimport math\n\ndef task_func(f):\n    # Get the function name\n    function_name = f.__name__\n    \n    # Get the number of arguments\n    signature = inspect.signature(f)\n    num_args = len(signature.parameters)\n    sqrt_args = math.sqrt(num_args) if num_args > 0 else 0\n    \n    # Count lambda functions in default values\n    lambda_in_defaults = 0\n    for param in signature.parameters.values():\n        default = param.default\n        if isinstance(default, types.LambdaType):\n            lambda_in_defaults += 1\n    \n    return {\n        'function_name': function_name,\n        'sqrt_args': sqrt_args,\n        'lambda_in_defaults': lambda_in_defaults\n    }",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 683 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests passed."
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 0.058,
+        "exception": "None",
+        "ok": true,
+        "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 3,
+    "input_tokens": 2434,
+    "output_tokens": 225,
+    "total_tokens": 2659
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 3
+}

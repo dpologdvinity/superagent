@@ -1,0 +1,322 @@
+{
+  "api_error": "",
+  "bucket": "TypeError",
+  "condition": "DISCARD",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T15:48:48+00:00",
+  "detector_questions": [
+    {
+      "answer": null,
+      "category": "constraints",
+      "label": "constraints and edge cases",
+      "question": "What constraints and edge cases should the implementation handle (for example empty inputs, duplicates, ordering, or bounds)?",
+      "score": 0.968178
+    },
+    {
+      "answer": null,
+      "category": "signature_types",
+      "label": "signature and types",
+      "question": "What are the exact function signature, parameter types, and return type?",
+      "score": 0.499004
+    },
+    {
+      "answer": null,
+      "category": "error_behaviour",
+      "label": "error behaviour",
+      "question": "What should happen on invalid or unexpected input — which exceptions should be raised, or what should be returned?",
+      "score": 0.200721
+    }
+  ],
+  "duration_s": 4.434,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "TypeError",
+    "duration_s": 0.286,
+    "exception": "TypeError",
+    "output_tail": "nc(context)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-0m1rrvyo/solution.py\", line 11, in task_func\n    response.raise_for_status()\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/requests/models.py\", line 1156, in raise_for_status\n    if 400 <= self.status_code < 500:\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: '<=' not supported between instances of 'int' and 'NoneType'\n\n======================================================================\nERROR: test_case_2 (hidden_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-0m1rrvyo/hidden_test.py\", line 34, in test_case_2\n    result = task_func(context)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-0m1rrvyo/solution.py\", line 11, in task_func\n    response.raise_for_status()\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/requests/models.py\", line 1156, in raise_for_status\n    if 400 <= self.status_code < 500:\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: '<=' not supported between instances of 'int' and 'NoneType'\n\n======================================================================\nERROR: test_case_4 (hidden_test.TestCases.test_case_4)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-0m1rrvyo/hidden_test.py\", line 44, in test_case_4\n    result = task_func(context)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-0m1rrvyo/solution.py\", line 11, in task_func\n    response.raise_for_status()\n    ^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'str' object has no attribute 'raise_for_status'\n\n======================================================================\nERROR: test_case_5 (hidden_test.TestCases.test_case_5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-0m1rrvyo/hidden_test.py\", line 49, in test_case_5\n    result = task_func(context)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-0m1rrvyo/solution.py\", line 11, in task_func\n    response.raise_for_status()\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/requests/models.py\", line 1156, in raise_for_status\n    if 400 <= self.status_code < 500:\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: '<=' not supported between instances of 'int' and 'NoneType'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.005s\n\nFAILED (errors=4)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import re\nimport json\nimport requests\n\ndef task_func(data_url):\n    if not data_url:\n        return 'Invalid url input'\n\n    try:\n        response = requests.get(data_url)\n        response.raise_for_status()\n        data = response.json()\n    except requests.RequestException as e:\n        return f\"Request failed: {e}\"\n    except json.JSONDecodeError as e:\n        return f\"Invalid JSON format: {e}\"\n\n    if 'names' not in data:\n        return 'Key \"names\" not found in response'\n\n    names = data['names']\n    result = []\n\n    for name in names:\n        # Check if the name is enclosed in square brackets\n        if re.match(r'^\\[.*\\]$', name):\n            continue\n        result.append(name)\n\n    return result",
+  "follow_up_questions": [],
+  "hidden_duration_s": 0.286,
+  "hidden_output_tail": "nc(context)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-0m1rrvyo/solution.py\", line 11, in task_func\n    response.raise_for_status()\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/requests/models.py\", line 1156, in raise_for_status\n    if 400 <= self.status_code < 500:\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: '<=' not supported between instances of 'int' and 'NoneType'\n\n======================================================================\nERROR: test_case_2 (hidden_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-0m1rrvyo/hidden_test.py\", line 34, in test_case_2\n    result = task_func(context)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-0m1rrvyo/solution.py\", line 11, in task_func\n    response.raise_for_status()\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/requests/models.py\", line 1156, in raise_for_status\n    if 400 <= self.status_code < 500:\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: '<=' not supported between instances of 'int' and 'NoneType'\n\n======================================================================\nERROR: test_case_4 (hidden_test.TestCases.test_case_4)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-0m1rrvyo/hidden_test.py\", line 44, in test_case_4\n    result = task_func(context)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-0m1rrvyo/solution.py\", line 11, in task_func\n    response.raise_for_status()\n    ^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'str' object has no attribute 'raise_for_status'\n\n======================================================================\nERROR: test_case_5 (hidden_test.TestCases.test_case_5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-0m1rrvyo/hidden_test.py\", line 49, in test_case_5\n    result = task_func(context)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-0m1rrvyo/solution.py\", line 11, in task_func\n    response.raise_for_status()\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/requests/models.py\", line 1156, in raise_for_status\n    if 400 <= self.status_code < 500:\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: '<=' not supported between instances of 'int' and 'NoneType'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.005s\n\nFAILED (errors=4)",
+  "llm_calls": [
+    {
+      "content": "The implementation should handle the following constraints and edge cases:\n\n- Empty inputs: The function should handle cases where the fetched data is empty or does not contain any names.\n- Duplicates: The function should handle cases where names may appear multiple times and decide whether to include duplicates or not based on the specification.\n- Ordering: The function should maintain the order of names as they appear in the fetched data.\n- Bounds: The function should handle cases where the fetched data may have unexpected or malformed structures.",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "stakeholder",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 317,
+        "output_tokens": 100,
+        "total_tokens": 417
+      }
+    },
+    {
+      "content": "The exact function signature, parameter types, and return type are as follows:\n\n- **Function signature**: `task_func(data_url: str) -> list[str]`  \n- **Parameter types**: `data_url` is a string (`str`).  \n- **Return type**: The function returns a list of strings (`list[str]`).",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "stakeholder",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 309,
+        "output_tokens": 68,
+        "total_tokens": 377
+      }
+    },
+    {
+      "content": "That is not specified.",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "stakeholder",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 316,
+        "output_tokens": 6,
+        "total_tokens": 322
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import re\\nimport json\\nimport requests\\n\\ndef task_func(data_url):\\n    if not data_url:\\n        return 'Invalid url input'\\n\\n    try:\\n        response = requests.get(data_url)\\n        response.raise_for_status()\\n        data = response.json()\\n    except requests.RequestException as e:\\n        return f\\\"Request failed: {e}\\\"\\n    except json.JSONDecodeError as e:\\n        return f\\\"Invalid JSON format: {e}\\\"\\n\\n    if 'names' not in data:\\n        return 'Key \\\"names\\\" not found in response'\\n\\n    names = data['names']\\n    result = []\\n\\n    for name in names:\\n        # Check if the name is enclosed in square brackets\\n        if re.match(r'^\\\\[.*\\\\]$', name):\\n            continue\\n        result.append(name)\\n\\n    return result\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 949,
+        "output_tokens": 215,
+        "total_tokens": 1164
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1190,
+        "output_tokens": 14,
+        "total_tokens": 1204
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "read_error"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1233,
+        "output_tokens": 13,
+        "total_tokens": 1246
+      }
+    },
+    {
+      "content": "The error indicates that `response.raise_for_status()` is failing because `response` is `None`. This suggests that `requests.get(data_url)` is not returning a valid response object. This might be due to the `data_url` not being properly handled in the test setup.\n\nLet's update the implementation to ensure that the `requests.get` call is properly mocked and that the `response` object is correctly handled. We will also ensure that the function returns the expected output format as per the tests.\n\nI will now write the updated `solution.py` file.",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1740,
+        "output_tokens": 114,
+        "total_tokens": 1854
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. The stakeholder is unavailable and no answers are available in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Wish\n\nFetch data from the specified URL and extract all names from the JSON-formatted response that are not enclosed within square brackets.\n\n## Questions asked to the stakeholder\n\nThe stakeholder was asked the following questions, but the answers are unavailable. Code defensively for these categories:\n\n- **constraints**: What constraints and edge cases should the implementation handle (for example empty inputs, duplicates, ordering, or bounds)?\n- **signature_types**: What are the exact function signature, parameter types, and return type?\n- **error_behaviour**: What should happen on invalid or unexpected input — which exceptions should be raised, or what should be returned?\n\n## Starting file (solution.py)\n\n```python\nimport re\n\nimport json\n\nimport requests\n\ndef task_func(data_url):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nfrom unittest.mock import patch\nimport json\nimport requests\n\nclass TestCases(unittest.TestCase):\n\n    def mock_requests_get(url):\n        if url == 'https://api.example.com/data':\n            response = requests.Response()\n            response._content = json.dumps({'names': ['John', 'Doe', 'Alice']}).encode('utf-8')\n            return response\n        elif url == 'https://api.example.com/other_data':\n            response = requests.Response()\n            response._content = json.dumps({'names': ['Bob', '[Adam]', 'Eve']}).encode('utf-8')\n            return response\n        elif url == 'https://api.example.com/data_1':\n            response = requests.Response()\n            response._content = json.dumps({'names': ['Billy']}).encode('utf-8')\n            return response\n        else:\n            return ''\n\n    @patch('requests.get', side_effect=mock_requests_get)\n    def test_case_1(self, mock_get):\n        context = 'https://api.example.com/data'\n        result = task_func(context)\n        self.assertListEqual(result, ['John', 'Doe', 'Alice'])\n\n    @patch('requests.get', side_effect=mock_requests_get)\n    def test_case_2(self, mock_get):\n        context = 'https://api.example.com/other_data'\n        result = task_func(context)\n        self.assertListEqual(result, ['Bob', 'Eve'])\n\n    @patch('requests.get', side_effect=mock_requests_get)\n    def test_case_3(self, mock_get):\n        context = ''\n        result = task_func(context)\n        self.assertEqual(result, 'Invalid url input')\n```\n\nThe questions above were asked, but the answers are unavailable. Implement `solution.py`, coding defensively for those categories.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import re\\nimport json\\nimport requests\\n\\ndef task_func(data_url):\\n    if not data_url:\\n        return 'Invalid url input'\\n\\n    try:\\n        response = requests.get(data_url)\\n        response.raise_for_status()\\n        data = response.json()\\n    except requests.RequestException as e:\\n        return f\\\"Request failed: {e}\\\"\\n    except json.JSONDecodeError as e:\\n        return f\\\"Invalid JSON format: {e}\\\"\\n\\n    if 'names' not in data:\\n        return 'Key \\\"names\\\" not found in response'\\n\\n    names = data['names']\\n    result = []\\n\\n    for name in names:\\n        # Check if the name is enclosed in square brackets\\n        if re.match(r'^\\\\[.*\\\\]$', name):\\n            continue\\n        result.append(name)\\n\\n    return result\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 714 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests failed (TypeError). Call read_error to see the traceback.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "read_error"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "EE.\n======================================================================\nERROR: test_case_1 (visible_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-ltpijw80/visible_test.py\", line 30, in test_case_1\n    result = task_func(context)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-ltpijw80/solution.py\", line 11, in task_func\n    response.raise_for_status()\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/requests/models.py\", line 1156, in raise_for_status\n    if 400 <= self.status_code < 500:\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: '<=' not supported between instances of 'int' and 'NoneType'\n\n======================================================================\nERROR: test_case_2 (visible_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-ltpijw80/visible_test.py\", line 36, in test_case_2\n    result = task_func(context)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-ltpijw80/solution.py\", line 11, in task_func\n    response.raise_for_status()\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/requests/models.py\", line 1156, in raise_for_status\n    if 400 <= self.status_code < 500:\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: '<=' not supported between instances of 'int' and 'NoneType'\n\n----------------------------------------------------------------------\nRan 3 tests in 0.003s\n\nFAILED (errors=2)",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "The error indicates that `response.raise_for_status()` is failing because `response` is `None`. This suggests that `requests.get(data_url)` is not returning a valid response object. This might be due to the `data_url` not being properly handled in the test setup.\n\nLet's update the implementation to ensure that the `requests.get` call is properly mocked and that the `response` object is correctly handled. We will also ensure that the function returns the expected output format as per the tests.\n\nI will now write the updated `solution.py` file.",
+      "role": "assistant"
+    }
+  ],
+  "pass": false,
+  "questions": 3,
+  "run_id": "r2b-pilot",
+  "sample_index": 2,
+  "seed": 20261123,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/189",
+  "stakeholder_answers": [
+    {
+      "answer": null,
+      "category": "constraints"
+    },
+    {
+      "answer": null,
+      "category": "signature_types"
+    },
+    {
+      "answer": null,
+      "category": "error_behaviour"
+    }
+  ],
+  "started_at": "2026-11-23T15:48:44+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/189",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "import re\nimport json\nimport requests\n\ndef task_func(data_url):\n    if not data_url:\n        return 'Invalid url input'\n\n    try:\n        response = requests.get(data_url)\n        response.raise_for_status()\n        data = response.json()\n    except requests.RequestException as e:\n        return f\"Request failed: {e}\"\n    except json.JSONDecodeError as e:\n        return f\"Invalid JSON format: {e}\"\n\n    if 'names' not in data:\n        return 'Key \"names\" not found in response'\n\n    names = data['names']\n    result = []\n\n    for name in names:\n        # Check if the name is enclosed in square brackets\n        if re.match(r'^\\[.*\\]$', name):\n            continue\n        result.append(name)\n\n    return result",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 714 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests failed (TypeError). Call read_error to see the traceback."
+      },
+      {
+        "arguments": {},
+        "name": "read_error",
+        "ok": true,
+        "result": "EE.\n======================================================================\nERROR: test_case_1 (visible_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-ltpijw80/visible_test.py\", line 30, in test_case_1\n    result = task_func(context)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-ltpijw80/solution.py\", line 11, in task_func\n    response.raise_for_status()\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/requests/models.py\", line 1156, in raise_for_status\n    if 400 <= self.status_code < 500:\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: '<=' not supported between instances of 'int' and 'NoneType'\n\n======================================================================\nERROR: test_case_2 (visible_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-ltpijw80/visible_test.py\", line 36, in test_case_2\n    result = task_func(context)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-ltpijw80/solution.py\", line 11, in task_func\n    response.raise_for_status()\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/requests/models.py\", line 1156, in raise_for_status\n    if 400 <= self.status_code < 500:\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: '<=' not supported between instances of 'int' and 'NoneType'\n\n----------------------------------------------------------------------\nRan 3 tests in 0.003s\n\nFAILED (errors=2)"
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 0.287,
+        "exception": "TypeError",
+        "ok": false,
+        "output": "EE.\n======================================================================\nERROR: test_case_1 (visible_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-ltpijw80/visible_test.py\", line 30, in test_case_1\n    result = task_func(context)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-ltpijw80/solution.py\", line 11, in task_func\n    response.raise_for_status()\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/requests/models.py\", line 1156, in raise_for_status\n    if 400 <= self.status_code < 500:\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: '<=' not supported between instances of 'int' and 'NoneType'\n\n======================================================================\nERROR: test_case_2 (visible_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-ltpijw80/visible_test.py\", line 36, in test_case_2\n    result = task_func(context)\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-ltpijw80/solution.py\", line 11, in task_func\n    response.raise_for_status()\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/requests/models.py\", line 1156, in raise_for_status\n    if 400 <= self.status_code < 500:\n       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: '<=' not supported between instances of 'int' and 'NoneType'\n\n----------------------------------------------------------------------\nRan 3 tests in 0.003s\n\nFAILED (errors=2)"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 7,
+    "input_tokens": 6054,
+    "output_tokens": 530,
+    "total_tokens": 6584
+  },
+  "trace_events": [
+    {
+      "event": "detector_prepass",
+      "questions": [
+        {
+          "answer": null,
+          "category": "constraints",
+          "label": "constraints and edge cases",
+          "question": "What constraints and edge cases should the implementation handle (for example empty inputs, duplicates, ordering, or bounds)?",
+          "score": 0.968178
+        },
+        {
+          "answer": null,
+          "category": "signature_types",
+          "label": "signature and types",
+          "question": "What are the exact function signature, parameter types, and return type?",
+          "score": 0.499004
+        },
+        {
+          "answer": null,
+          "category": "error_behaviour",
+          "label": "error behaviour",
+          "question": "What should happen on invalid or unexpected input — which exceptions should be raised, or what should be returned?",
+          "score": 0.200721
+        }
+      ]
+    }
+  ],
+  "turn_cap_hit": false,
+  "turns": 4
+}

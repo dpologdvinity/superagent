@@ -1,0 +1,275 @@
+{
+  "api_error": "",
+  "bucket": "AssertionError",
+  "condition": "B2",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T15:31:44+00:00",
+  "detector_questions": [],
+  "duration_s": 8.36,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 0.066,
+    "exception": "AssertionError",
+    "output_tail": "...F.\n======================================================================\nFAIL: test_file_path_return (hidden_test.TestCases.test_file_path_return)\nTest if the correct file path is returned.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-n5hno829/hidden_test.py\", line 35, in test_file_path_return\n    self.assertEqual(file_path, FILE_PATH)\nAssertionError: None != './output/sensor_data.csv'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.005s\n\nFAILED (failures=1)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import csv\nimport os\nfrom datetime import datetime\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    # Create output directory if it doesn't exist\n    os.makedirs(output_dir, exist_ok=True)\n    \n    # Define the file path\n    file_path = os.path.join(output_dir, 'sensor_data.csv')\n    \n    # Generate sensor data\n    with open(file_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        \n        # Write header\n        writer.writerow(['Time', 'Temperature', 'Humidity', 'Pressure'])\n        \n        # Generate data for the specified number of hours\n        for hour in range(hours):\n            # Generate time in HH:MM:SS format\n            time_str = datetime.strptime(f\"{hour:02d}:00:00\", \"%H:%M:%S\").strftime(\"%H:%M:%S\")\n            \n            # Generate random values for sensors\n            temperature = randint(20, 35)\n            humidity = randint(30, 80)\n            pressure = randint(1000, 1030)\n            \n            # Write data row\n            writer.writerow([time_str, temperature, humidity, pressure])\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "...F.\n======================================================================\nFAIL: test_file_path_return (hidden_test.TestCases.test_file_path_return)\nTest if the correct file path is returned.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-n5hno829/hidden_test.py\", line 35, in test_file_path_return\n    self.assertEqual(file_path, FILE_PATH)\nAssertionError: None != './output/sensor_data.csv'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.005s\n\nFAILED (failures=1)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport csv\nimport os\nfrom datetime import datetime\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    # Create output directory if it doesn't exist\n    os.makedirs(output_dir, exist_ok=True)\n    \n    # Define the file path\n    file_path = os.path.join(output_dir, 'sensor_data.csv')\n    \n    # Generate sensor data\n    with open(file_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        \n        # Write header\n        writer.writerow(['Time', 'Temperature', 'Humidity', 'Pressure'])\n        \n        # Generate data for the specified number of hours\n        for hour in range(hours):\n            # Generate time in HH:MM:SS format\n            time_str = datetime.strptime(f\"{hour:02d}:00:00\", \"%H:%M:%S\").strftime(\"%H:%M:%S\")\n            \n            # Generate random values for sensors\n            temperature = randint(20, 35)\n            humidity = randint(30, 80)\n            pressure = randint(1000, 1030)\n            \n            # Write data row\n            writer.writerow([time_str, temperature, humidity, pressure])\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 445,
+        "output_tokens": 281,
+        "total_tokens": 726
+      }
+    },
+    {
+      "content": "```python\nimport csv\nimport os\nfrom datetime import datetime\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    os.makedirs(output_dir, exist_ok=True)\n    file_path = os.path.join(output_dir, 'sensor_data.csv')\n    \n    with open(file_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        writer.writerow(['Time', 'Temperature', 'Humidity', 'Pressure'])\n        \n        start_time = datetime.now()\n        for _ in range(hours * 24):\n            current_time = start_time + datetime.timedelta(hours=_.hour, minutes=_.minute)\n            temperature = randint(20, 30)\n            humidity = randint(40, 80)\n            pressure = randint(1000, 1030)\n            writer.writerow([\n                current_time.strftime('%Y-%m-%d %H:%M:%S'),\n                temperature,\n                humidity,\n                pressure\n            ])\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 445,
+        "output_tokens": 225,
+        "total_tokens": 670
+      }
+    },
+    {
+      "content": "```python\nimport csv\nimport os\nfrom datetime import datetime\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    # Ensure the output directory exists\n    os.makedirs(output_dir, exist_ok=True)\n    file_path = os.path.join(output_dir, 'sensor_data.csv')\n    \n    # Generate sensor data\n    with open(file_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        # Write header\n        writer.writerow(['Time', 'Temperature', 'Humidity', 'Pressure'])\n        \n        # Generate data for the specified number of hours\n        for hour in range(hours):\n            # Generate time in HH:MM:SS format\n            time_str = datetime.now().strftime('%H:%M:%S')\n            # Generate random values for each sensor\n            temperature = randint(20, 30)\n            humidity = randint(40, 60)\n            pressure = randint(1000, 1020)\n            # Write row\n            writer.writerow([time_str, temperature, humidity, pressure])\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 445,
+        "output_tokens": 247,
+        "total_tokens": 692
+      }
+    },
+    {
+      "content": "```python\nimport csv\nimport os\nfrom datetime import datetime\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    os.makedirs(output_dir, exist_ok=True)\n    file_path = os.path.join(output_dir, 'sensor_data.csv')\n    \n    with open(file_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        writer.writerow(['Time', 'Temperature', 'Humidity', 'Pressure'])\n        \n        start_time = datetime.now()\n        for _ in range(hours * 60):\n            current_time = start_time + datetime.timedelta(minutes=1)\n            temperature = randint(20, 30)\n            humidity = randint(40, 60)\n            pressure = randint(1000, 1020)\n            writer.writerow([\n                current_time.strftime('%Y-%m-%d %H:%M:%S'),\n                temperature,\n                humidity,\n                pressure\n            ])\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 445,
+        "output_tokens": 219,
+        "total_tokens": 664
+      }
+    },
+    {
+      "content": "```python\nimport csv\nimport os\nfrom datetime import datetime\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    # Ensure the output directory exists\n    os.makedirs(output_dir, exist_ok=True)\n    file_path = os.path.join(output_dir, 'sensor_data.csv')\n    \n    # Generate sensor data for the specified number of hours\n    with open(file_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        # Write header\n        writer.writerow(['Time', 'Temperature', 'Humidity', 'Pressure'])\n        \n        # Generate data for each hour\n        for hour in range(hours):\n            # Generate time in HH:MM:SS format\n            time_str = datetime.strptime(f\"{hour}:00:00\", \"%H:%M:%S\").strftime(\"%H:%M:%S\")\n            # Generate random values for sensors\n            temperature = randint(20, 30)\n            humidity = randint(40, 60)\n            pressure = randint(1000, 1020)\n            # Write row\n            writer.writerow([time_str, temperature, humidity, pressure])\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 445,
+        "output_tokens": 265,
+        "total_tokens": 710
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 0,
+  "samples": [
+    {
+      "bucket": "AssertionError",
+      "code": "import csv\nimport os\nfrom datetime import datetime\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    # Create output directory if it doesn't exist\n    os.makedirs(output_dir, exist_ok=True)\n    \n    # Define the file path\n    file_path = os.path.join(output_dir, 'sensor_data.csv')\n    \n    # Generate sensor data\n    with open(file_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        \n        # Write header\n        writer.writerow(['Time', 'Temperature', 'Humidity', 'Pressure'])\n        \n        # Generate data for the specified number of hours\n        for hour in range(hours):\n            # Generate time in HH:MM:SS format\n            time_str = datetime.strptime(f\"{hour:02d}:00:00\", \"%H:%M:%S\").strftime(\"%H:%M:%S\")\n            \n            # Generate random values for sensors\n            temperature = randint(20, 35)\n            humidity = randint(30, 80)\n            pressure = randint(1000, 1030)\n            \n            # Write data row\n            writer.writerow([time_str, temperature, humidity, pressure])\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.066,
+        "exception": "AssertionError",
+        "output_tail": "...F.\n======================================================================\nFAIL: test_file_path_return (hidden_test.TestCases.test_file_path_return)\nTest if the correct file path is returned.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-n5hno829/hidden_test.py\", line 35, in test_file_path_return\n    self.assertEqual(file_path, FILE_PATH)\nAssertionError: None != './output/sensor_data.csv'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.005s\n\nFAILED (failures=1)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nGenerate sensor data for the specified number of hours and save it in a CSV file with columns 'Time', 'Temperature', 'Humidity', and 'Pressure'.\n\n## Starting file (solution.py)\n\n```python\nimport csv\n\nimport os\n\nfrom datetime import datetime\n\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\n\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport os\nimport shutil\nFILE_PATH = os.path.join(OUTPUT_DIR, 'sensor_data.csv')\n\nclass TestCases(unittest.TestCase):\n\n    def tearDown(self):\n        \"\"\"Clean up any files created during the tests.\"\"\"\n        if os.path.exists(OUTPUT_DIR):\n            shutil.rmtree(OUTPUT_DIR)\n\n    def test_csv_file_creation(self):\n        \"\"\"Test if the CSV file is successfully created.\"\"\"\n        task_func(1)\n        self.assertTrue(os.path.exists(FILE_PATH))\n\n    def test_csv_file_rows(self):\n        \"\"\"Test if the CSV file contains the correct number of rows for 24 hours.\"\"\"\n        task_func(24)\n        with open(FILE_PATH, 'r') as f:\n            self.assertEqual(len(f.readlines()), 25)\n\n    def test_csv_file_header(self):\n        \"\"\"Test if the CSV file header matches the expected sensors.\"\"\"\n        task_func(0)\n        with open(FILE_PATH, 'r') as f:\n            reader = csv.reader(f)\n            header = next(reader)\n            self.assertEqual(header, ['Time', 'Temperature', 'Humidity', 'Pressure'])\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261121,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 445,
+        "output_tokens": 281,
+        "total_tokens": 726
+      }
+    },
+    {
+      "bucket": "AttributeError",
+      "code": "import csv\nimport os\nfrom datetime import datetime\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    os.makedirs(output_dir, exist_ok=True)\n    file_path = os.path.join(output_dir, 'sensor_data.csv')\n    \n    with open(file_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        writer.writerow(['Time', 'Temperature', 'Humidity', 'Pressure'])\n        \n        start_time = datetime.now()\n        for _ in range(hours * 24):\n            current_time = start_time + datetime.timedelta(hours=_.hour, minutes=_.minute)\n            temperature = randint(20, 30)\n            humidity = randint(40, 80)\n            pressure = randint(1000, 1030)\n            writer.writerow([\n                current_time.strftime('%Y-%m-%d %H:%M:%S'),\n                temperature,\n                humidity,\n                pressure\n            ])\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AttributeError",
+        "duration_s": 0.069,
+        "exception": "AttributeError",
+        "output_tail": "E.EE.\n======================================================================\nERROR: test_csv_file_creation (hidden_test.TestCases.test_csv_file_creation)\nTest if the CSV file is successfully created.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-21xe125b/hidden_test.py\", line 18, in test_csv_file_creation\n    task_func(1)\n  File \"/tmp/wish-eval-21xe125b/solution.py\", line 19, in task_func\n    current_time = start_time + datetime.timedelta(hours=_.hour, minutes=_.minute)\n                                ^^^^^^^^^^^^^^^^^^\nAttributeError: type object 'datetime.datetime' has no attribute 'timedelta'\n\n======================================================================\nERROR: test_csv_file_rows (hidden_test.TestCases.test_csv_file_rows)\nTest if the CSV file contains the correct number of rows for 24 hours.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-21xe125b/hidden_test.py\", line 22, in test_csv_file_rows\n    task_func(24)\n  File \"/tmp/wish-eval-21xe125b/solution.py\", line 19, in task_func\n    current_time = start_time + datetime.timedelta(hours=_.hour, minutes=_.minute)\n                                ^^^^^^^^^^^^^^^^^^\nAttributeError: type object 'datetime.datetime' has no attribute 'timedelta'\n\n======================================================================\nERROR: test_file_path_return (hidden_test.TestCases.test_file_path_return)\nTest if the correct file path is returned.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-21xe125b/hidden_test.py\", line 34, in test_file_path_return\n    file_path = task_func(1)\n                ^^^^^^^^^^^^\n  File \"/tmp/wish-eval-21xe125b/solution.py\", line 19, in task_func\n    current_time = start_time + datetime.timedelta(hours=_.hour, minutes=_.minute)\n                                ^^^^^^^^^^^^^^^^^^\nAttributeError: type object 'datetime.datetime' has no attribute 'timedelta'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.006s\n\nFAILED (errors=3)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nGenerate sensor data for the specified number of hours and save it in a CSV file with columns 'Time', 'Temperature', 'Humidity', and 'Pressure'.\n\n## Starting file (solution.py)\n\n```python\nimport csv\n\nimport os\n\nfrom datetime import datetime\n\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\n\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport os\nimport shutil\nFILE_PATH = os.path.join(OUTPUT_DIR, 'sensor_data.csv')\n\nclass TestCases(unittest.TestCase):\n\n    def tearDown(self):\n        \"\"\"Clean up any files created during the tests.\"\"\"\n        if os.path.exists(OUTPUT_DIR):\n            shutil.rmtree(OUTPUT_DIR)\n\n    def test_csv_file_creation(self):\n        \"\"\"Test if the CSV file is successfully created.\"\"\"\n        task_func(1)\n        self.assertTrue(os.path.exists(FILE_PATH))\n\n    def test_csv_file_rows(self):\n        \"\"\"Test if the CSV file contains the correct number of rows for 24 hours.\"\"\"\n        task_func(24)\n        with open(FILE_PATH, 'r') as f:\n            self.assertEqual(len(f.readlines()), 25)\n\n    def test_csv_file_header(self):\n        \"\"\"Test if the CSV file header matches the expected sensors.\"\"\"\n        task_func(0)\n        with open(FILE_PATH, 'r') as f:\n            reader = csv.reader(f)\n            header = next(reader)\n            self.assertEqual(header, ['Time', 'Temperature', 'Humidity', 'Pressure'])\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261122,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 445,
+        "output_tokens": 225,
+        "total_tokens": 670
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import csv\nimport os\nfrom datetime import datetime\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    # Ensure the output directory exists\n    os.makedirs(output_dir, exist_ok=True)\n    file_path = os.path.join(output_dir, 'sensor_data.csv')\n    \n    # Generate sensor data\n    with open(file_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        # Write header\n        writer.writerow(['Time', 'Temperature', 'Humidity', 'Pressure'])\n        \n        # Generate data for the specified number of hours\n        for hour in range(hours):\n            # Generate time in HH:MM:SS format\n            time_str = datetime.now().strftime('%H:%M:%S')\n            # Generate random values for each sensor\n            temperature = randint(20, 30)\n            humidity = randint(40, 60)\n            pressure = randint(1000, 1020)\n            # Write row\n            writer.writerow([time_str, temperature, humidity, pressure])\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.062,
+        "exception": "AssertionError",
+        "output_tail": "...F.\n======================================================================\nFAIL: test_file_path_return (hidden_test.TestCases.test_file_path_return)\nTest if the correct file path is returned.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-kpjzjanv/hidden_test.py\", line 35, in test_file_path_return\n    self.assertEqual(file_path, FILE_PATH)\nAssertionError: None != './output/sensor_data.csv'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.002s\n\nFAILED (failures=1)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nGenerate sensor data for the specified number of hours and save it in a CSV file with columns 'Time', 'Temperature', 'Humidity', and 'Pressure'.\n\n## Starting file (solution.py)\n\n```python\nimport csv\n\nimport os\n\nfrom datetime import datetime\n\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\n\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport os\nimport shutil\nFILE_PATH = os.path.join(OUTPUT_DIR, 'sensor_data.csv')\n\nclass TestCases(unittest.TestCase):\n\n    def tearDown(self):\n        \"\"\"Clean up any files created during the tests.\"\"\"\n        if os.path.exists(OUTPUT_DIR):\n            shutil.rmtree(OUTPUT_DIR)\n\n    def test_csv_file_creation(self):\n        \"\"\"Test if the CSV file is successfully created.\"\"\"\n        task_func(1)\n        self.assertTrue(os.path.exists(FILE_PATH))\n\n    def test_csv_file_rows(self):\n        \"\"\"Test if the CSV file contains the correct number of rows for 24 hours.\"\"\"\n        task_func(24)\n        with open(FILE_PATH, 'r') as f:\n            self.assertEqual(len(f.readlines()), 25)\n\n    def test_csv_file_header(self):\n        \"\"\"Test if the CSV file header matches the expected sensors.\"\"\"\n        task_func(0)\n        with open(FILE_PATH, 'r') as f:\n            reader = csv.reader(f)\n            header = next(reader)\n            self.assertEqual(header, ['Time', 'Temperature', 'Humidity', 'Pressure'])\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 445,
+        "output_tokens": 247,
+        "total_tokens": 692
+      }
+    },
+    {
+      "bucket": "AttributeError",
+      "code": "import csv\nimport os\nfrom datetime import datetime\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    os.makedirs(output_dir, exist_ok=True)\n    file_path = os.path.join(output_dir, 'sensor_data.csv')\n    \n    with open(file_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        writer.writerow(['Time', 'Temperature', 'Humidity', 'Pressure'])\n        \n        start_time = datetime.now()\n        for _ in range(hours * 60):\n            current_time = start_time + datetime.timedelta(minutes=1)\n            temperature = randint(20, 30)\n            humidity = randint(40, 60)\n            pressure = randint(1000, 1020)\n            writer.writerow([\n                current_time.strftime('%Y-%m-%d %H:%M:%S'),\n                temperature,\n                humidity,\n                pressure\n            ])\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AttributeError",
+        "duration_s": 0.067,
+        "exception": "AttributeError",
+        "output_tail": "E.EE.\n======================================================================\nERROR: test_csv_file_creation (hidden_test.TestCases.test_csv_file_creation)\nTest if the CSV file is successfully created.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-zt5bxpv_/hidden_test.py\", line 18, in test_csv_file_creation\n    task_func(1)\n  File \"/tmp/wish-eval-zt5bxpv_/solution.py\", line 19, in task_func\n    current_time = start_time + datetime.timedelta(minutes=1)\n                                ^^^^^^^^^^^^^^^^^^\nAttributeError: type object 'datetime.datetime' has no attribute 'timedelta'\n\n======================================================================\nERROR: test_csv_file_rows (hidden_test.TestCases.test_csv_file_rows)\nTest if the CSV file contains the correct number of rows for 24 hours.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-zt5bxpv_/hidden_test.py\", line 22, in test_csv_file_rows\n    task_func(24)\n  File \"/tmp/wish-eval-zt5bxpv_/solution.py\", line 19, in task_func\n    current_time = start_time + datetime.timedelta(minutes=1)\n                                ^^^^^^^^^^^^^^^^^^\nAttributeError: type object 'datetime.datetime' has no attribute 'timedelta'\n\n======================================================================\nERROR: test_file_path_return (hidden_test.TestCases.test_file_path_return)\nTest if the correct file path is returned.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-zt5bxpv_/hidden_test.py\", line 34, in test_file_path_return\n    file_path = task_func(1)\n                ^^^^^^^^^^^^\n  File \"/tmp/wish-eval-zt5bxpv_/solution.py\", line 19, in task_func\n    current_time = start_time + datetime.timedelta(minutes=1)\n                                ^^^^^^^^^^^^^^^^^^\nAttributeError: type object 'datetime.datetime' has no attribute 'timedelta'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.006s\n\nFAILED (errors=3)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nGenerate sensor data for the specified number of hours and save it in a CSV file with columns 'Time', 'Temperature', 'Humidity', and 'Pressure'.\n\n## Starting file (solution.py)\n\n```python\nimport csv\n\nimport os\n\nfrom datetime import datetime\n\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\n\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport os\nimport shutil\nFILE_PATH = os.path.join(OUTPUT_DIR, 'sensor_data.csv')\n\nclass TestCases(unittest.TestCase):\n\n    def tearDown(self):\n        \"\"\"Clean up any files created during the tests.\"\"\"\n        if os.path.exists(OUTPUT_DIR):\n            shutil.rmtree(OUTPUT_DIR)\n\n    def test_csv_file_creation(self):\n        \"\"\"Test if the CSV file is successfully created.\"\"\"\n        task_func(1)\n        self.assertTrue(os.path.exists(FILE_PATH))\n\n    def test_csv_file_rows(self):\n        \"\"\"Test if the CSV file contains the correct number of rows for 24 hours.\"\"\"\n        task_func(24)\n        with open(FILE_PATH, 'r') as f:\n            self.assertEqual(len(f.readlines()), 25)\n\n    def test_csv_file_header(self):\n        \"\"\"Test if the CSV file header matches the expected sensors.\"\"\"\n        task_func(0)\n        with open(FILE_PATH, 'r') as f:\n            reader = csv.reader(f)\n            header = next(reader)\n            self.assertEqual(header, ['Time', 'Temperature', 'Humidity', 'Pressure'])\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261124,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 445,
+        "output_tokens": 219,
+        "total_tokens": 664
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import csv\nimport os\nfrom datetime import datetime\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    # Ensure the output directory exists\n    os.makedirs(output_dir, exist_ok=True)\n    file_path = os.path.join(output_dir, 'sensor_data.csv')\n    \n    # Generate sensor data for the specified number of hours\n    with open(file_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        # Write header\n        writer.writerow(['Time', 'Temperature', 'Humidity', 'Pressure'])\n        \n        # Generate data for each hour\n        for hour in range(hours):\n            # Generate time in HH:MM:SS format\n            time_str = datetime.strptime(f\"{hour}:00:00\", \"%H:%M:%S\").strftime(\"%H:%M:%S\")\n            # Generate random values for sensors\n            temperature = randint(20, 30)\n            humidity = randint(40, 60)\n            pressure = randint(1000, 1020)\n            # Write row\n            writer.writerow([time_str, temperature, humidity, pressure])\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.065,
+        "exception": "AssertionError",
+        "output_tail": "...F.\n======================================================================\nFAIL: test_file_path_return (hidden_test.TestCases.test_file_path_return)\nTest if the correct file path is returned.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-5j3b8z30/hidden_test.py\", line 35, in test_file_path_return\n    self.assertEqual(file_path, FILE_PATH)\nAssertionError: None != './output/sensor_data.csv'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.004s\n\nFAILED (failures=1)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nGenerate sensor data for the specified number of hours and save it in a CSV file with columns 'Time', 'Temperature', 'Humidity', and 'Pressure'.\n\n## Starting file (solution.py)\n\n```python\nimport csv\n\nimport os\n\nfrom datetime import datetime\n\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\n\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport os\nimport shutil\nFILE_PATH = os.path.join(OUTPUT_DIR, 'sensor_data.csv')\n\nclass TestCases(unittest.TestCase):\n\n    def tearDown(self):\n        \"\"\"Clean up any files created during the tests.\"\"\"\n        if os.path.exists(OUTPUT_DIR):\n            shutil.rmtree(OUTPUT_DIR)\n\n    def test_csv_file_creation(self):\n        \"\"\"Test if the CSV file is successfully created.\"\"\"\n        task_func(1)\n        self.assertTrue(os.path.exists(FILE_PATH))\n\n    def test_csv_file_rows(self):\n        \"\"\"Test if the CSV file contains the correct number of rows for 24 hours.\"\"\"\n        task_func(24)\n        with open(FILE_PATH, 'r') as f:\n            self.assertEqual(len(f.readlines()), 25)\n\n    def test_csv_file_header(self):\n        \"\"\"Test if the CSV file header matches the expected sensors.\"\"\"\n        task_func(0)\n        with open(FILE_PATH, 'r') as f:\n            reader = csv.reader(f)\n            header = next(reader)\n            self.assertEqual(header, ['Time', 'Temperature', 'Humidity', 'Pressure'])\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261125,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 445,
+        "output_tokens": 265,
+        "total_tokens": 710
+      }
+    }
+  ],
+  "seed": 20261121,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/592",
+  "started_at": "2026-11-23T15:31:44+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/592",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 5,
+    "input_tokens": 2225,
+    "output_tokens": 1237,
+    "total_tokens": 3462
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 5
+}

@@ -1,0 +1,669 @@
+{
+  "api_error": "",
+  "bucket": "AssertionError",
+  "condition": "H2",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T13:30:16+00:00",
+  "detector_questions": [],
+  "duration_s": 13.258,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 2.073,
+    "exception": "AssertionError",
+    "output_tail": "........./content/superagent/.venv/lib/python3.12/site-packages/sklearn/metrics/_regression.py:1295: UndefinedMetricWarning: R^2 score is not well-defined with less than two samples.\n  warnings.warn(msg, UndefinedMetricWarning)\nF\n======================================================================\nFAIL: test_case_test_size (hidden_test.TestCases.test_case_test_size)\ntest sizes out of allowed range\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-uwn_4eoz/hidden_test.py\", line 21, in test_case_test_size\n    self.assertRaises(Exception, task_func, data, 'y', 1)\nAssertionError: Exception not raised by task_func\n\n----------------------------------------------------------------------\nRan 10 tests in 0.120s\n\nFAILED (failures=1)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import pandas as pd\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LinearRegression\nimport numpy as np\n\n\ndef task_func(data, target_column, test_size=0.2, random_state=0):\n    # Check if data is a DataFrame\n    if not isinstance(data, pd.DataFrame):\n        raise ValueError(\"Input data must be a pandas DataFrame.\")\n    \n    # Check if target_column exists in the DataFrame\n    if target_column not in data.columns:\n        raise ValueError(f\"Target column '{target_column}' not found in the DataFrame.\")\n    \n    # Validate test_size\n    if not (0 <= test_size <= 1):\n        raise ValueError(\"test_size must be between 0 and 1, inclusive.\")\n    \n    # Split the data into training and test sets\n    X = data.drop(columns=[target_column])\n    y = data[target_column]\n    X_train, X_test, y_train, y_test = train_test_split(\n        X, y, test_size=test_size, random_state=random_state\n    )\n    \n    # Train the linear regression model\n    model = LinearRegression().fit(X_train, y_train)\n    \n    # Calculate the model's score on the test set\n    score = model.score(X_test, y_test)\n    \n    return score",
+  "follow_up_questions": [
+    {
+      "answer": "That is not specified.",
+      "index": 1,
+      "question": "What should the function return if the input data is not a DataFrame or the target_column does not exist in the DataFrame?"
+    },
+    {
+      "answer": "Yes.",
+      "index": 2,
+      "question": "Should the function raise an exception if the target_column is not present in the DataFrame?"
+    },
+    {
+      "answer": "Yes.",
+      "index": 3,
+      "question": "Is the test_size parameter expected to be a float between 0 and 1, inclusive?"
+    },
+    {
+      "answer": "Yes, the function should handle cases where the target_column is not a valid column in the DataFrame by raising a ValueError.",
+      "index": 4,
+      "question": "Should the function handle cases where the target_column is not a valid column in the DataFrame?"
+    },
+    {
+      "answer": "Yes.",
+      "index": 5,
+      "question": "Should the function raise an exception when the test_size is not within the range [0, 1]?"
+    }
+  ],
+  "hidden_duration_s": 2.073,
+  "hidden_output_tail": "........./content/superagent/.venv/lib/python3.12/site-packages/sklearn/metrics/_regression.py:1295: UndefinedMetricWarning: R^2 score is not well-defined with less than two samples.\n  warnings.warn(msg, UndefinedMetricWarning)\nF\n======================================================================\nFAIL: test_case_test_size (hidden_test.TestCases.test_case_test_size)\ntest sizes out of allowed range\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-uwn_4eoz/hidden_test.py\", line 21, in test_case_test_size\n    self.assertRaises(Exception, task_func, data, 'y', 1)\nAssertionError: Exception not raised by task_func\n\n----------------------------------------------------------------------\nRan 10 tests in 0.120s\n\nFAILED (failures=1)",
+  "llm_calls": [
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"question\": \"What should the function return if the input data is not a DataFrame or the target_column does not exist in the DataFrame?\"}",
+          "name": "ask_stakeholder"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 960,
+        "output_tokens": 42,
+        "total_tokens": 1002
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"question\": \"Should the function raise an exception if the target_column is not present in the DataFrame?\"}",
+          "name": "ask_stakeholder"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1022,
+        "output_tokens": 35,
+        "total_tokens": 1057
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"question\": \"Is the test_size parameter expected to be a float between 0 and 1, inclusive?\"}",
+          "name": "ask_stakeholder"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1074,
+        "output_tokens": 40,
+        "total_tokens": 1114
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"question\": \"Should the function handle cases where the target_column is not a valid column in the DataFrame?\"}",
+          "name": "ask_stakeholder"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1128,
+        "output_tokens": 39,
+        "total_tokens": 1167
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import pandas as pd\\nfrom sklearn.model_selection import train_test_split\\nfrom sklearn.linear_model import LinearRegression\\nimport numpy as np\\n\\ndef task_func(data, target_column, test_size=0.2, random_state=0):\\n    # Check if data is a DataFrame\\n    if not isinstance(data, pd.DataFrame):\\n        raise ValueError(\\\"Input data must be a pandas DataFrame.\\\")\\n    \\n    # Check if target_column exists in the DataFrame\\n    if target_column not in data.columns:\\n        raise ValueError(f\\\"Target column '{target_column}' not found in the DataFrame.\\\")\\n    \\n    # Split the data into training and test sets\\n    X = data.drop(columns=[target_column])\\n    y = data[target_column]\\n    X_train, X_test, y_train, y_test = train_test_split(\\n        X, y, test_size=test_size, random_state=random_state\\n    )\\n    \\n    # Train the linear regression model\\n    model = LinearRegression().fit(X_train, y_train)\\n    \\n    # Calculate the model's score on the test set\\n    score = model.score(X_test, y_test)\\n    \\n    return score\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1203,
+        "output_tokens": 279,
+        "total_tokens": 1482
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1509,
+        "output_tokens": 9,
+        "total_tokens": 1518
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "read_error"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1553,
+        "output_tokens": 13,
+        "total_tokens": 1566
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"question\": \"Should the function raise an exception when the test_size is not within the range [0, 1]?\"}",
+          "name": "ask_stakeholder"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1696,
+        "output_tokens": 43,
+        "total_tokens": 1739
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import pandas as pd\\nfrom sklearn.model_selection import train_test_split\\nfrom sklearn.linear_model import LinearRegression\\nimport numpy as np\\n\\n\\ndef task_func(data, target_column, test_size=0.2, random_state=0):\\n    # Check if data is a DataFrame\\n    if not isinstance(data, pd.DataFrame):\\n        raise ValueError(\\\"Input data must be a pandas DataFrame.\\\")\\n    \\n    # Check if target_column exists in the DataFrame\\n    if target_column not in data.columns:\\n        raise ValueError(f\\\"Target column '{target_column}' not found in the DataFrame.\\\")\\n    \\n    # Validate test_size\\n    if not (0 <= test_size <= 1):\\n        raise ValueError(\\\"test_size must be between 0 and 1, inclusive.\\\")\\n    \\n    # Split the data into training and test sets\\n    X = data.drop(columns=[target_column])\\n    y = data[target_column]\\n    X_train, X_test, y_train, y_test = train_test_split(\\n        X, y, test_size=test_size, random_state=random_state\\n    )\\n    \\n    # Train the linear regression model\\n    model = LinearRegression().fit(X_train, y_train)\\n    \\n    # Calculate the model's score on the test set\\n    score = model.score(X_test, y_test)\\n    \\n    return score\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1717,
+        "output_tokens": 325,
+        "total_tokens": 2042
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 2066,
+        "output_tokens": 17,
+        "total_tokens": 2083
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "read_error"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 2110,
+        "output_tokens": 16,
+        "total_tokens": 2126
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"question\": \"Should the function raise an exception when the test_size is exactly 1, leading to no training data?\"}",
+          "name": "ask_stakeholder"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 2310,
+        "output_tokens": 42,
+        "total_tokens": 2352
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. You may call ask_stakeholder with one question at a time, up to 5 questions in total.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Wish\n\nTrain a linear regression model using the provided DataFrame as training data, with the target_column as the target variable, and return the model's score on the test set after splitting the data into training and test sets using the specified test_size and random_state parameters.\n\n## Starting file (solution.py)\n\n```python\nimport pandas as pd\n\nfrom sklearn.model_selection import train_test_split\n\nfrom sklearn.linear_model import LinearRegression\n\nimport numpy as np\n\ndef task_func(data, target_column, test_size=0.2, random_state=0):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LinearRegression\n\nclass TestCases(unittest.TestCase):\n\n    def test_case_test_size(self):\n        \"\"\"test sizes out of allowed range\"\"\"\n        rng = np.random.default_rng(seed=0)\n        data = pd.DataFrame({'x1': rng.random(100), 'x2': rng.random(100), 'y': rng.random(100)})\n        self.assertRaises(Exception, task_func, data, 'y', 5)\n        self.assertRaises(Exception, task_func, data, 'y', -1)\n        self.assertRaises(Exception, task_func, data, 'y', 0)\n        self.assertRaises(Exception, task_func, data, 'y', 1)\n\n    def test_case_random_state(self):\n        \"\"\"random_state not an integer\"\"\"\n        rng = np.random.default_rng(seed=0)\n        data = pd.DataFrame({'x1': rng.random(100), 'x2': rng.random(100), 'y': rng.random(100)})\n        self.assertRaises(Exception, task_func, data, 'y', 0.2, 'a')\n        self.assertRaises(Exception, task_func, data, 'y', 0.2, [1, 2])\n        self.assertRaises(Exception, task_func, data, 'y', 0.2, {'a': 2})\n\n    def test_case_df(self):\n        \"\"\"non DataFrame input\"\"\"\n        df = 3\n        target_column = 'test'\n        self.assertRaises(Exception, task_func, df, target_column)\n```\n\nBefore implementing, ask the stakeholder at least one generic clarifying question, and at most 5 in total, one ask_stakeholder call per turn. Use the answers while implementing.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"question\": \"What should the function return if the input data is not a DataFrame or the target_column does not exist in the DataFrame?\"}",
+            "name": "ask_stakeholder"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "That is not specified.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"question\": \"Should the function raise an exception if the target_column is not present in the DataFrame?\"}",
+            "name": "ask_stakeholder"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Yes.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"question\": \"Is the test_size parameter expected to be a float between 0 and 1, inclusive?\"}",
+            "name": "ask_stakeholder"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Yes.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"question\": \"Should the function handle cases where the target_column is not a valid column in the DataFrame?\"}",
+            "name": "ask_stakeholder"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Yes, the function should handle cases where the target_column is not a valid column in the DataFrame by raising a ValueError.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import pandas as pd\\nfrom sklearn.model_selection import train_test_split\\nfrom sklearn.linear_model import LinearRegression\\nimport numpy as np\\n\\ndef task_func(data, target_column, test_size=0.2, random_state=0):\\n    # Check if data is a DataFrame\\n    if not isinstance(data, pd.DataFrame):\\n        raise ValueError(\\\"Input data must be a pandas DataFrame.\\\")\\n    \\n    # Check if target_column exists in the DataFrame\\n    if target_column not in data.columns:\\n        raise ValueError(f\\\"Target column '{target_column}' not found in the DataFrame.\\\")\\n    \\n    # Split the data into training and test sets\\n    X = data.drop(columns=[target_column])\\n    y = data[target_column]\\n    X_train, X_test, y_train, y_test = train_test_split(\\n        X, y, test_size=test_size, random_state=random_state\\n    )\\n    \\n    # Train the linear regression model\\n    model = LinearRegression().fit(X_train, y_train)\\n    \\n    # Calculate the model's score on the test set\\n    score = model.score(X_test, y_test)\\n    \\n    return score\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 1007 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests failed (AssertionError). Call read_error to see the traceback.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "read_error"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "..F\n======================================================================\nFAIL: test_case_test_size (visible_test.TestCases.test_case_test_size)\ntest sizes out of allowed range\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-kr7nzcqy/visible_test.py\", line 16, in test_case_test_size\n    self.assertRaises(Exception, task_func, data, 'y', 5)\nAssertionError: Exception not raised by task_func\n\n----------------------------------------------------------------------\nRan 3 tests in 0.084s\n\nFAILED (failures=1)",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"question\": \"Should the function raise an exception when the test_size is not within the range [0, 1]?\"}",
+            "name": "ask_stakeholder"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Yes.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import pandas as pd\\nfrom sklearn.model_selection import train_test_split\\nfrom sklearn.linear_model import LinearRegression\\nimport numpy as np\\n\\n\\ndef task_func(data, target_column, test_size=0.2, random_state=0):\\n    # Check if data is a DataFrame\\n    if not isinstance(data, pd.DataFrame):\\n        raise ValueError(\\\"Input data must be a pandas DataFrame.\\\")\\n    \\n    # Check if target_column exists in the DataFrame\\n    if target_column not in data.columns:\\n        raise ValueError(f\\\"Target column '{target_column}' not found in the DataFrame.\\\")\\n    \\n    # Validate test_size\\n    if not (0 <= test_size <= 1):\\n        raise ValueError(\\\"test_size must be between 0 and 1, inclusive.\\\")\\n    \\n    # Split the data into training and test sets\\n    X = data.drop(columns=[target_column])\\n    y = data[target_column]\\n    X_train, X_test, y_train, y_test = train_test_split(\\n        X, y, test_size=test_size, random_state=random_state\\n    )\\n    \\n    # Train the linear regression model\\n    model = LinearRegression().fit(X_train, y_train)\\n    \\n    # Calculate the model's score on the test set\\n    score = model.score(X_test, y_test)\\n    \\n    return score\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 1146 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests failed (AssertionError). Call read_error to see the traceback.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "read_error"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "../content/superagent/.venv/lib/python3.12/site-packages/sklearn/metrics/_regression.py:1295: UndefinedMetricWarning: R^2 score is not well-defined with less than two samples.\n  warnings.warn(msg, UndefinedMetricWarning)\nF\n======================================================================\nFAIL: test_case_test_size (visible_test.TestCases.test_case_test_size)\ntest sizes out of allowed range\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-kr7nzcqy/visible_test.py\", line 19, in test_case_test_size\n    self.assertRaises(Exception, task_func, data, 'y', 1)\nAssertionError: Exception not raised by task_func\n\n----------------------------------------------------------------------\nRan 3 tests in 0.114s\n\nFAILED (failures=1)",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"question\": \"Should the function raise an exception when the test_size is exactly 1, leading to no training data?\"}",
+            "name": "ask_stakeholder"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Error: the question budget (5) is exhausted.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    }
+  ],
+  "pass": false,
+  "questions": 5,
+  "run_id": "r2b-pilot",
+  "sample_index": 0,
+  "seed": 20261121,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/752",
+  "stakeholder_answers": [],
+  "started_at": "2026-11-23T13:30:03+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/752",
+  "tools": {
+    "ask_used": 5,
+    "calls": [
+      {
+        "arguments": {
+          "question": "What should the function return if the input data is not a DataFrame or the target_column does not exist in the DataFrame?"
+        },
+        "name": "ask_stakeholder",
+        "ok": true,
+        "result": "That is not specified."
+      },
+      {
+        "arguments": {
+          "question": "Should the function raise an exception if the target_column is not present in the DataFrame?"
+        },
+        "name": "ask_stakeholder",
+        "ok": true,
+        "result": "Yes."
+      },
+      {
+        "arguments": {
+          "question": "Is the test_size parameter expected to be a float between 0 and 1, inclusive?"
+        },
+        "name": "ask_stakeholder",
+        "ok": true,
+        "result": "Yes."
+      },
+      {
+        "arguments": {
+          "question": "Should the function handle cases where the target_column is not a valid column in the DataFrame?"
+        },
+        "name": "ask_stakeholder",
+        "ok": true,
+        "result": "Yes, the function should handle cases where the target_column is not a valid column in the DataFrame by raising a ValueError."
+      },
+      {
+        "arguments": {
+          "content": "import pandas as pd\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LinearRegression\nimport numpy as np\n\ndef task_func(data, target_column, test_size=0.2, random_state=0):\n    # Check if data is a DataFrame\n    if not isinstance(data, pd.DataFrame):\n        raise ValueError(\"Input data must be a pandas DataFrame.\")\n    \n    # Check if target_column exists in the DataFrame\n    if target_column not in data.columns:\n        raise ValueError(f\"Target column '{target_column}' not found in the DataFrame.\")\n    \n    # Split the data into training and test sets\n    X = data.drop(columns=[target_column])\n    y = data[target_column]\n    X_train, X_test, y_train, y_test = train_test_split(\n        X, y, test_size=test_size, random_state=random_state\n    )\n    \n    # Train the linear regression model\n    model = LinearRegression().fit(X_train, y_train)\n    \n    # Calculate the model's score on the test set\n    score = model.score(X_test, y_test)\n    \n    return score",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 1007 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests failed (AssertionError). Call read_error to see the traceback."
+      },
+      {
+        "arguments": {},
+        "name": "read_error",
+        "ok": true,
+        "result": "..F\n======================================================================\nFAIL: test_case_test_size (visible_test.TestCases.test_case_test_size)\ntest sizes out of allowed range\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-kr7nzcqy/visible_test.py\", line 16, in test_case_test_size\n    self.assertRaises(Exception, task_func, data, 'y', 5)\nAssertionError: Exception not raised by task_func\n\n----------------------------------------------------------------------\nRan 3 tests in 0.084s\n\nFAILED (failures=1)"
+      },
+      {
+        "arguments": {
+          "question": "Should the function raise an exception when the test_size is not within the range [0, 1]?"
+        },
+        "name": "ask_stakeholder",
+        "ok": true,
+        "result": "Yes."
+      },
+      {
+        "arguments": {
+          "content": "import pandas as pd\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LinearRegression\nimport numpy as np\n\n\ndef task_func(data, target_column, test_size=0.2, random_state=0):\n    # Check if data is a DataFrame\n    if not isinstance(data, pd.DataFrame):\n        raise ValueError(\"Input data must be a pandas DataFrame.\")\n    \n    # Check if target_column exists in the DataFrame\n    if target_column not in data.columns:\n        raise ValueError(f\"Target column '{target_column}' not found in the DataFrame.\")\n    \n    # Validate test_size\n    if not (0 <= test_size <= 1):\n        raise ValueError(\"test_size must be between 0 and 1, inclusive.\")\n    \n    # Split the data into training and test sets\n    X = data.drop(columns=[target_column])\n    y = data[target_column]\n    X_train, X_test, y_train, y_test = train_test_split(\n        X, y, test_size=test_size, random_state=random_state\n    )\n    \n    # Train the linear regression model\n    model = LinearRegression().fit(X_train, y_train)\n    \n    # Calculate the model's score on the test set\n    score = model.score(X_test, y_test)\n    \n    return score",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 1146 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests failed (AssertionError). Call read_error to see the traceback."
+      },
+      {
+        "arguments": {},
+        "name": "read_error",
+        "ok": true,
+        "result": "../content/superagent/.venv/lib/python3.12/site-packages/sklearn/metrics/_regression.py:1295: UndefinedMetricWarning: R^2 score is not well-defined with less than two samples.\n  warnings.warn(msg, UndefinedMetricWarning)\nF\n======================================================================\nFAIL: test_case_test_size (visible_test.TestCases.test_case_test_size)\ntest sizes out of allowed range\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-kr7nzcqy/visible_test.py\", line 19, in test_case_test_size\n    self.assertRaises(Exception, task_func, data, 'y', 1)\nAssertionError: Exception not raised by task_func\n\n----------------------------------------------------------------------\nRan 3 tests in 0.114s\n\nFAILED (failures=1)"
+      },
+      {
+        "arguments": {
+          "question": "Should the function raise an exception when the test_size is exactly 1, leading to no training data?"
+        },
+        "name": "ask_stakeholder",
+        "ok": false,
+        "result": "Error: the question budget (5) is exhausted."
+      }
+    ],
+    "questions": [
+      {
+        "answer": "That is not specified.",
+        "index": 1,
+        "question": "What should the function return if the input data is not a DataFrame or the target_column does not exist in the DataFrame?"
+      },
+      {
+        "answer": "Yes.",
+        "index": 2,
+        "question": "Should the function raise an exception if the target_column is not present in the DataFrame?"
+      },
+      {
+        "answer": "Yes.",
+        "index": 3,
+        "question": "Is the test_size parameter expected to be a float between 0 and 1, inclusive?"
+      },
+      {
+        "answer": "Yes, the function should handle cases where the target_column is not a valid column in the DataFrame by raising a ValueError.",
+        "index": 4,
+        "question": "Should the function handle cases where the target_column is not a valid column in the DataFrame?"
+      },
+      {
+        "answer": "Yes.",
+        "index": 5,
+        "question": "Should the function raise an exception when the test_size is not within the range [0, 1]?"
+      }
+    ],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 2.083,
+        "exception": "AssertionError",
+        "ok": false,
+        "output": "..F\n======================================================================\nFAIL: test_case_test_size (visible_test.TestCases.test_case_test_size)\ntest sizes out of allowed range\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-kr7nzcqy/visible_test.py\", line 16, in test_case_test_size\n    self.assertRaises(Exception, task_func, data, 'y', 5)\nAssertionError: Exception not raised by task_func\n\n----------------------------------------------------------------------\nRan 3 tests in 0.084s\n\nFAILED (failures=1)"
+      },
+      {
+        "duration_s": 2.001,
+        "exception": "AssertionError",
+        "ok": false,
+        "output": "../content/superagent/.venv/lib/python3.12/site-packages/sklearn/metrics/_regression.py:1295: UndefinedMetricWarning: R^2 score is not well-defined with less than two samples.\n  warnings.warn(msg, UndefinedMetricWarning)\nF\n======================================================================\nFAIL: test_case_test_size (visible_test.TestCases.test_case_test_size)\ntest sizes out of allowed range\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-kr7nzcqy/visible_test.py\", line 19, in test_case_test_size\n    self.assertRaises(Exception, task_func, data, 'y', 1)\nAssertionError: Exception not raised by task_func\n\n----------------------------------------------------------------------\nRan 3 tests in 0.114s\n\nFAILED (failures=1)"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 12,
+    "input_tokens": 18348,
+    "output_tokens": 900,
+    "total_tokens": 19248
+  },
+  "trace_events": [
+    {
+      "event": "turn_cap_hit",
+      "turns": 12
+    }
+  ],
+  "turn_cap_hit": true,
+  "turns": 12
+}

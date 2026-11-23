@@ -1,0 +1,275 @@
+{
+  "api_error": "",
+  "bucket": "None",
+  "condition": "B2",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T14:01:29+00:00",
+  "detector_questions": [],
+  "duration_s": 25.065,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "NameError",
+    "duration_s": 13.147,
+    "exception": "NameError",
+    "output_tail": "EEEE\n======================================================================\nERROR: test_empty_directory (hidden_test.TestCases.test_empty_directory)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-l0kmxkou/hidden_test.py\", line 40, in test_empty_directory\n    _, zipfile_name = task_func(self.test_dir)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-l0kmxkou/solution.py\", line 35, in task_func\n    shutil.rmtree(encrypted_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_file_encryption_contents (hidden_test.TestCases.test_file_encryption_contents)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-l0kmxkou/hidden_test.py\", line 48, in test_file_encryption_contents\n    pub_key, zipfile_name = task_func(self.test_dir)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-l0kmxkou/solution.py\", line 35, in task_func\n    shutil.rmtree(encrypted_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_return_type (hidden_test.TestCases.test_return_type)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-l0kmxkou/hidden_test.py\", line 26, in test_return_type\n    pub_key, zipfile_name = task_func(self.test_dir)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-l0kmxkou/solution.py\", line 35, in task_func\n    shutil.rmtree(encrypted_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_zipfile_creation (hidden_test.TestCases.test_zipfile_creation)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-l0kmxkou/hidden_test.py\", line 34, in test_zipfile_creation\n    _, zipfile_name = task_func(self.test_dir)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-l0kmxkou/solution.py\", line 35, in task_func\n    shutil.rmtree(encrypted_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n----------------------------------------------------------------------\nRan 4 tests in 13.057s\n\nFAILED (errors=4)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # Generate RSA keys\n    (pub_key, priv_key) = rsa.newkeys(2048)\n    \n    # Get all files in the directory\n    files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]\n    \n    # Create a temporary directory to store encrypted files\n    encrypted_dir = os.path.join(directory, 'encrypted')\n    os.makedirs(encrypted_dir, exist_ok=True)\n    \n    # Encrypt each file and save it\n    for filename in files:\n        file_path = os.path.join(directory, filename)\n        with open(file_path, 'rb') as f:\n            data = f.read()\n        encrypted_data = rsa.encrypt(data, pub_key)\n        encrypted_filename = os.path.join(encrypted_dir, filename)\n        with open(encrypted_filename, 'wb') as f:\n            f.write(encrypted_data)\n    \n    # Create a zip file containing all encrypted files\n    zip_filename = 'encrypted_files.zip'\n    with zipfile.ZipFile(zip_filename, 'w') as zipf:\n        for filename in os.listdir(encrypted_dir):\n            file_path = os.path.join(encrypted_dir, filename)\n            zipf.write(file_path, filename)\n    \n    # Clean up the temporary directory\n    shutil.rmtree(encrypted_dir)\n    \n    return pub_key, zip_filename\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "EEEE\n======================================================================\nERROR: test_empty_directory (hidden_test.TestCases.test_empty_directory)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-l0kmxkou/hidden_test.py\", line 40, in test_empty_directory\n    _, zipfile_name = task_func(self.test_dir)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-l0kmxkou/solution.py\", line 35, in task_func\n    shutil.rmtree(encrypted_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_file_encryption_contents (hidden_test.TestCases.test_file_encryption_contents)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-l0kmxkou/hidden_test.py\", line 48, in test_file_encryption_contents\n    pub_key, zipfile_name = task_func(self.test_dir)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-l0kmxkou/solution.py\", line 35, in task_func\n    shutil.rmtree(encrypted_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_return_type (hidden_test.TestCases.test_return_type)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-l0kmxkou/hidden_test.py\", line 26, in test_return_type\n    pub_key, zipfile_name = task_func(self.test_dir)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-l0kmxkou/solution.py\", line 35, in task_func\n    shutil.rmtree(encrypted_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_zipfile_creation (hidden_test.TestCases.test_zipfile_creation)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-l0kmxkou/hidden_test.py\", line 34, in test_zipfile_creation\n    _, zipfile_name = task_func(self.test_dir)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-l0kmxkou/solution.py\", line 35, in task_func\n    shutil.rmtree(encrypted_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n----------------------------------------------------------------------\nRan 4 tests in 13.057s\n\nFAILED (errors=4)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # Generate RSA keys\n    (pub_key, priv_key) = rsa.newkeys(2048)\n    \n    # Get all files in the directory\n    files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]\n    \n    # Create a temporary directory to store encrypted files\n    encrypted_dir = os.path.join(directory, 'encrypted')\n    os.makedirs(encrypted_dir, exist_ok=True)\n    \n    # Encrypt each file and save it\n    for filename in files:\n        file_path = os.path.join(directory, filename)\n        with open(file_path, 'rb') as f:\n            data = f.read()\n        encrypted_data = rsa.encrypt(data, pub_key)\n        encrypted_filename = os.path.join(encrypted_dir, filename)\n        with open(encrypted_filename, 'wb') as f:\n            f.write(encrypted_data)\n    \n    # Create a zip file containing all encrypted files\n    zip_filename = 'encrypted_files.zip'\n    with zipfile.ZipFile(zip_filename, 'w') as zipf:\n        for filename in os.listdir(encrypted_dir):\n            file_path = os.path.join(encrypted_dir, filename)\n            zipf.write(file_path, filename)\n    \n    # Clean up the temporary directory\n    shutil.rmtree(encrypted_dir)\n    \n    return pub_key, zip_filename\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 510,
+        "output_tokens": 303,
+        "total_tokens": 813
+      }
+    },
+    {
+      "content": "```python\nimport rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # Generate RSA keys\n    (pub_key, priv_key) = rsa.newkeys(512)\n    \n    # Get list of files in the directory\n    files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]\n    \n    # Create a temporary directory to store encrypted files\n    temp_dir = os.path.join(directory, 'temp_encrypted')\n    os.makedirs(temp_dir, exist_ok=True)\n    \n    # Encrypt each file and save to temp directory\n    for file in files:\n        file_path = os.path.join(directory, file)\n        with open(file_path, 'rb') as f:\n            data = f.read()\n        \n        # Encrypt the data using the public key\n        encrypted_data = rsa.encrypt(data, pub_key)\n        \n        # Save the encrypted data to a new file in the temp directory\n        encrypted_file_path = os.path.join(temp_dir, file)\n        with open(encrypted_file_path, 'wb') as f:\n            f.write(encrypted_data)\n    \n    # Create a zip file containing all encrypted files\n    zip_file_name = 'encrypted_files.zip'\n    with zipfile.ZipFile(zip_file_name, 'w') as zipf:\n        for file in files:\n            encrypted_file_path = os.path.join(temp_dir, file)\n            zipf.write(encrypted_file_path, os.path.basename(encrypted_file_path))\n    \n    # Clean up the temporary directory\n    shutil.rmtree(temp_dir)\n    \n    return pub_key, zip_file_name\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 510,
+        "output_tokens": 340,
+        "total_tokens": 850
+      }
+    },
+    {
+      "content": "```python\nimport rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # Generate RSA public and private keys\n    (pub_key, priv_key) = rsa.newkeys(512)\n    \n    # Get all files in the directory\n    files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]\n    \n    # Create a temporary directory to store encrypted files\n    temp_dir = os.path.join(directory, 'temp_encrypted')\n    os.makedirs(temp_dir, exist_ok=True)\n    \n    # Encrypt each file and save to temp directory\n    for file in files:\n        file_path = os.path.join(directory, file)\n        with open(file_path, 'rb') as f:\n            data = f.read()\n        encrypted_data = rsa.encrypt(data, pub_key)\n        encrypted_file_path = os.path.join(temp_dir, file)\n        with open(encrypted_file_path, 'wb') as f:\n            f.write(encrypted_data)\n    \n    # Create a zip file containing all encrypted files\n    zip_file_name = 'encrypted_files.zip'\n    with zipfile.ZipFile(zip_file_name, 'w') as zipf:\n        for file in files:\n            encrypted_file_path = os.path.join(temp_dir, file)\n            zipf.write(encrypted_file_path, arcname=file)\n    \n    # Clean up the temporary directory\n    shutil.rmtree(temp_dir)\n    \n    return pub_key, zip_file_name\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 510,
+        "output_tokens": 311,
+        "total_tokens": 821
+      }
+    },
+    {
+      "content": "```python\nimport rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # Generate RSA keys\n    (pub_key, priv_key) = rsa.newkeys(512)\n    \n    # Get list of files in directory\n    files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]\n    \n    # Create temporary directory to store encrypted files\n    temp_dir = os.path.join(directory, 'temp_encrypted')\n    os.makedirs(temp_dir, exist_ok=True)\n    \n    # Encrypt each file and save to temp directory\n    for file in files:\n        file_path = os.path.join(directory, file)\n        with open(file_path, 'r') as f:\n            content = f.read()\n        \n        # Encrypt content using public key\n        encrypted_content = rsa.encrypt(content.encode(), pub_key)\n        encrypted_content_b64 = b64encode(encrypted_content).decode()\n        \n        # Save encrypted file\n        encrypted_file = os.path.join(temp_dir, file)\n        with open(encrypted_file, 'w') as f:\n            f.write(encrypted_content_b64)\n    \n    # Create zip file with encrypted files\n    zip_file_name = 'encrypted_files.zip'\n    with zipfile.ZipFile(zip_file_name, 'w') as zipf:\n        for file in files:\n            zipf.write(os.path.join(temp_dir, file), arcname=file)\n    \n    return pub_key, zip_file_name\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 510,
+        "output_tokens": 315,
+        "total_tokens": 825
+      }
+    },
+    {
+      "content": "```python\nimport rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # Generate RSA public and private keys\n    (pub_key, priv_key) = rsa.newkeys(512)\n    \n    # Get all files in the directory\n    files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]\n    \n    # Create a temporary directory to store encrypted files\n    temp_dir = os.path.join(directory, 'temp_encrypted')\n    os.makedirs(temp_dir, exist_ok=True)\n    \n    # Encrypt each file and save it to the temporary directory\n    for file_name in files:\n        file_path = os.path.join(directory, file_name)\n        with open(file_path, 'rb') as f:\n            data = f.read()\n        \n        # Encrypt the file content using the public key\n        encrypted_data = rsa.encrypt(data, pub_key)\n        \n        # Save the encrypted data as a base64 encoded string in a new file\n        encrypted_file_path = os.path.join(temp_dir, file_name)\n        with open(encrypted_file_path, 'wb') as f:\n            f.write(b64encode(encrypted_data))\n    \n    # Create a zip file containing all encrypted files\n    zip_file_name = 'encrypted_files.zip'\n    with zipfile.ZipFile(zip_file_name, 'w') as zipf:\n        for file_name in os.listdir(temp_dir):\n            file_path = os.path.join(temp_dir, file_name)\n            zipf.write(file_path, os.path.basename(file_path))\n    \n    # Clean up the temporary directory\n    shutil.rmtree(temp_dir)\n    \n    return pub_key, zip_file_name\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 510,
+        "output_tokens": 355,
+        "total_tokens": 865
+      }
+    }
+  ],
+  "messages": [],
+  "pass": true,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 2,
+  "samples": [
+    {
+      "bucket": "NameError",
+      "code": "import rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # Generate RSA keys\n    (pub_key, priv_key) = rsa.newkeys(2048)\n    \n    # Get all files in the directory\n    files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]\n    \n    # Create a temporary directory to store encrypted files\n    encrypted_dir = os.path.join(directory, 'encrypted')\n    os.makedirs(encrypted_dir, exist_ok=True)\n    \n    # Encrypt each file and save it\n    for filename in files:\n        file_path = os.path.join(directory, filename)\n        with open(file_path, 'rb') as f:\n            data = f.read()\n        encrypted_data = rsa.encrypt(data, pub_key)\n        encrypted_filename = os.path.join(encrypted_dir, filename)\n        with open(encrypted_filename, 'wb') as f:\n            f.write(encrypted_data)\n    \n    # Create a zip file containing all encrypted files\n    zip_filename = 'encrypted_files.zip'\n    with zipfile.ZipFile(zip_filename, 'w') as zipf:\n        for filename in os.listdir(encrypted_dir):\n            file_path = os.path.join(encrypted_dir, filename)\n            zipf.write(file_path, filename)\n    \n    # Clean up the temporary directory\n    shutil.rmtree(encrypted_dir)\n    \n    return pub_key, zip_filename\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "NameError",
+        "duration_s": 13.147,
+        "exception": "NameError",
+        "output_tail": "EEEE\n======================================================================\nERROR: test_empty_directory (hidden_test.TestCases.test_empty_directory)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-l0kmxkou/hidden_test.py\", line 40, in test_empty_directory\n    _, zipfile_name = task_func(self.test_dir)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-l0kmxkou/solution.py\", line 35, in task_func\n    shutil.rmtree(encrypted_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_file_encryption_contents (hidden_test.TestCases.test_file_encryption_contents)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-l0kmxkou/hidden_test.py\", line 48, in test_file_encryption_contents\n    pub_key, zipfile_name = task_func(self.test_dir)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-l0kmxkou/solution.py\", line 35, in task_func\n    shutil.rmtree(encrypted_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_return_type (hidden_test.TestCases.test_return_type)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-l0kmxkou/hidden_test.py\", line 26, in test_return_type\n    pub_key, zipfile_name = task_func(self.test_dir)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-l0kmxkou/solution.py\", line 35, in task_func\n    shutil.rmtree(encrypted_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_zipfile_creation (hidden_test.TestCases.test_zipfile_creation)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-l0kmxkou/hidden_test.py\", line 34, in test_zipfile_creation\n    _, zipfile_name = task_func(self.test_dir)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-l0kmxkou/solution.py\", line 35, in task_func\n    shutil.rmtree(encrypted_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n----------------------------------------------------------------------\nRan 4 tests in 13.057s\n\nFAILED (errors=4)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nGenerates RSA public and private keys, encrypts all files in the specified directory using the public key, and saves the encrypted files into a zip file, returning the public key and the name of the zip file.\n\n## Starting file (solution.py)\n\n```python\nimport rsa\n\nimport os\n\nimport zipfile\n\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\nimport unittest\nimport tempfile\nimport shutil\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.test_dir = tempfile.mkdtemp()\n\n    def tearDown(self):\n        shutil.rmtree(self.test_dir)\n        if os.path.exists('encrypted_files.zip'):\n            os.remove('encrypted_files.zip')\n\n    def test_return_type(self):\n        for i in range(2):\n            with open(os.path.join(self.test_dir, f'file{i}.txt'), 'w') as f:\n                f.write('Sample content')\n        pub_key, zipfile_name = task_func(self.test_dir)\n        self.assertIsInstance(pub_key, rsa.PublicKey)\n        self.assertIsInstance(zipfile_name, str)\n\n    def test_zipfile_creation(self):\n        for i in range(2):\n            with open(os.path.join(self.test_dir, f'file{i}.txt'), 'w') as f:\n                f.write('Sample content')\n        _, zipfile_name = task_func(self.test_dir)\n        self.assertTrue(os.path.exists(zipfile_name))\n        with zipfile.ZipFile(zipfile_name, 'r') as zipf:\n            self.assertEqual(len(zipf.namelist()), 2)\n\n    def test_empty_directory(self):\n        _, zipfile_name = task_func(self.test_dir)\n        with zipfile.ZipFile(zipfile_name, 'r') as zipf:\n            self.assertEqual(len(zipf.namelist()), 0)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 510,
+        "output_tokens": 303,
+        "total_tokens": 813
+      }
+    },
+    {
+      "bucket": "NameError",
+      "code": "import rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # Generate RSA keys\n    (pub_key, priv_key) = rsa.newkeys(512)\n    \n    # Get list of files in the directory\n    files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]\n    \n    # Create a temporary directory to store encrypted files\n    temp_dir = os.path.join(directory, 'temp_encrypted')\n    os.makedirs(temp_dir, exist_ok=True)\n    \n    # Encrypt each file and save to temp directory\n    for file in files:\n        file_path = os.path.join(directory, file)\n        with open(file_path, 'rb') as f:\n            data = f.read()\n        \n        # Encrypt the data using the public key\n        encrypted_data = rsa.encrypt(data, pub_key)\n        \n        # Save the encrypted data to a new file in the temp directory\n        encrypted_file_path = os.path.join(temp_dir, file)\n        with open(encrypted_file_path, 'wb') as f:\n            f.write(encrypted_data)\n    \n    # Create a zip file containing all encrypted files\n    zip_file_name = 'encrypted_files.zip'\n    with zipfile.ZipFile(zip_file_name, 'w') as zipf:\n        for file in files:\n            encrypted_file_path = os.path.join(temp_dir, file)\n            zipf.write(encrypted_file_path, os.path.basename(encrypted_file_path))\n    \n    # Clean up the temporary directory\n    shutil.rmtree(temp_dir)\n    \n    return pub_key, zip_file_name\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "NameError",
+        "duration_s": 0.313,
+        "exception": "NameError",
+        "output_tail": "EEEE\n======================================================================\nERROR: test_empty_directory (hidden_test.TestCases.test_empty_directory)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-pmclwlye/hidden_test.py\", line 40, in test_empty_directory\n    _, zipfile_name = task_func(self.test_dir)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-pmclwlye/solution.py\", line 39, in task_func\n    shutil.rmtree(temp_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_file_encryption_contents (hidden_test.TestCases.test_file_encryption_contents)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-pmclwlye/hidden_test.py\", line 48, in test_file_encryption_contents\n    pub_key, zipfile_name = task_func(self.test_dir)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-pmclwlye/solution.py\", line 39, in task_func\n    shutil.rmtree(temp_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_return_type (hidden_test.TestCases.test_return_type)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-pmclwlye/hidden_test.py\", line 26, in test_return_type\n    pub_key, zipfile_name = task_func(self.test_dir)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-pmclwlye/solution.py\", line 39, in task_func\n    shutil.rmtree(temp_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_zipfile_creation (hidden_test.TestCases.test_zipfile_creation)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-pmclwlye/hidden_test.py\", line 34, in test_zipfile_creation\n    _, zipfile_name = task_func(self.test_dir)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-pmclwlye/solution.py\", line 39, in task_func\n    shutil.rmtree(temp_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n----------------------------------------------------------------------\nRan 4 tests in 0.225s\n\nFAILED (errors=4)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nGenerates RSA public and private keys, encrypts all files in the specified directory using the public key, and saves the encrypted files into a zip file, returning the public key and the name of the zip file.\n\n## Starting file (solution.py)\n\n```python\nimport rsa\n\nimport os\n\nimport zipfile\n\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\nimport unittest\nimport tempfile\nimport shutil\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.test_dir = tempfile.mkdtemp()\n\n    def tearDown(self):\n        shutil.rmtree(self.test_dir)\n        if os.path.exists('encrypted_files.zip'):\n            os.remove('encrypted_files.zip')\n\n    def test_return_type(self):\n        for i in range(2):\n            with open(os.path.join(self.test_dir, f'file{i}.txt'), 'w') as f:\n                f.write('Sample content')\n        pub_key, zipfile_name = task_func(self.test_dir)\n        self.assertIsInstance(pub_key, rsa.PublicKey)\n        self.assertIsInstance(zipfile_name, str)\n\n    def test_zipfile_creation(self):\n        for i in range(2):\n            with open(os.path.join(self.test_dir, f'file{i}.txt'), 'w') as f:\n                f.write('Sample content')\n        _, zipfile_name = task_func(self.test_dir)\n        self.assertTrue(os.path.exists(zipfile_name))\n        with zipfile.ZipFile(zipfile_name, 'r') as zipf:\n            self.assertEqual(len(zipf.namelist()), 2)\n\n    def test_empty_directory(self):\n        _, zipfile_name = task_func(self.test_dir)\n        with zipfile.ZipFile(zipfile_name, 'r') as zipf:\n            self.assertEqual(len(zipf.namelist()), 0)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261124,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 510,
+        "output_tokens": 340,
+        "total_tokens": 850
+      }
+    },
+    {
+      "bucket": "NameError",
+      "code": "import rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # Generate RSA public and private keys\n    (pub_key, priv_key) = rsa.newkeys(512)\n    \n    # Get all files in the directory\n    files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]\n    \n    # Create a temporary directory to store encrypted files\n    temp_dir = os.path.join(directory, 'temp_encrypted')\n    os.makedirs(temp_dir, exist_ok=True)\n    \n    # Encrypt each file and save to temp directory\n    for file in files:\n        file_path = os.path.join(directory, file)\n        with open(file_path, 'rb') as f:\n            data = f.read()\n        encrypted_data = rsa.encrypt(data, pub_key)\n        encrypted_file_path = os.path.join(temp_dir, file)\n        with open(encrypted_file_path, 'wb') as f:\n            f.write(encrypted_data)\n    \n    # Create a zip file containing all encrypted files\n    zip_file_name = 'encrypted_files.zip'\n    with zipfile.ZipFile(zip_file_name, 'w') as zipf:\n        for file in files:\n            encrypted_file_path = os.path.join(temp_dir, file)\n            zipf.write(encrypted_file_path, arcname=file)\n    \n    # Clean up the temporary directory\n    shutil.rmtree(temp_dir)\n    \n    return pub_key, zip_file_name\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "NameError",
+        "duration_s": 0.473,
+        "exception": "NameError",
+        "output_tail": "EEEE\n======================================================================\nERROR: test_empty_directory (hidden_test.TestCases.test_empty_directory)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-5s2mouas/hidden_test.py\", line 40, in test_empty_directory\n    _, zipfile_name = task_func(self.test_dir)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-5s2mouas/solution.py\", line 35, in task_func\n    shutil.rmtree(temp_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_file_encryption_contents (hidden_test.TestCases.test_file_encryption_contents)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-5s2mouas/hidden_test.py\", line 48, in test_file_encryption_contents\n    pub_key, zipfile_name = task_func(self.test_dir)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-5s2mouas/solution.py\", line 35, in task_func\n    shutil.rmtree(temp_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_return_type (hidden_test.TestCases.test_return_type)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-5s2mouas/hidden_test.py\", line 26, in test_return_type\n    pub_key, zipfile_name = task_func(self.test_dir)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-5s2mouas/solution.py\", line 35, in task_func\n    shutil.rmtree(temp_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_zipfile_creation (hidden_test.TestCases.test_zipfile_creation)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-5s2mouas/hidden_test.py\", line 34, in test_zipfile_creation\n    _, zipfile_name = task_func(self.test_dir)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-5s2mouas/solution.py\", line 35, in task_func\n    shutil.rmtree(temp_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n----------------------------------------------------------------------\nRan 4 tests in 0.384s\n\nFAILED (errors=4)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nGenerates RSA public and private keys, encrypts all files in the specified directory using the public key, and saves the encrypted files into a zip file, returning the public key and the name of the zip file.\n\n## Starting file (solution.py)\n\n```python\nimport rsa\n\nimport os\n\nimport zipfile\n\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\nimport unittest\nimport tempfile\nimport shutil\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.test_dir = tempfile.mkdtemp()\n\n    def tearDown(self):\n        shutil.rmtree(self.test_dir)\n        if os.path.exists('encrypted_files.zip'):\n            os.remove('encrypted_files.zip')\n\n    def test_return_type(self):\n        for i in range(2):\n            with open(os.path.join(self.test_dir, f'file{i}.txt'), 'w') as f:\n                f.write('Sample content')\n        pub_key, zipfile_name = task_func(self.test_dir)\n        self.assertIsInstance(pub_key, rsa.PublicKey)\n        self.assertIsInstance(zipfile_name, str)\n\n    def test_zipfile_creation(self):\n        for i in range(2):\n            with open(os.path.join(self.test_dir, f'file{i}.txt'), 'w') as f:\n                f.write('Sample content')\n        _, zipfile_name = task_func(self.test_dir)\n        self.assertTrue(os.path.exists(zipfile_name))\n        with zipfile.ZipFile(zipfile_name, 'r') as zipf:\n            self.assertEqual(len(zipf.namelist()), 2)\n\n    def test_empty_directory(self):\n        _, zipfile_name = task_func(self.test_dir)\n        with zipfile.ZipFile(zipfile_name, 'r') as zipf:\n            self.assertEqual(len(zipf.namelist()), 0)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261125,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 510,
+        "output_tokens": 311,
+        "total_tokens": 821
+      }
+    },
+    {
+      "bucket": "None",
+      "code": "import rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # Generate RSA keys\n    (pub_key, priv_key) = rsa.newkeys(512)\n    \n    # Get list of files in directory\n    files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]\n    \n    # Create temporary directory to store encrypted files\n    temp_dir = os.path.join(directory, 'temp_encrypted')\n    os.makedirs(temp_dir, exist_ok=True)\n    \n    # Encrypt each file and save to temp directory\n    for file in files:\n        file_path = os.path.join(directory, file)\n        with open(file_path, 'r') as f:\n            content = f.read()\n        \n        # Encrypt content using public key\n        encrypted_content = rsa.encrypt(content.encode(), pub_key)\n        encrypted_content_b64 = b64encode(encrypted_content).decode()\n        \n        # Save encrypted file\n        encrypted_file = os.path.join(temp_dir, file)\n        with open(encrypted_file, 'w') as f:\n            f.write(encrypted_content_b64)\n    \n    # Create zip file with encrypted files\n    zip_file_name = 'encrypted_files.zip'\n    with zipfile.ZipFile(zip_file_name, 'w') as zipf:\n        for file in files:\n            zipf.write(os.path.join(temp_dir, file), arcname=file)\n    \n    return pub_key, zip_file_name\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "None",
+        "duration_s": 0.407,
+        "exception": "",
+        "output_tail": "....\n----------------------------------------------------------------------\nRan 4 tests in 0.316s\n\nOK",
+        "pass": true,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nGenerates RSA public and private keys, encrypts all files in the specified directory using the public key, and saves the encrypted files into a zip file, returning the public key and the name of the zip file.\n\n## Starting file (solution.py)\n\n```python\nimport rsa\n\nimport os\n\nimport zipfile\n\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\nimport unittest\nimport tempfile\nimport shutil\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.test_dir = tempfile.mkdtemp()\n\n    def tearDown(self):\n        shutil.rmtree(self.test_dir)\n        if os.path.exists('encrypted_files.zip'):\n            os.remove('encrypted_files.zip')\n\n    def test_return_type(self):\n        for i in range(2):\n            with open(os.path.join(self.test_dir, f'file{i}.txt'), 'w') as f:\n                f.write('Sample content')\n        pub_key, zipfile_name = task_func(self.test_dir)\n        self.assertIsInstance(pub_key, rsa.PublicKey)\n        self.assertIsInstance(zipfile_name, str)\n\n    def test_zipfile_creation(self):\n        for i in range(2):\n            with open(os.path.join(self.test_dir, f'file{i}.txt'), 'w') as f:\n                f.write('Sample content')\n        _, zipfile_name = task_func(self.test_dir)\n        self.assertTrue(os.path.exists(zipfile_name))\n        with zipfile.ZipFile(zipfile_name, 'r') as zipf:\n            self.assertEqual(len(zipf.namelist()), 2)\n\n    def test_empty_directory(self):\n        _, zipfile_name = task_func(self.test_dir)\n        with zipfile.ZipFile(zipfile_name, 'r') as zipf:\n            self.assertEqual(len(zipf.namelist()), 0)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": true,
+      "seed": 20261126,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 510,
+        "output_tokens": 315,
+        "total_tokens": 825
+      }
+    },
+    {
+      "bucket": "NameError",
+      "code": "import rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # Generate RSA public and private keys\n    (pub_key, priv_key) = rsa.newkeys(512)\n    \n    # Get all files in the directory\n    files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]\n    \n    # Create a temporary directory to store encrypted files\n    temp_dir = os.path.join(directory, 'temp_encrypted')\n    os.makedirs(temp_dir, exist_ok=True)\n    \n    # Encrypt each file and save it to the temporary directory\n    for file_name in files:\n        file_path = os.path.join(directory, file_name)\n        with open(file_path, 'rb') as f:\n            data = f.read()\n        \n        # Encrypt the file content using the public key\n        encrypted_data = rsa.encrypt(data, pub_key)\n        \n        # Save the encrypted data as a base64 encoded string in a new file\n        encrypted_file_path = os.path.join(temp_dir, file_name)\n        with open(encrypted_file_path, 'wb') as f:\n            f.write(b64encode(encrypted_data))\n    \n    # Create a zip file containing all encrypted files\n    zip_file_name = 'encrypted_files.zip'\n    with zipfile.ZipFile(zip_file_name, 'w') as zipf:\n        for file_name in os.listdir(temp_dir):\n            file_path = os.path.join(temp_dir, file_name)\n            zipf.write(file_path, os.path.basename(file_path))\n    \n    # Clean up the temporary directory\n    shutil.rmtree(temp_dir)\n    \n    return pub_key, zip_file_name\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "NameError",
+        "duration_s": 0.232,
+        "exception": "NameError",
+        "output_tail": "EEEE\n======================================================================\nERROR: test_empty_directory (hidden_test.TestCases.test_empty_directory)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-wgg1x8_q/hidden_test.py\", line 40, in test_empty_directory\n    _, zipfile_name = task_func(self.test_dir)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-wgg1x8_q/solution.py\", line 39, in task_func\n    shutil.rmtree(temp_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_file_encryption_contents (hidden_test.TestCases.test_file_encryption_contents)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-wgg1x8_q/hidden_test.py\", line 48, in test_file_encryption_contents\n    pub_key, zipfile_name = task_func(self.test_dir)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-wgg1x8_q/solution.py\", line 39, in task_func\n    shutil.rmtree(temp_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_return_type (hidden_test.TestCases.test_return_type)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-wgg1x8_q/hidden_test.py\", line 26, in test_return_type\n    pub_key, zipfile_name = task_func(self.test_dir)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-wgg1x8_q/solution.py\", line 39, in task_func\n    shutil.rmtree(temp_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n======================================================================\nERROR: test_zipfile_creation (hidden_test.TestCases.test_zipfile_creation)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-wgg1x8_q/hidden_test.py\", line 34, in test_zipfile_creation\n    _, zipfile_name = task_func(self.test_dir)\n                      ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-wgg1x8_q/solution.py\", line 39, in task_func\n    shutil.rmtree(temp_dir)\n    ^^^^^^\nNameError: name 'shutil' is not defined. Did you forget to import 'shutil'\n\n----------------------------------------------------------------------\nRan 4 tests in 0.144s\n\nFAILED (errors=4)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nGenerates RSA public and private keys, encrypts all files in the specified directory using the public key, and saves the encrypted files into a zip file, returning the public key and the name of the zip file.\n\n## Starting file (solution.py)\n\n```python\nimport rsa\n\nimport os\n\nimport zipfile\n\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\nimport unittest\nimport tempfile\nimport shutil\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.test_dir = tempfile.mkdtemp()\n\n    def tearDown(self):\n        shutil.rmtree(self.test_dir)\n        if os.path.exists('encrypted_files.zip'):\n            os.remove('encrypted_files.zip')\n\n    def test_return_type(self):\n        for i in range(2):\n            with open(os.path.join(self.test_dir, f'file{i}.txt'), 'w') as f:\n                f.write('Sample content')\n        pub_key, zipfile_name = task_func(self.test_dir)\n        self.assertIsInstance(pub_key, rsa.PublicKey)\n        self.assertIsInstance(zipfile_name, str)\n\n    def test_zipfile_creation(self):\n        for i in range(2):\n            with open(os.path.join(self.test_dir, f'file{i}.txt'), 'w') as f:\n                f.write('Sample content')\n        _, zipfile_name = task_func(self.test_dir)\n        self.assertTrue(os.path.exists(zipfile_name))\n        with zipfile.ZipFile(zipfile_name, 'r') as zipf:\n            self.assertEqual(len(zipf.namelist()), 2)\n\n    def test_empty_directory(self):\n        _, zipfile_name = task_func(self.test_dir)\n        with zipfile.ZipFile(zipfile_name, 'r') as zipf:\n            self.assertEqual(len(zipf.namelist()), 0)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261127,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 510,
+        "output_tokens": 355,
+        "total_tokens": 865
+      }
+    }
+  ],
+  "seed": 20261123,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/585",
+  "started_at": "2026-11-23T14:01:29+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/585",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 5,
+    "input_tokens": 2550,
+    "output_tokens": 1624,
+    "total_tokens": 4174
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 5
+}

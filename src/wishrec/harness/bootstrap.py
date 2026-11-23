@@ -1,4 +1,4 @@
-"""Paired task-level bootstrap for the R2 pilot condition contrasts.
+"""Paired task-level bootstrap for the R2b pilot condition contrasts.
 
 The pilot has three samples per (condition, task).  A task contributes one number per
 condition---the mean of its sample-level pass@1 indicators---and conditions are paired
@@ -11,12 +11,19 @@ the average difference over tasks, not the spread between unrelated task samples
 direct samples); ``pass`` is the fallback.  The pilot artifact is complete, so a
 condition must provide the same task set as every other condition.
 
+``results.jsonl`` does not carry the per-task L0 category labels, so ``--summary``
+optionally attaches the per-category grouping that the run's ``summary.json`` computed
+from the task records.  The condition pass rates in that grouping are checked against the
+values recomputed from the unit table, and the attached rows are copied verbatim so the
+paper's per-category table traces to the artifact.
+
 Run from the repository root:
 
     PYTHONPATH=src uv run python -m wishrec.harness.bootstrap \
-        results/runs/r2-pilot/results.jsonl \
-        --output results/runs/r2-pilot/bootstrap.json \
-        --markdown results/runs/r2-pilot/bootstrap.md
+        results/runs/r2b-pilot/results.jsonl \
+        --summary results/runs/r2b-pilot/summary.json \
+        --output results/runs/r2b-pilot/bootstrap.json \
+        --markdown results/runs/r2b-pilot/bootstrap.md
 """
 
 from __future__ import annotations
@@ -35,21 +42,25 @@ from .config import (
     utc_now_iso,
 )
 
-#: Bootstrap settings fixed by the R3 ticket.
+#: Bootstrap settings fixed by the R3 ticket and reused by R6.
 RESAMPLES = 2000
 BOOTSTRAP_SEED = 20261121
 
-#: Contrasts requested in the ticket, in report order.
+#: Contrasts reported by the measured paper, in report order.
 CONTRASTS: tuple[tuple[str, str], ...] = (
     ("B1", "H0"),
     ("H2", "H0"),
     ("H3", "H0"),
     ("H4", "H0"),
+    ("H1", "H0"),
     ("H3", "H2"),
     ("H3", "H4"),
     ("DISCARD", "H3"),
     ("B2", "H0"),
 )
+
+#: Columns rendered for the optional per-category grouping.
+CATEGORY_CONDITIONS: tuple[str, ...] = ("B1", "H0", "H2", "H3", "H4")
 
 
 def load_task_means(
@@ -133,6 +144,87 @@ def paired_interval(
     return float(low), float(high)
 
 
+def load_summary_grouping(
+    summary_path: Path,
+    *,
+    tasks: int,
+    condition_items: dict[str, dict],
+) -> dict:
+    """Load the run's per-category grouping and check it against the unit table.
+
+    ``results.jsonl`` has no category column, so the grouping comes from the aggregate
+    report.  Every condition's overall pass@1 and unit count must match the values
+    recomputed from ``results.jsonl`` before the grouping is accepted.
+    """
+
+    summary_path = Path(summary_path)
+    try:
+        summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ValueError(f"{summary_path}: cannot read summary") from exc
+    if not isinstance(summary, dict):
+        raise ValueError(f"{summary_path}: summary is not an object")
+    if summary.get("tasks") != tasks:
+        raise ValueError(
+            f"{summary_path}: summary has {summary.get('tasks')!r} tasks, expected {tasks}"
+        )
+    if summary.get("heldout_tasks_used") != 0:
+        raise ValueError(f"{summary_path}: summary does not hold out every task")
+    reported = summary.get("conditions_summary")
+    if not isinstance(reported, dict):
+        raise ValueError(f"{summary_path}: missing conditions_summary")
+    for condition, item in condition_items.items():
+        other = reported.get(condition)
+        if not isinstance(other, dict):
+            raise ValueError(f"{summary_path}: missing condition {condition}")
+        for field in ("pass_at_1", "units"):
+            if other.get(field) is None:
+                raise ValueError(f"{summary_path}: condition {condition} lacks {field}")
+        if abs(float(other["pass_at_1"]) - item["pass_at_1"]) > 5e-4:
+            raise ValueError(
+                f"{summary_path}: condition {condition} pass@1 disagrees with "
+                f"results.jsonl ({other['pass_at_1']} vs {item['pass_at_1']})"
+            )
+        if int(other["units"]) != item["units"]:
+            raise ValueError(
+                f"{summary_path}: condition {condition} unit count disagrees with "
+                f"results.jsonl ({other['units']} vs {item['units']})"
+            )
+
+    raw_categories = summary.get("by_category")
+    if not isinstance(raw_categories, dict) or not raw_categories:
+        raise ValueError(f"{summary_path}: missing by_category grouping")
+    by_category: dict[str, dict] = {}
+    for name, raw in raw_categories.items():
+        if not isinstance(raw, dict) or not isinstance(raw.get("conditions"), dict):
+            raise ValueError(f"{summary_path}: malformed by_category row {name!r}")
+        conditions: dict[str, dict] = {}
+        for condition, values in raw["conditions"].items():
+            if not isinstance(values, dict):
+                raise ValueError(
+                    f"{summary_path}: malformed by_category {name}/{condition}"
+                )
+            conditions[condition] = {
+                "pass_at_1": values.get("pass_at_1"),
+                "pass_rate": values.get("pass_rate"),
+                "recovery": values.get("recovery"),
+                "units": values.get("units"),
+                "avg_questions": values.get("avg_questions"),
+                "avg_turns": values.get("avg_turns"),
+            }
+        by_category[str(name)] = {
+            "label": raw.get("label"),
+            "tasks": raw.get("tasks"),
+            "conditions": conditions,
+        }
+
+    return {
+        "summary": str(summary_path),
+        "summary_sha256": sha256_file(summary_path),
+        "by_category": by_category,
+    }
+
+
 def build_bootstrap(
     results_path: Path,
     *,
@@ -140,8 +232,9 @@ def build_bootstrap(
     seed: int = BOOTSTRAP_SEED,
     contrasts: tuple[tuple[str, str], ...] = CONTRASTS,
     alpha: float = 0.05,
+    summary_path: Path | None = None,
 ) -> dict:
-    """Compute condition means and paired task-level contrasts."""
+    """Compute condition means, paired task-level contrasts and category grouping."""
 
     results_path = Path(results_path)
     task_means, sample_counts = load_task_means(results_path)
@@ -182,7 +275,7 @@ def build_bootstrap(
     sample_values = sorted(
         {count for per_task in sample_counts.values() for count in per_task.values()}
     )
-    return {
+    summary = {
         "format_version": 1,
         "generated_at": utc_now_iso(),
         "results": str(results_path),
@@ -207,13 +300,26 @@ def build_bootstrap(
             "The 300 held-out tasks are absent from the pilot results.",
         ],
     }
+    if summary_path is not None:
+        grouping = load_summary_grouping(
+            summary_path, tasks=len(tasks), condition_items=condition_items
+        )
+        summary["summary"] = grouping["summary"]
+        summary["summary_sha256"] = grouping["summary_sha256"]
+        summary["by_category"] = grouping["by_category"]
+        summary["notes"].append(
+            "The per-category grouping is copied from summary.json because the unit "
+            "table carries no category labels; its condition pass rates were checked "
+            "against results.jsonl."
+        )
+    return summary
 
 
 def render_markdown(summary: dict) -> str:
     """Render the bootstrap artifact as a short Markdown report."""
 
     lines = [
-        "# R2 paired task-level bootstrap",
+        "# R2b paired task-level bootstrap",
         "",
         f"- Generated: {summary['generated_at']}",
         f"- Source: `{summary['results']}` "
@@ -221,10 +327,19 @@ def render_markdown(summary: dict) -> str:
         f"- {summary['tasks']} tasks; samples per task "
         f"{summary['samples_per_task']}; {summary['bootstrap']['resamples']} resamples; "
         f"seed {summary['bootstrap']['seed']}",
-        "",
-        "| condition | pass@1 | tasks | units |",
-        "| --- | --- | --- | --- |",
     ]
+    if summary.get("summary"):
+        lines.append(
+            f"- Per-category grouping: `{summary['summary']}` "
+            f"(sha256 `{summary['summary_sha256']}`)"
+        )
+    lines.extend(
+        [
+            "",
+            "| condition | pass@1 | tasks | units |",
+            "| --- | --- | --- | --- |",
+        ]
+    )
     for condition, item in summary["conditions"].items():
         lines.append(
             f"| {condition} | {item['pass_at_1'] * 100:.1f} | {item['tasks']} | "
@@ -245,13 +360,45 @@ def render_markdown(summary: dict) -> str:
             f"[{low:+.1f}, {high:+.1f}] | "
             f"{'yes' if item['excludes_zero'] else 'no'} |"
         )
+    if summary.get("by_category"):
+        lines.extend(
+            [
+                "",
+                "## Per-category grouping",
+                "",
+                "From `summary.json`: tasks grouped by an L0 category their wish omits "
+                "(categories overlap).",
+                "",
+                "| category | tasks | "
+                + " | ".join(CATEGORY_CONDITIONS)
+                + " | H3 recovery |",
+                "| --- | --- | " + " | ".join("---" for _ in CATEGORY_CONDITIONS) + " | --- |",
+            ]
+        )
+        for name, item in summary["by_category"].items():
+            cells = []
+            for condition in CATEGORY_CONDITIONS:
+                value = item["conditions"].get(condition, {}).get("pass_at_1")
+                cells.append("n/a" if value is None else f"{value * 100:.1f}")
+            recovery = item["conditions"].get("H3", {}).get("recovery")
+            lines.append(
+                f"| {name} | {item['tasks']} | "
+                + " | ".join(cells)
+                + f" | {'n/a' if recovery is None else f'{recovery:.3f}'} |"
+            )
     lines.extend(["", "## Notes", "", *[f"- {note}" for note in summary["notes"]], ""])
     return "\n".join(lines)
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("results", type=Path, help="results.jsonl from the R2 pilot")
+    parser.add_argument("results", type=Path, help="results.jsonl from the R2b pilot")
+    parser.add_argument(
+        "--summary",
+        type=Path,
+        default=None,
+        help="summary.json whose per-category grouping is attached and checked",
+    )
     parser.add_argument("--output", type=Path, default=None)
     parser.add_argument("--markdown", type=Path, default=None)
     parser.add_argument("--resamples", type=int, default=RESAMPLES)
@@ -259,7 +406,10 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     summary = build_bootstrap(
-        args.results, resamples=args.resamples, seed=args.seed
+        args.results,
+        resamples=args.resamples,
+        seed=args.seed,
+        summary_path=args.summary,
     )
     output = args.output or args.results.with_name("bootstrap.json")
     atomic_write_json(output, summary)
@@ -277,10 +427,12 @@ if __name__ == "__main__":
 
 __all__ = [
     "BOOTSTRAP_SEED",
+    "CATEGORY_CONDITIONS",
     "CONTRASTS",
     "RESAMPLES",
     "bootstrap_indices",
     "build_bootstrap",
+    "load_summary_grouping",
     "load_task_means",
     "main",
     "paired_interval",

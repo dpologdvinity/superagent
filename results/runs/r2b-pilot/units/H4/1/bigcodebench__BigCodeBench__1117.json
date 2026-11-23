@@ -1,0 +1,178 @@
+{
+  "api_error": "",
+  "bucket": "None",
+  "condition": "H4",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T15:10:39+00:00",
+  "detector_questions": [],
+  "duration_s": 2.402,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "None",
+    "duration_s": 0.062,
+    "exception": "",
+    "output_tail": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.000s\n\nOK",
+    "pass": true,
+    "timed_out": false
+  },
+  "final_solution": "import collections\nimport random\nimport json\n\nPREFICES = ['EMP$$', 'MAN$$', 'DEV$$', 'HR$$']\nLEVELS = ['Junior', 'Mid', 'Senior']\n\ndef task_func(department_data):\n    result = {}\n    for department, count in department_data.items():\n        employees = []\n        for _ in range(count):\n            level = random.choice(LEVELS)\n            employees.append(level)\n        result[department] = employees\n    return json.dumps(result)",
+  "follow_up_questions": [],
+  "hidden_duration_s": 0.062,
+  "hidden_output_tail": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.000s\n\nOK",
+  "llm_calls": [
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import collections\\nimport random\\nimport json\\n\\nPREFICES = ['EMP$$', 'MAN$$', 'DEV$$', 'HR$$']\\nLEVELS = ['Junior', 'Mid', 'Senior']\\n\\ndef task_func(department_data):\\n    result = {}\\n    for department, count in department_data.items():\\n        employees = []\\n        for _ in range(count):\\n            level = random.choice(LEVELS)\\n            employees.append(level)\\n        result[department] = employees\\n    return json.dumps(result)\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 3171,
+        "output_tokens": 147,
+        "total_tokens": 3318
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 3336,
+        "output_tokens": 93,
+        "total_tokens": 3429
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 3369,
+        "output_tokens": 7,
+        "total_tokens": 3376
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. You cannot ask the stakeholder questions in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Wish\n\nGenerate a JSON object that represents employee data grouped by department codes and their corresponding employee counts.\n\n## Nearby functions in the codebase (context, not your task)\n\n### `task_func`\n\n```python\nfrom bs4 import BeautifulSoup\nimport requests\n\n# Constants\nURL = \"http://example.com\"\n\n\ndef task_func(url=URL, from_encoding=\"cp1251\", use_lxml=False):\n    \"\"\"\n    Fetches a web page from a given URL, decodes its content from a specified encoding,\n    and returns the parsed HTML using BeautifulSoup. If specified, 'lxml' is used as\n    the parser for improved performance. In case of any failure (like network issues,\n    invalid URL, or decoding errors), the function returns None.\n\n    Parameters:\n    - url (str): The URL of the webpage to fetch. Defaults to the constant URL.\n    - from_encoding (str): The original encoding of the webpage content. Defaults to 'cp1251'.\n    - use_lxml (bool): Flag to use 'lxml' as the parser for BeautifulSoup. If False, the default 'html.parser' is used. Defaults to False.\n\n    Returns:\n    - BeautifulSoup object if the fetch and parse are successful.\n    - None if the URL is invalid, the request fails, or parsing fails.\n\n    Requirements:\n    - bs4\n    - requests\n\n    Example:\n    >>> html = task_func('http://example.com', 'cp1251', True)\n    >>> print(html.prettify()) if html else print(\"Error fetching or parsing the webpage.\")\n\n    Notes:\n    - The function returns None if the URL is empty or None.\n    - Network errors, HTTP errors, and decoding issues are caught and result in None being returned.\n    - If the HTTP response status code is 200 (indicating success), the content is decoded using the specified encoding\n    - If the response status code is not 200, it implies an unsuccessful HTTP request (e.g., 404 Not Found, 403 Forbidden).\n      In such cases, the function returns None, indicating that the webpage could not be successfully retrieved or was not available.\n      \n    \"\"\"\n    if not url:\n        return None\n    try:\n        response = requests.get(url, timeout=5)\n        response.raise_for_status()\n        if response.status_code == 200:\n            decoded_content = response.content.decode(from_encoding)\n            parser = \"lxml\" if use_lxml else \"html.parser\"\n            soup = BeautifulSoup(decoded_content, parser)\n            return soup\n        else:\n            return None\n    except Exception as e:\n        print(f\"An error occurred: {e}\")\n        return None\n```\n\n```python\n>>> html = task_func('http://example.com', 'cp1251', True)\n>>> print(html.prettify()) if html else print(\"Error fetching or parsing the webpage.\")\n```\n\n### `task_func`\n\n```python\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom sklearn.preprocessing import MinMaxScaler\n\n# Constants\nPLOT_TITLE = \"Scaled Values\"\n\n\ndef task_func(data_dict):\n    \"\"\"\n    Scales the values in a given dictionary using MinMaxScaler and plots the scaled data.\n\n    Parameters:\n    - data_dict (dict): A dictionary where keys represent column names and values are lists of numerical data.\n                        The values may contain missing data (None), which are handled by dropping them before scaling.\n\n    Returns:\n    - pandas.DataFrame containing the scaled data.\n    - matplotlib Axes object that displays the plot of the scaled data.\n\n    Requirements:\n    - pandas\n    - scikit-learn\n    - matplotlib\n\n    Example:\n    >>> data = {'a': [1, 2, None, 4], 'b': [5, None, 7, 8]}\n    >>> scaled_df, plot_ax = task_func(data)\n    >>> scaled_df\n         a    b\n    0  0.0  0.0\n    1  1.0  1.0\n    >>> plot_ax.get_title()\n    'Scaled Values'\n    \"\"\"\n    df = pd.DataFrame(data_dict).dropna()\n\n    if df.empty:\n        ax = plt.gca()\n        ax.set_title(PLOT_TITLE)\n        return df, ax\n\n    scaler = MinMaxScaler()\n    scaled_data = scaler.fit_transform(df)\n    df_scaled = pd.DataFrame(scaled_data, columns=df.columns)\n\n    ax = df_scaled.plot()\n    ax.set_title(PLOT_TITLE)\n\n    return df_scaled, ax\n```\n\n```python\n>>> data = {'a': [1, 2, None, 4], 'b': [5, None, 7, 8]}\n>>> scaled_df, plot_ax = task_func(data)\n>>> scaled_df\na    b\n0  0.0  0.0\n1  1.0  1.0\n>>> plot_ax.get_title()\n'Scaled Values'\n```\n\n### `task_func`\n\n```python\nfrom datetime import datetime\nimport pandas as pd\nfrom itertools import product\n\n# Constants\nEMPLOYEES = [\"John\", \"Alice\", \"Bob\", \"Charlie\", \"Dave\"]\n\n\ndef task_func(date_str):\n    \"\"\"\n    Generate a Pandas DataFrame containing a series of dates for a predefined list of employees.\n\n    Parameters:\n    - date_str (str): A date string in the \"yyyy-mm-dd\" format to define the starting date.\n\n    Returns:\n    - DataFrame: A pandas DataFrame with 'Employee' and 'Date' columns, listing the next 10 days for each employee.\n\n    Requirements:\n    - datetime.datetime\n    - pandas\n    - itertools\n\n    Example:\n    >>> df = task_func('2023-06-15')\n    >>> print(df)\n       Employee       Date\n    0      John 2023-06-15\n    1      John 2023-06-16\n    ...\n    49     Dave 2023-06-24\n    \"\"\"\n    start_date = datetime.strptime(date_str, \"%Y-%m-%d\")\n    dates = pd.date_range(start_date, periods=10).tolist()\n\n    # Creating a DataFrame from the product of EMPLOYEES and dates\n    df = pd.DataFrame(list(product(EMPLOYEES, dates)), columns=[\"Employee\", \"Date\"])\n\n    return df\n```\n\n```python\n>>> df = task_func('2023-06-15')\n>>> print(df)\nEmployee       Date\n0      John 2023-06-15\n1      John 2023-06-16\n...\n49     Dave 2023-06-24\n```\n\n### `task_func`\n\n```python\nimport numpy as np\nimport seaborn as sns\n\n\ndef task_func(arr):\n    \"\"\"\n    Plots a heatmap of a given 2D numerical array and prints the sum of each row.\n    The heatmap's color range is set based on the minimum and maximum values in the array.\n\n    Parameters:\n    arr (numpy.array): A 2D numpy array of numerical values.\n\n    Returns:\n    ax (matplotlib.axes.Axes): The Axes object with the plotted heatmap.\n\n    Requirements:\n    - numpy\n    - seaborn\n\n    Note:\n    The function calculates the sum of each row and prints these values.\n    The heatmap is plotted based on the original array with its color range set from the minimum to the maximum value in the array.\n\n    Example:\n    >>> arr = np.array([[i + j for i in range(3)] for j in range(5)])\n    >>> ax = task_func(arr)\n    >>> ax.get_title()\n    'Heatmap of the 2D Array'\n    \"\"\"\n    row_sums = arr.sum(axis=1)\n    vmax = np.max(arr)  # Set vmax to the maximum value in the array\n    vmin = np.min(arr)  # Set vmin to the minimum value in the array\n    ax = sns.heatmap(\n        arr, annot=True, vmax=vmax, vmin=vmin\n    )  # Include both vmin and vmax in the heatmap call\n    ax.set_title(\"Heatmap of the 2D Array\")\n\n    return ax\n```\n\n```python\n>>> arr = np.array([[i + j for i in range(3)] for j in range(5)])\n>>> ax = task_func(arr)\n>>> ax.get_title()\n'Heatmap of the 2D Array'\n```\n\n### `task_func`\n\n```python\nimport pandas as pd\nfrom random import shuffle\n\n# Constants\nPOSSIBLE_VALUES = [\"A\", \"B\", \"C\", \"D\", \"E\", \"F\", \"G\", \"H\", \"I\", \"J\"]\n\n\ndef task_func(list_of_lists):\n    \"\"\"\n    Generate a list of pandas DataFrames, each created from a sublist in 'list_of_lists'.\n    Each DataFrame has columns named as per the elements of the sublist, and each column\n    is filled with randomly shuffled values from 'POSSIBLE_VALUES'.\n\n    Parameters:\n    - list_of_lists (list of list): A list where each element is a list of strings\n    representing column names for a DataFrame.\n\n    Returns:\n    - list of pandas.DataFrame: A list where each element is a DataFrame with columns as specified\n    in 'list_of_lists', and each column contains shuffled values from 'POSSIBLE_VALUES'.\n\n    Requirements:\n    - pandas\n    - random.shuffle\n\n    Note:\n    - The length of each DataFrame's columns is equal to the length of 'POSSIBLE_VALUES'.\n    - Each column in the DataFrame has the same shuffled order of 'POSSIBLE_VALUES'.\n\n    Example:\n    >>> import random\n    >>> random.seed(0)\n    >>> dfs = task_func([['x', 'y', 'z'], ['a', 'b', 'c']])\n    >>> dfs[0].head()\n       x  y  z\n    0  H  J  H\n    1  I  E  A\n    2  B  I  J\n    3  F  G  D\n    4  D  A  C\n    \"\"\"\n    dataframes = []\n\n    for list_ in list_of_lists:\n        df_dict = {col: POSSIBLE_VALUES.copy() for col in list_}\n        for col in df_dict:\n            shuffle(df_dict[col])\n        df = pd.DataFrame(df_dict)\n        dataframes.append(df)\n\n    return dataframes\n```\n\n```python\n>>> import random\n>>> random.seed(0)\n>>> dfs = task_func([['x', 'y', 'z'], ['a', 'b', 'c']])\n>>> dfs[0].head()\nx  y  z\n0  H  J  H\n1  I  E  A\n2  B  I  J\n3  F  G  D\n4  D  A  C\n```\n\n## Starting file (solution.py)\n\n```python\nimport collections\n\nimport random\n\nimport json\n\nPREFICES = ['EMP$$', 'MAN$$', 'DEV$$', 'HR$$']\n\nLEVELS = ['Junior', 'Mid', 'Senior']\n\ndef task_func(department_data):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport collections\nimport random\nimport json\nPREFICES = ['EMP$$', 'MAN$$', 'DEV$$', 'HR$$']\nLEVELS = ['Junior', 'Mid', 'Senior']\n\nclass TestCases(unittest.TestCase):\n\n    def test_case_1(self):\n        random.seed(0)\n        input_data = {'EMP$$': 5, 'MAN$$': 3, 'DEV$$': 4, 'HR$$': 2}\n        output_data = task_func(input_data)\n        parsed_output = json.loads(output_data)\n        for key, value in input_data.items():\n            self.assertIn(key, parsed_output)\n            self.assertEqual(len(parsed_output[key]), value)\n            for level in parsed_output[key]:\n                self.assertIn(level, LEVELS)\n\n    def test_case_2(self):\n        random.seed(0)\n        input_data = {'EMP$$': 10}\n        output_data = task_func(input_data)\n        parsed_output = json.loads(output_data)\n        self.assertEqual(len(parsed_output), 1)\n        self.assertEqual(len(parsed_output['EMP$$']), 10)\n        for level in parsed_output['EMP$$']:\n            self.assertIn(level, LEVELS)\n\n    def test_case_3(self):\n        random.seed(0)\n        input_data = {'MAN$$': 6, 'DEV$$': 7}\n        output_data = task_func(input_data)\n        parsed_output = json.loads(output_data)\n        self.assertEqual(len(parsed_output), 2)\n        self.assertEqual(len(parsed_output['MAN$$']), 6)\n        self.assertEqual(len(parsed_output['DEV$$']), 7)\n        for level in parsed_output['MAN$$']:\n            self.assertIn(level, LEVELS)\n        for level in parsed_output['DEV$$']:\n            self.assertIn(level, LEVELS)\n```\n\nImplement `solution.py` from the wish, then run the visible tests.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import collections\\nimport random\\nimport json\\n\\nPREFICES = ['EMP$$', 'MAN$$', 'DEV$$', 'HR$$']\\nLEVELS = ['Junior', 'Mid', 'Senior']\\n\\ndef task_func(department_data):\\n    result = {}\\n    for department, count in department_data.items():\\n        employees = []\\n        for _ in range(count):\\n            level = random.choice(LEVELS)\\n            employees.append(level)\\n        result[department] = employees\\n    return json.dumps(result)\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 433 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests passed.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant"
+    }
+  ],
+  "pass": true,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 1,
+  "seed": 20261122,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/1117",
+  "stakeholder_answers": [],
+  "started_at": "2026-11-23T15:10:37+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/1117",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "import collections\nimport random\nimport json\n\nPREFICES = ['EMP$$', 'MAN$$', 'DEV$$', 'HR$$']\nLEVELS = ['Junior', 'Mid', 'Senior']\n\ndef task_func(department_data):\n    result = {}\n    for department, count in department_data.items():\n        employees = []\n        for _ in range(count):\n            level = random.choice(LEVELS)\n            employees.append(level)\n        result[department] = employees\n    return json.dumps(result)",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 433 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests passed."
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 0.062,
+        "exception": "None",
+        "ok": true,
+        "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.000s\n\nOK"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 3,
+    "input_tokens": 9876,
+    "output_tokens": 247,
+    "total_tokens": 10123
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 3
+}

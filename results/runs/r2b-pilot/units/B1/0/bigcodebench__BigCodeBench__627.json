@@ -1,0 +1,178 @@
+{
+  "api_error": "",
+  "bucket": "None",
+  "condition": "B1",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T13:07:14+00:00",
+  "detector_questions": [],
+  "duration_s": 2.704,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "None",
+    "duration_s": 0.61,
+    "exception": "",
+    "output_tail": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.009s\n\nOK",
+    "pass": true,
+    "timed_out": false
+  },
+  "final_solution": "from random import randint\n\nfrom statistics import mean\n\nimport pandas as pd\n\n\ndef task_func(products_list):\n    if not products_list:\n        return pd.DataFrame()\n\n    data = []\n    for product in products_list:\n        monthly_sales = [randint(100, 500) for _ in range(12)]\n        average_sales = mean(monthly_sales)\n        row = [product] + monthly_sales + [average_sales]\n        data.append(row)\n\n    columns = ['Product'] + [f'Month {i + 1}' for i in range(12)] + ['Average Sales']\n    return pd.DataFrame(data, columns=columns)",
+  "follow_up_questions": [],
+  "hidden_duration_s": 0.61,
+  "hidden_output_tail": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.009s\n\nOK",
+  "llm_calls": [
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"from random import randint\\n\\nfrom statistics import mean\\n\\nimport pandas as pd\\n\\n\\ndef task_func(products_list):\\n    if not products_list:\\n        return pd.DataFrame()\\n\\n    data = []\\n    for product in products_list:\\n        monthly_sales = [randint(100, 500) for _ in range(12)]\\n        average_sales = mean(monthly_sales)\\n        row = [product] + monthly_sales + [average_sales]\\n        data.append(row)\\n\\n    columns = ['Product'] + [f'Month {i + 1}' for i in range(12)] + ['Average Sales']\\n    return pd.DataFrame(data, columns=columns)\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 903,
+        "output_tokens": 186,
+        "total_tokens": 1089
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1107,
+        "output_tokens": 16,
+        "total_tokens": 1123
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1140,
+        "output_tokens": 7,
+        "total_tokens": 1147
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. You cannot ask the stakeholder questions in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Specification (complete)\n\nIntent:\nThis function takes in a list of product names and generates random sales data for each product over a period of 12 months. It then calculates the average sales for each product and returns the results as a pandas DataFrame with columns: 'Product', 'Month 1', 'Month 2', ..., 'Month 12', 'Average Sales'..\n\nSignature and types:\nArgs:\n- products_list (list): A list of product names.\n\nReturns:\n- DataFrame: A pandas DataFrame with columns: 'Product', 'Month 1', 'Month 2', ..., 'Month 12', 'Average Sales'.\n\nExamples:\n```python\n>>> products = ['Apples', 'Bananas', 'Grapes', 'Oranges', 'Pineapples']\n>>> sales_data = task_func(products)\n>>> type(sales_data)\n<class 'pandas.core.frame.DataFrame'>\n```\n\nConstraints and edge cases:\nRequirements:\n- pandas\n- random\n- statistics\n\n## Starting file (solution.py)\n\n```python\nfrom random import randint\n\nfrom statistics import mean\n\nimport pandas as pd\n\ndef task_func(products_list):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\n\nclass TestCases(unittest.TestCase):\n\n    def test_case_1(self):\n        products = ['Apples']\n        sales_data = task_func(products)\n        expected_columns = ['Product'] + [f'Month {i + 1}' for i in range(12)] + ['Average Sales']\n        self.assertEqual(list(sales_data.columns), expected_columns)\n        avg_sales = sales_data['Average Sales'].iloc[0]\n        self.assertAlmostEqual(avg_sales, sales_data.iloc[0, 1:13].mean(), places=2)\n        self.assertTrue((sales_data.iloc[0, 1:13] >= 100).all() and (sales_data.iloc[0, 1:13] <= 500).all())\n\n    def test_case_2(self):\n        products = ['Apples', 'Bananas', 'Grapes']\n        sales_data = task_func(products)\n        self.assertEqual(len(sales_data), 3)\n\n    def test_case_3(self):\n        products = []\n        sales_data = task_func(products)\n        self.assertEqual(len(sales_data), 0)\n```\n\nImplement `solution.py` from the complete specification.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"from random import randint\\n\\nfrom statistics import mean\\n\\nimport pandas as pd\\n\\n\\ndef task_func(products_list):\\n    if not products_list:\\n        return pd.DataFrame()\\n\\n    data = []\\n    for product in products_list:\\n        monthly_sales = [randint(100, 500) for _ in range(12)]\\n        average_sales = mean(monthly_sales)\\n        row = [product] + monthly_sales + [average_sales]\\n        data.append(row)\\n\\n    columns = ['Product'] + [f'Month {i + 1}' for i in range(12)] + ['Average Sales']\\n    return pd.DataFrame(data, columns=columns)\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 537 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests passed.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant"
+    }
+  ],
+  "pass": true,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 0,
+  "seed": 20261121,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/627",
+  "stakeholder_answers": [],
+  "started_at": "2026-11-23T13:07:11+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/627",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "from random import randint\n\nfrom statistics import mean\n\nimport pandas as pd\n\n\ndef task_func(products_list):\n    if not products_list:\n        return pd.DataFrame()\n\n    data = []\n    for product in products_list:\n        monthly_sales = [randint(100, 500) for _ in range(12)]\n        average_sales = mean(monthly_sales)\n        row = [product] + monthly_sales + [average_sales]\n        data.append(row)\n\n    columns = ['Product'] + [f'Month {i + 1}' for i in range(12)] + ['Average Sales']\n    return pd.DataFrame(data, columns=columns)",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 537 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests passed."
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 0.552,
+        "exception": "None",
+        "ok": true,
+        "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.007s\n\nOK"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 3,
+    "input_tokens": 3150,
+    "output_tokens": 209,
+    "total_tokens": 3359
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 3
+}

@@ -1,0 +1,275 @@
+{
+  "api_error": "",
+  "bucket": "AssertionError",
+  "condition": "B2",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T15:31:33+00:00",
+  "detector_questions": [],
+  "duration_s": 18.245,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 1.747,
+    "exception": "AssertionError",
+    "output_tail": "FFFFF\n======================================================================\nFAIL: test_case_1 (hidden_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_ooyrhjm/hidden_test.py\", line 25, in test_case_1\n    self.assertIsInstance(result[\"plot\"], matplotlib.container.BarContainer)\nAssertionError: <Axes: title={'center': 'Histogram of Temperature'}, xlabel='Temperature', ylabel='Frequency'> is not an instance of <class 'matplotlib.container.BarContainer'>\n\n======================================================================\nFAIL: test_case_2 (hidden_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_ooyrhjm/hidden_test.py\", line 29, in test_case_2\n    self.assertEqual(result[\"sum\"], 410)\nAssertionError: np.int64(-11) != 410\n\n======================================================================\nFAIL: test_case_3 (hidden_test.TestCases.test_case_3)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_ooyrhjm/hidden_test.py\", line 37, in test_case_3\n    self.assertEqual(result[\"sum\"], 61)\nAssertionError: np.int64(50) != 61\n\n======================================================================\nFAIL: test_case_4 (hidden_test.TestCases.test_case_4)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_ooyrhjm/hidden_test.py\", line 45, in test_case_4\n    self.assertAlmostEqual(result[\"sum\"], 0.8, places=6)\nAssertionError: np.float64(-10.200000000000001) != 0.8 within 6 places (np.float64(11.000000000000002) difference)\n\n======================================================================\nFAIL: test_case_5 (hidden_test.TestCases.test_case_5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_ooyrhjm/hidden_test.py\", line 54, in test_case_5\n    self.assertEqual(result[\"sum\"], 0)\nAssertionError: nan != 0\n\n----------------------------------------------------------------------\nRan 5 tests in 0.099s\n\nFAILED (failures=5)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # Extract the relevant column data\n    df = pd.DataFrame(data, columns=['Date', column, 'Temp', 'Wind Speed', 'Precipitation'])\n    column_data = df[column].values\n    \n    # Calculate sum, mean, min, max\n    if len(column_data) == 0:\n        sum_val = np.nan\n        mean_val = np.nan\n        min_val = np.inf\n        max_val = -np.inf\n    else:\n        sum_val = np.sum(column_data)\n        mean_val = np.mean(column_data)\n        min_val = np.min(column_data)\n        max_val = np.max(column_data)\n    \n    # Create a DataFrame for the results\n    result = {\n        'sum': sum_val,\n        'mean': mean_val,\n        'min': min_val,\n        'max': max_val,\n        'plot': None\n    }\n    \n    # Generate histogram plot\n    plt.figure()\n    plt.hist(column_data, bins=10, edgecolor='black')\n    plt.title(f'Histogram of {column}')\n    plt.xlabel(column)\n    plt.ylabel('Frequency')\n    result['plot'] = plt.gca()  # Get the current axes for the plot\n    \n    return result\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "FFFFF\n======================================================================\nFAIL: test_case_1 (hidden_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_ooyrhjm/hidden_test.py\", line 25, in test_case_1\n    self.assertIsInstance(result[\"plot\"], matplotlib.container.BarContainer)\nAssertionError: <Axes: title={'center': 'Histogram of Temperature'}, xlabel='Temperature', ylabel='Frequency'> is not an instance of <class 'matplotlib.container.BarContainer'>\n\n======================================================================\nFAIL: test_case_2 (hidden_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_ooyrhjm/hidden_test.py\", line 29, in test_case_2\n    self.assertEqual(result[\"sum\"], 410)\nAssertionError: np.int64(-11) != 410\n\n======================================================================\nFAIL: test_case_3 (hidden_test.TestCases.test_case_3)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_ooyrhjm/hidden_test.py\", line 37, in test_case_3\n    self.assertEqual(result[\"sum\"], 61)\nAssertionError: np.int64(50) != 61\n\n======================================================================\nFAIL: test_case_4 (hidden_test.TestCases.test_case_4)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_ooyrhjm/hidden_test.py\", line 45, in test_case_4\n    self.assertAlmostEqual(result[\"sum\"], 0.8, places=6)\nAssertionError: np.float64(-10.200000000000001) != 0.8 within 6 places (np.float64(11.000000000000002) difference)\n\n======================================================================\nFAIL: test_case_5 (hidden_test.TestCases.test_case_5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_ooyrhjm/hidden_test.py\", line 54, in test_case_5\n    self.assertEqual(result[\"sum\"], 0)\nAssertionError: nan != 0\n\n----------------------------------------------------------------------\nRan 5 tests in 0.099s\n\nFAILED (failures=5)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # Extract the relevant column data\n    df = pd.DataFrame(data, columns=['Date', column, 'Temp', 'Wind Speed', 'Precipitation'])\n    column_data = df[column].values\n    \n    # Calculate sum, mean, min, max\n    if len(column_data) == 0:\n        sum_val = np.nan\n        mean_val = np.nan\n        min_val = np.inf\n        max_val = -np.inf\n    else:\n        sum_val = np.sum(column_data)\n        mean_val = np.mean(column_data)\n        min_val = np.min(column_data)\n        max_val = np.max(column_data)\n    \n    # Create a DataFrame for the results\n    result = {\n        'sum': sum_val,\n        'mean': mean_val,\n        'min': min_val,\n        'max': max_val,\n        'plot': None\n    }\n    \n    # Generate histogram plot\n    plt.figure()\n    plt.hist(column_data, bins=10, edgecolor='black')\n    plt.title(f'Histogram of {column}')\n    plt.xlabel(column)\n    plt.ylabel('Frequency')\n    result['plot'] = plt.gca()  # Get the current axes for the plot\n    \n    return result\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 650,
+        "output_tokens": 280,
+        "total_tokens": 930
+      }
+    },
+    {
+      "content": "```python\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # Extract the relevant column data\n    df = pd.DataFrame(data)\n    column_data = df[column].values\n    \n    # Calculate sum, mean, min, max\n    if len(column_data) == 0:\n        sum_val = np.nan\n        mean_val = np.nan\n        min_val = np.inf\n        max_val = -np.inf\n    else:\n        sum_val = np.sum(column_data)\n        mean_val = np.mean(column_data)\n        min_val = np.min(column_data)\n        max_val = np.max(column_data)\n    \n    # Create a DataFrame for the statistics\n    stats = {\n        'sum': sum_val,\n        'mean': mean_val,\n        'min': min_val,\n        'max': max_val\n    }\n    \n    # Generate a histogram plot\n    plt.figure()\n    plt.hist(column_data, bins=10, edgecolor='black')\n    plt.title(f'Histogram of {column}')\n    plt.xlabel(column)\n    plt.ylabel('Frequency')\n    plot = plt.gca()  # Get current axes for the result\n    \n    # Return the stats and the plot\n    return {\n        'sum': stats['sum'],\n        'mean': stats['mean'],\n        'min': stats['min'],\n        'max': stats['max'],\n        'plot': plot\n    }\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 650,
+        "output_tokens": 301,
+        "total_tokens": 951
+      }
+    },
+    {
+      "content": "```python\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # Extract the relevant column data\n    column_data = [row[1] for row in data if isinstance(row, list) and len(row) > 1]\n    \n    # If the data list is empty, set the mean to np.nan, min to np.inf, and max to -np.inf\n    if not column_data:\n        return {\n            'sum': np.nan,\n            'mean': np.nan,\n            'min': np.inf,\n            'max': -np.inf,\n            'plot': None\n        }\n    \n    # Calculate the required statistics\n    sum_val = np.sum(column_data)\n    mean_val = np.mean(column_data)\n    min_val = np.min(column_data)\n    max_val = np.max(column_data)\n    \n    # Create a DataFrame for the column data\n    df = pd.DataFrame({column: column_data})\n    \n    # Generate a histogram plot\n    plt.figure()\n    plt.hist(df[column], bins=5, edgecolor='black')\n    plt.title(f'Histogram of {column}')\n    plt.xlabel(column)\n    plt.ylabel('Frequency')\n    plot = plt.gca().get_children()[1]  # Get the bar container\n    \n    # Return the results\n    return {\n        'sum': sum_val,\n        'mean': mean_val,\n        'min': min_val,\n        'max': max_val,\n        'plot': plot\n    }\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 650,
+        "output_tokens": 315,
+        "total_tokens": 965
+      }
+    },
+    {
+      "content": "```python\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # Extract the relevant column data\n    df = pd.DataFrame(data, columns=['Date', column, 'Temp', 'Wind Speed', 'Visibility'])\n    column_data = df[column].dropna().values\n\n    # Calculate statistics\n    if len(column_data) == 0:\n        sum_val = np.nan\n        mean_val = np.nan\n        min_val = np.inf\n        max_val = -np.inf\n    else:\n        sum_val = np.sum(column_data)\n        mean_val = np.mean(column_data)\n        min_val = np.min(column_data)\n        max_val = np.max(column_data)\n\n    # Generate histogram plot\n    plt.figure()\n    plt.hist(column_data, bins=10, edgecolor='black')\n    plt.title(f'Histogram of {column}')\n    plt.xlabel(column)\n    plt.ylabel('Frequency')\n    plot = plt.gca()  # Get current axes for return\n\n    # Return results as a dictionary\n    return {\n        'sum': sum_val,\n        'mean': mean_val,\n        'min': min_val,\n        'max': max_val,\n        'plot': plot\n    }\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 650,
+        "output_tokens": 262,
+        "total_tokens": 912
+      }
+    },
+    {
+      "content": "```python\nimport pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # Extract the relevant column data\n    column_data = [row[1] for row in data if isinstance(row, list) and len(row) > 1]\n    \n    # Check if the data list is empty\n    if not column_data:\n        return {\n            'sum': np.nan,\n            'mean': np.nan,\n            'min': np.inf,\n            'max': -np.inf,\n            'plot': None\n        }\n    \n    # Calculate the required statistics\n    sum_val = sum(column_data)\n    mean_val = np.mean(column_data)\n    min_val = np.min(column_data)\n    max_val = np.max(column_data)\n    \n    # Create a DataFrame for the column data\n    df = pd.DataFrame({column: column_data})\n    \n    # Generate the histogram plot\n    plt.figure()\n    plt.hist(df[column], bins=5, edgecolor='black')\n    plt.title(f'Histogram of {column}')\n    plt.xlabel(column)\n    plt.ylabel('Frequency')\n    plot = plt.gca()  # Get the current axes for the plot\n    \n    # Return the results\n    return {\n        'sum': sum_val,\n        'mean': mean_val,\n        'min': min_val,\n        'max': max_val,\n        'plot': plot\n    }\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 650,
+        "output_tokens": 294,
+        "total_tokens": 944
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 1,
+  "samples": [
+    {
+      "bucket": "AssertionError",
+      "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # Extract the relevant column data\n    df = pd.DataFrame(data, columns=['Date', column, 'Temp', 'Wind Speed', 'Precipitation'])\n    column_data = df[column].values\n    \n    # Calculate sum, mean, min, max\n    if len(column_data) == 0:\n        sum_val = np.nan\n        mean_val = np.nan\n        min_val = np.inf\n        max_val = -np.inf\n    else:\n        sum_val = np.sum(column_data)\n        mean_val = np.mean(column_data)\n        min_val = np.min(column_data)\n        max_val = np.max(column_data)\n    \n    # Create a DataFrame for the results\n    result = {\n        'sum': sum_val,\n        'mean': mean_val,\n        'min': min_val,\n        'max': max_val,\n        'plot': None\n    }\n    \n    # Generate histogram plot\n    plt.figure()\n    plt.hist(column_data, bins=10, edgecolor='black')\n    plt.title(f'Histogram of {column}')\n    plt.xlabel(column)\n    plt.ylabel('Frequency')\n    result['plot'] = plt.gca()  # Get the current axes for the plot\n    \n    return result\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 1.747,
+        "exception": "AssertionError",
+        "output_tail": "FFFFF\n======================================================================\nFAIL: test_case_1 (hidden_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_ooyrhjm/hidden_test.py\", line 25, in test_case_1\n    self.assertIsInstance(result[\"plot\"], matplotlib.container.BarContainer)\nAssertionError: <Axes: title={'center': 'Histogram of Temperature'}, xlabel='Temperature', ylabel='Frequency'> is not an instance of <class 'matplotlib.container.BarContainer'>\n\n======================================================================\nFAIL: test_case_2 (hidden_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_ooyrhjm/hidden_test.py\", line 29, in test_case_2\n    self.assertEqual(result[\"sum\"], 410)\nAssertionError: np.int64(-11) != 410\n\n======================================================================\nFAIL: test_case_3 (hidden_test.TestCases.test_case_3)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_ooyrhjm/hidden_test.py\", line 37, in test_case_3\n    self.assertEqual(result[\"sum\"], 61)\nAssertionError: np.int64(50) != 61\n\n======================================================================\nFAIL: test_case_4 (hidden_test.TestCases.test_case_4)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_ooyrhjm/hidden_test.py\", line 45, in test_case_4\n    self.assertAlmostEqual(result[\"sum\"], 0.8, places=6)\nAssertionError: np.float64(-10.200000000000001) != 0.8 within 6 places (np.float64(11.000000000000002) difference)\n\n======================================================================\nFAIL: test_case_5 (hidden_test.TestCases.test_case_5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_ooyrhjm/hidden_test.py\", line 54, in test_case_5\n    self.assertEqual(result[\"sum\"], 0)\nAssertionError: nan != 0\n\n----------------------------------------------------------------------\nRan 5 tests in 0.099s\n\nFAILED (failures=5)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nAnalyze and visualize the statistical properties of a specified weather data column by calculating the sum, mean, minimum, and maximum values, and generating a histogram plot. If the data list is empty, set the mean to np.nan, the minimum to np.inf, and the maximum to -np.inf.\n\n## Starting file (solution.py)\n\n```python\nimport pandas as pd\n\nimport numpy as np\n\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport matplotlib\nimport matplotlib.pyplot as plt\nfrom datetime import datetime\nimport numpy as np\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.data = [[datetime(2022, 1, 1), -5, 80, 10, 0], [datetime(2022, 1, 2), -3, 85, 12, 0.5], [datetime(2022, 1, 3), -2, 83, 15, 0], [datetime(2022, 1, 4), -1, 82, 13, 0.2], [datetime(2022, 1, 5), 0, 80, 11, 0.1]]\n\n    def test_case_1(self):\n        result = task_func('Temperature', self.data)\n        self.assertEqual(result['sum'], -11)\n        self.assertEqual(result['mean'], -2.2)\n        self.assertEqual(result['min'], -5)\n        self.assertEqual(result['max'], 0)\n        self.assertIsInstance(result['plot'], matplotlib.container.BarContainer)\n\n    def test_case_2(self):\n        result = task_func('Humidity', self.data)\n        self.assertEqual(result['sum'], 410)\n        self.assertEqual(result['mean'], 82)\n        self.assertEqual(result['min'], 80)\n        self.assertEqual(result['max'], 85)\n        self.assertIsInstance(result['plot'], matplotlib.container.BarContainer)\n\n    def test_case_3(self):\n        result = task_func('Wind Speed', self.data)\n        self.assertEqual(result['sum'], 61)\n        self.assertEqual(result['mean'], 12.2)\n        self.assertEqual(result['min'], 10)\n        self.assertEqual(result['max'], 15)\n        self.assertIsInstance(result['plot'], matplotlib.container.BarContainer)\n\n    def tearDown(self):\n        plt.close('all')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261122,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 650,
+        "output_tokens": 280,
+        "total_tokens": 930
+      }
+    },
+    {
+      "bucket": "KeyError",
+      "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # Extract the relevant column data\n    df = pd.DataFrame(data)\n    column_data = df[column].values\n    \n    # Calculate sum, mean, min, max\n    if len(column_data) == 0:\n        sum_val = np.nan\n        mean_val = np.nan\n        min_val = np.inf\n        max_val = -np.inf\n    else:\n        sum_val = np.sum(column_data)\n        mean_val = np.mean(column_data)\n        min_val = np.min(column_data)\n        max_val = np.max(column_data)\n    \n    # Create a DataFrame for the statistics\n    stats = {\n        'sum': sum_val,\n        'mean': mean_val,\n        'min': min_val,\n        'max': max_val\n    }\n    \n    # Generate a histogram plot\n    plt.figure()\n    plt.hist(column_data, bins=10, edgecolor='black')\n    plt.title(f'Histogram of {column}')\n    plt.xlabel(column)\n    plt.ylabel('Frequency')\n    plot = plt.gca()  # Get current axes for the result\n    \n    # Return the stats and the plot\n    return {\n        'sum': stats['sum'],\n        'mean': stats['mean'],\n        'min': stats['min'],\n        'max': stats['max'],\n        'plot': plot\n    }\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "KeyError",
+        "duration_s": 1.655,
+        "exception": "KeyError",
+        "output_tail": "self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/range.py\", line 549, in get_loc\n    raise KeyError(key)\nKeyError: 'Humidity'\n\n======================================================================\nERROR: test_case_3 (hidden_test.TestCases.test_case_3)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-m9bv2j4w/hidden_test.py\", line 36, in test_case_3\n    result = task_func(\"Wind Speed\", self.data)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-m9bv2j4w/solution.py\", line 8, in task_func\n    column_data = df[column].values\n                  ~~^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/range.py\", line 549, in get_loc\n    raise KeyError(key)\nKeyError: 'Wind Speed'\n\n======================================================================\nERROR: test_case_4 (hidden_test.TestCases.test_case_4)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-m9bv2j4w/hidden_test.py\", line 44, in test_case_4\n    result = task_func(\"Precipitation\", self.data)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-m9bv2j4w/solution.py\", line 8, in task_func\n    column_data = df[column].values\n                  ~~^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/range.py\", line 549, in get_loc\n    raise KeyError(key)\nKeyError: 'Precipitation'\n\n======================================================================\nERROR: test_case_5 (hidden_test.TestCases.test_case_5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-m9bv2j4w/hidden_test.py\", line 52, in test_case_5\n    result = task_func(\"Temperature\", [])\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-m9bv2j4w/solution.py\", line 8, in task_func\n    column_data = df[column].values\n                  ~~^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/range.py\", line 549, in get_loc\n    raise KeyError(key)\nKeyError: 'Temperature'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.009s\n\nFAILED (errors=5)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nAnalyze and visualize the statistical properties of a specified weather data column by calculating the sum, mean, minimum, and maximum values, and generating a histogram plot. If the data list is empty, set the mean to np.nan, the minimum to np.inf, and the maximum to -np.inf.\n\n## Starting file (solution.py)\n\n```python\nimport pandas as pd\n\nimport numpy as np\n\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport matplotlib\nimport matplotlib.pyplot as plt\nfrom datetime import datetime\nimport numpy as np\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.data = [[datetime(2022, 1, 1), -5, 80, 10, 0], [datetime(2022, 1, 2), -3, 85, 12, 0.5], [datetime(2022, 1, 3), -2, 83, 15, 0], [datetime(2022, 1, 4), -1, 82, 13, 0.2], [datetime(2022, 1, 5), 0, 80, 11, 0.1]]\n\n    def test_case_1(self):\n        result = task_func('Temperature', self.data)\n        self.assertEqual(result['sum'], -11)\n        self.assertEqual(result['mean'], -2.2)\n        self.assertEqual(result['min'], -5)\n        self.assertEqual(result['max'], 0)\n        self.assertIsInstance(result['plot'], matplotlib.container.BarContainer)\n\n    def test_case_2(self):\n        result = task_func('Humidity', self.data)\n        self.assertEqual(result['sum'], 410)\n        self.assertEqual(result['mean'], 82)\n        self.assertEqual(result['min'], 80)\n        self.assertEqual(result['max'], 85)\n        self.assertIsInstance(result['plot'], matplotlib.container.BarContainer)\n\n    def test_case_3(self):\n        result = task_func('Wind Speed', self.data)\n        self.assertEqual(result['sum'], 61)\n        self.assertEqual(result['mean'], 12.2)\n        self.assertEqual(result['min'], 10)\n        self.assertEqual(result['max'], 15)\n        self.assertIsInstance(result['plot'], matplotlib.container.BarContainer)\n\n    def tearDown(self):\n        plt.close('all')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 650,
+        "output_tokens": 301,
+        "total_tokens": 951
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # Extract the relevant column data\n    column_data = [row[1] for row in data if isinstance(row, list) and len(row) > 1]\n    \n    # If the data list is empty, set the mean to np.nan, min to np.inf, and max to -np.inf\n    if not column_data:\n        return {\n            'sum': np.nan,\n            'mean': np.nan,\n            'min': np.inf,\n            'max': -np.inf,\n            'plot': None\n        }\n    \n    # Calculate the required statistics\n    sum_val = np.sum(column_data)\n    mean_val = np.mean(column_data)\n    min_val = np.min(column_data)\n    max_val = np.max(column_data)\n    \n    # Create a DataFrame for the column data\n    df = pd.DataFrame({column: column_data})\n    \n    # Generate a histogram plot\n    plt.figure()\n    plt.hist(df[column], bins=5, edgecolor='black')\n    plt.title(f'Histogram of {column}')\n    plt.xlabel(column)\n    plt.ylabel('Frequency')\n    plot = plt.gca().get_children()[1]  # Get the bar container\n    \n    # Return the results\n    return {\n        'sum': sum_val,\n        'mean': mean_val,\n        'min': min_val,\n        'max': max_val,\n        'plot': plot\n    }\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 1.775,
+        "exception": "AssertionError",
+        "output_tail": "FFFFF\n======================================================================\nFAIL: test_case_1 (hidden_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-8bbwddy6/hidden_test.py\", line 25, in test_case_1\n    self.assertIsInstance(result[\"plot\"], matplotlib.container.BarContainer)\nAssertionError: <matplotlib.patches.Rectangle object at 0x7e89aa0e7950> is not an instance of <class 'matplotlib.container.BarContainer'>\n\n======================================================================\nFAIL: test_case_2 (hidden_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-8bbwddy6/hidden_test.py\", line 29, in test_case_2\n    self.assertEqual(result[\"sum\"], 410)\nAssertionError: np.int64(-11) != 410\n\n======================================================================\nFAIL: test_case_3 (hidden_test.TestCases.test_case_3)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-8bbwddy6/hidden_test.py\", line 37, in test_case_3\n    self.assertEqual(result[\"sum\"], 61)\nAssertionError: np.int64(-11) != 61\n\n======================================================================\nFAIL: test_case_4 (hidden_test.TestCases.test_case_4)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-8bbwddy6/hidden_test.py\", line 45, in test_case_4\n    self.assertAlmostEqual(result[\"sum\"], 0.8, places=6)\nAssertionError: np.int64(-11) != 0.8 within 6 places (np.float64(11.8) difference)\n\n======================================================================\nFAIL: test_case_5 (hidden_test.TestCases.test_case_5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-8bbwddy6/hidden_test.py\", line 54, in test_case_5\n    self.assertEqual(result[\"sum\"], 0)\nAssertionError: nan != 0\n\n----------------------------------------------------------------------\nRan 5 tests in 0.060s\n\nFAILED (failures=5)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nAnalyze and visualize the statistical properties of a specified weather data column by calculating the sum, mean, minimum, and maximum values, and generating a histogram plot. If the data list is empty, set the mean to np.nan, the minimum to np.inf, and the maximum to -np.inf.\n\n## Starting file (solution.py)\n\n```python\nimport pandas as pd\n\nimport numpy as np\n\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport matplotlib\nimport matplotlib.pyplot as plt\nfrom datetime import datetime\nimport numpy as np\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.data = [[datetime(2022, 1, 1), -5, 80, 10, 0], [datetime(2022, 1, 2), -3, 85, 12, 0.5], [datetime(2022, 1, 3), -2, 83, 15, 0], [datetime(2022, 1, 4), -1, 82, 13, 0.2], [datetime(2022, 1, 5), 0, 80, 11, 0.1]]\n\n    def test_case_1(self):\n        result = task_func('Temperature', self.data)\n        self.assertEqual(result['sum'], -11)\n        self.assertEqual(result['mean'], -2.2)\n        self.assertEqual(result['min'], -5)\n        self.assertEqual(result['max'], 0)\n        self.assertIsInstance(result['plot'], matplotlib.container.BarContainer)\n\n    def test_case_2(self):\n        result = task_func('Humidity', self.data)\n        self.assertEqual(result['sum'], 410)\n        self.assertEqual(result['mean'], 82)\n        self.assertEqual(result['min'], 80)\n        self.assertEqual(result['max'], 85)\n        self.assertIsInstance(result['plot'], matplotlib.container.BarContainer)\n\n    def test_case_3(self):\n        result = task_func('Wind Speed', self.data)\n        self.assertEqual(result['sum'], 61)\n        self.assertEqual(result['mean'], 12.2)\n        self.assertEqual(result['min'], 10)\n        self.assertEqual(result['max'], 15)\n        self.assertIsInstance(result['plot'], matplotlib.container.BarContainer)\n\n    def tearDown(self):\n        plt.close('all')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261124,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 650,
+        "output_tokens": 315,
+        "total_tokens": 965
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # Extract the relevant column data\n    df = pd.DataFrame(data, columns=['Date', column, 'Temp', 'Wind Speed', 'Visibility'])\n    column_data = df[column].dropna().values\n\n    # Calculate statistics\n    if len(column_data) == 0:\n        sum_val = np.nan\n        mean_val = np.nan\n        min_val = np.inf\n        max_val = -np.inf\n    else:\n        sum_val = np.sum(column_data)\n        mean_val = np.mean(column_data)\n        min_val = np.min(column_data)\n        max_val = np.max(column_data)\n\n    # Generate histogram plot\n    plt.figure()\n    plt.hist(column_data, bins=10, edgecolor='black')\n    plt.title(f'Histogram of {column}')\n    plt.xlabel(column)\n    plt.ylabel('Frequency')\n    plot = plt.gca()  # Get current axes for return\n\n    # Return results as a dictionary\n    return {\n        'sum': sum_val,\n        'mean': mean_val,\n        'min': min_val,\n        'max': max_val,\n        'plot': plot\n    }\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 1.756,
+        "exception": "AssertionError",
+        "output_tail": "FFFFF\n======================================================================\nFAIL: test_case_1 (hidden_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-bz23o42p/hidden_test.py\", line 25, in test_case_1\n    self.assertIsInstance(result[\"plot\"], matplotlib.container.BarContainer)\nAssertionError: <Axes: title={'center': 'Histogram of Temperature'}, xlabel='Temperature', ylabel='Frequency'> is not an instance of <class 'matplotlib.container.BarContainer'>\n\n======================================================================\nFAIL: test_case_2 (hidden_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-bz23o42p/hidden_test.py\", line 29, in test_case_2\n    self.assertEqual(result[\"sum\"], 410)\nAssertionError: np.int64(-11) != 410\n\n======================================================================\nFAIL: test_case_3 (hidden_test.TestCases.test_case_3)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-bz23o42p/hidden_test.py\", line 37, in test_case_3\n    self.assertEqual(result[\"sum\"], 61)\nAssertionError: np.int64(50) != 61\n\n======================================================================\nFAIL: test_case_4 (hidden_test.TestCases.test_case_4)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-bz23o42p/hidden_test.py\", line 45, in test_case_4\n    self.assertAlmostEqual(result[\"sum\"], 0.8, places=6)\nAssertionError: np.int64(-11) != 0.8 within 6 places (np.float64(11.8) difference)\n\n======================================================================\nFAIL: test_case_5 (hidden_test.TestCases.test_case_5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-bz23o42p/hidden_test.py\", line 54, in test_case_5\n    self.assertEqual(result[\"sum\"], 0)\nAssertionError: nan != 0\n\n----------------------------------------------------------------------\nRan 5 tests in 0.093s\n\nFAILED (failures=5)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nAnalyze and visualize the statistical properties of a specified weather data column by calculating the sum, mean, minimum, and maximum values, and generating a histogram plot. If the data list is empty, set the mean to np.nan, the minimum to np.inf, and the maximum to -np.inf.\n\n## Starting file (solution.py)\n\n```python\nimport pandas as pd\n\nimport numpy as np\n\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport matplotlib\nimport matplotlib.pyplot as plt\nfrom datetime import datetime\nimport numpy as np\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.data = [[datetime(2022, 1, 1), -5, 80, 10, 0], [datetime(2022, 1, 2), -3, 85, 12, 0.5], [datetime(2022, 1, 3), -2, 83, 15, 0], [datetime(2022, 1, 4), -1, 82, 13, 0.2], [datetime(2022, 1, 5), 0, 80, 11, 0.1]]\n\n    def test_case_1(self):\n        result = task_func('Temperature', self.data)\n        self.assertEqual(result['sum'], -11)\n        self.assertEqual(result['mean'], -2.2)\n        self.assertEqual(result['min'], -5)\n        self.assertEqual(result['max'], 0)\n        self.assertIsInstance(result['plot'], matplotlib.container.BarContainer)\n\n    def test_case_2(self):\n        result = task_func('Humidity', self.data)\n        self.assertEqual(result['sum'], 410)\n        self.assertEqual(result['mean'], 82)\n        self.assertEqual(result['min'], 80)\n        self.assertEqual(result['max'], 85)\n        self.assertIsInstance(result['plot'], matplotlib.container.BarContainer)\n\n    def test_case_3(self):\n        result = task_func('Wind Speed', self.data)\n        self.assertEqual(result['sum'], 61)\n        self.assertEqual(result['mean'], 12.2)\n        self.assertEqual(result['min'], 10)\n        self.assertEqual(result['max'], 15)\n        self.assertIsInstance(result['plot'], matplotlib.container.BarContainer)\n\n    def tearDown(self):\n        plt.close('all')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261125,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 650,
+        "output_tokens": 262,
+        "total_tokens": 912
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import pandas as pd\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # Extract the relevant column data\n    column_data = [row[1] for row in data if isinstance(row, list) and len(row) > 1]\n    \n    # Check if the data list is empty\n    if not column_data:\n        return {\n            'sum': np.nan,\n            'mean': np.nan,\n            'min': np.inf,\n            'max': -np.inf,\n            'plot': None\n        }\n    \n    # Calculate the required statistics\n    sum_val = sum(column_data)\n    mean_val = np.mean(column_data)\n    min_val = np.min(column_data)\n    max_val = np.max(column_data)\n    \n    # Create a DataFrame for the column data\n    df = pd.DataFrame({column: column_data})\n    \n    # Generate the histogram plot\n    plt.figure()\n    plt.hist(df[column], bins=5, edgecolor='black')\n    plt.title(f'Histogram of {column}')\n    plt.xlabel(column)\n    plt.ylabel('Frequency')\n    plot = plt.gca()  # Get the current axes for the plot\n    \n    # Return the results\n    return {\n        'sum': sum_val,\n        'mean': mean_val,\n        'min': min_val,\n        'max': max_val,\n        'plot': plot\n    }\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 1.704,
+        "exception": "AssertionError",
+        "output_tail": "FFFFF\n======================================================================\nFAIL: test_case_1 (hidden_test.TestCases.test_case_1)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-9ql9hxhj/hidden_test.py\", line 25, in test_case_1\n    self.assertIsInstance(result[\"plot\"], matplotlib.container.BarContainer)\nAssertionError: <Axes: title={'center': 'Histogram of Temperature'}, xlabel='Temperature', ylabel='Frequency'> is not an instance of <class 'matplotlib.container.BarContainer'>\n\n======================================================================\nFAIL: test_case_2 (hidden_test.TestCases.test_case_2)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-9ql9hxhj/hidden_test.py\", line 29, in test_case_2\n    self.assertEqual(result[\"sum\"], 410)\nAssertionError: -11 != 410\n\n======================================================================\nFAIL: test_case_3 (hidden_test.TestCases.test_case_3)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-9ql9hxhj/hidden_test.py\", line 37, in test_case_3\n    self.assertEqual(result[\"sum\"], 61)\nAssertionError: -11 != 61\n\n======================================================================\nFAIL: test_case_4 (hidden_test.TestCases.test_case_4)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-9ql9hxhj/hidden_test.py\", line 45, in test_case_4\n    self.assertAlmostEqual(result[\"sum\"], 0.8, places=6)\nAssertionError: -11 != 0.8 within 6 places (11.8 difference)\n\n======================================================================\nFAIL: test_case_5 (hidden_test.TestCases.test_case_5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-9ql9hxhj/hidden_test.py\", line 54, in test_case_5\n    self.assertEqual(result[\"sum\"], 0)\nAssertionError: nan != 0\n\n----------------------------------------------------------------------\nRan 5 tests in 0.060s\n\nFAILED (failures=5)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nAnalyze and visualize the statistical properties of a specified weather data column by calculating the sum, mean, minimum, and maximum values, and generating a histogram plot. If the data list is empty, set the mean to np.nan, the minimum to np.inf, and the maximum to -np.inf.\n\n## Starting file (solution.py)\n\n```python\nimport pandas as pd\n\nimport numpy as np\n\nimport matplotlib.pyplot as plt\n\ndef task_func(column, data):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport matplotlib\nimport matplotlib.pyplot as plt\nfrom datetime import datetime\nimport numpy as np\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.data = [[datetime(2022, 1, 1), -5, 80, 10, 0], [datetime(2022, 1, 2), -3, 85, 12, 0.5], [datetime(2022, 1, 3), -2, 83, 15, 0], [datetime(2022, 1, 4), -1, 82, 13, 0.2], [datetime(2022, 1, 5), 0, 80, 11, 0.1]]\n\n    def test_case_1(self):\n        result = task_func('Temperature', self.data)\n        self.assertEqual(result['sum'], -11)\n        self.assertEqual(result['mean'], -2.2)\n        self.assertEqual(result['min'], -5)\n        self.assertEqual(result['max'], 0)\n        self.assertIsInstance(result['plot'], matplotlib.container.BarContainer)\n\n    def test_case_2(self):\n        result = task_func('Humidity', self.data)\n        self.assertEqual(result['sum'], 410)\n        self.assertEqual(result['mean'], 82)\n        self.assertEqual(result['min'], 80)\n        self.assertEqual(result['max'], 85)\n        self.assertIsInstance(result['plot'], matplotlib.container.BarContainer)\n\n    def test_case_3(self):\n        result = task_func('Wind Speed', self.data)\n        self.assertEqual(result['sum'], 61)\n        self.assertEqual(result['mean'], 12.2)\n        self.assertEqual(result['min'], 10)\n        self.assertEqual(result['max'], 15)\n        self.assertIsInstance(result['plot'], matplotlib.container.BarContainer)\n\n    def tearDown(self):\n        plt.close('all')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261126,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 650,
+        "output_tokens": 294,
+        "total_tokens": 944
+      }
+    }
+  ],
+  "seed": 20261122,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/506",
+  "started_at": "2026-11-23T15:31:33+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/506",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 5,
+    "input_tokens": 3250,
+    "output_tokens": 1452,
+    "total_tokens": 4702
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 5
+}

@@ -1,0 +1,275 @@
+{
+  "api_error": "",
+  "bucket": "XMLSyntaxError",
+  "condition": "B2",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T13:55:06+00:00",
+  "detector_questions": [],
+  "duration_s": 10.318,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "XMLSyntaxError",
+    "duration_s": 0.575,
+    "exception": "XMLSyntaxError",
+    "output_tail": "..EE.\n======================================================================\nERROR: test_invalid_url (hidden_test.TestCases.test_invalid_url)\nTest that the function raises an error for an invalid URL.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-iqtul9_i/hidden_test.py\", line 52, in test_invalid_url\n    task_func(url)\n  File \"/tmp/wish-eval-iqtul9_i/solution.py\", line 7, in task_func\n    with urllib.request.urlopen(url) as response:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1134, in __call__\n    return self._mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1138, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1193, in _execute_mock_call\n    raise effect\nException: URL fetch error\n\n======================================================================\nERROR: test_non_xml_data (hidden_test.TestCases.test_non_xml_data)\nTest that the function raises an error for non-XML data.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-iqtul9_i/hidden_test.py\", line 63, in test_non_xml_data\n    task_func(url)\n  File \"/tmp/wish-eval-iqtul9_i/solution.py\", line 11, in task_func\n    root = etree.fromstring(xml_data)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"src/lxml/etree.pyx\", line 3434, in lxml.etree.fromstring\n  File \"src/lxml/parser.pxi\", line 2080, in lxml.etree._parseMemoryDocument\n  File \"src/lxml/parser.pxi\", line 1923, in lxml.etree._parseDoc\n  File \"src/lxml/parser.pxi\", line 1948, in lxml.etree._parseDoc_bytes\n  File \"src/lxml/parser.pxi\", line 1195, in lxml.etree._BaseParser._parseDoc\n  File \"src/lxml/parser.pxi\", line 647, in lxml.etree._ParserContext._handleParseResultDoc\n  File \"src/lxml/parser.pxi\", line 765, in lxml.etree._handleParseResult\n  File \"src/lxml/parser.pxi\", line 689, in lxml.etree._raiseParseError\n  File \"<string>\", line 1\nlxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1\n\n----------------------------------------------------------------------\nRan 5 tests in 0.013s\n\nFAILED (errors=2)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import urllib.request\nfrom lxml import etree\nimport pandas as pd\n\ndef task_func(url):\n    # Fetch the XML data from the given URL\n    with urllib.request.urlopen(url) as response:\n        xml_data = response.read()\n    \n    # Parse the XML data\n    root = etree.fromstring(xml_data)\n    \n    # Check if the XML structure is valid (has 'item' elements with 'name' and 'age')\n    if root.tag != 'root' or len(root) == 0:\n        raise ValueError(\"Invalid XML structure or empty XML data\")\n    \n    # Extract data from XML\n    data = []\n    for item in root.findall('item'):\n        name = item.find('name').text if item.find('name') is not None else None\n        age = item.find('age').text if item.find('age') is not None else None\n        if name is not None and age is not None:\n            data.append({'name': name, 'age': age})\n    \n    # Create DataFrame\n    if not data:\n        raise ValueError(\"No valid data found in XML\")\n    \n    df = pd.DataFrame(data)\n    return df\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "..EE.\n======================================================================\nERROR: test_invalid_url (hidden_test.TestCases.test_invalid_url)\nTest that the function raises an error for an invalid URL.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-iqtul9_i/hidden_test.py\", line 52, in test_invalid_url\n    task_func(url)\n  File \"/tmp/wish-eval-iqtul9_i/solution.py\", line 7, in task_func\n    with urllib.request.urlopen(url) as response:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1134, in __call__\n    return self._mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1138, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1193, in _execute_mock_call\n    raise effect\nException: URL fetch error\n\n======================================================================\nERROR: test_non_xml_data (hidden_test.TestCases.test_non_xml_data)\nTest that the function raises an error for non-XML data.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-iqtul9_i/hidden_test.py\", line 63, in test_non_xml_data\n    task_func(url)\n  File \"/tmp/wish-eval-iqtul9_i/solution.py\", line 11, in task_func\n    root = etree.fromstring(xml_data)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"src/lxml/etree.pyx\", line 3434, in lxml.etree.fromstring\n  File \"src/lxml/parser.pxi\", line 2080, in lxml.etree._parseMemoryDocument\n  File \"src/lxml/parser.pxi\", line 1923, in lxml.etree._parseDoc\n  File \"src/lxml/parser.pxi\", line 1948, in lxml.etree._parseDoc_bytes\n  File \"src/lxml/parser.pxi\", line 1195, in lxml.etree._BaseParser._parseDoc\n  File \"src/lxml/parser.pxi\", line 647, in lxml.etree._ParserContext._handleParseResultDoc\n  File \"src/lxml/parser.pxi\", line 765, in lxml.etree._handleParseResult\n  File \"src/lxml/parser.pxi\", line 689, in lxml.etree._raiseParseError\n  File \"<string>\", line 1\nlxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1\n\n----------------------------------------------------------------------\nRan 5 tests in 0.013s\n\nFAILED (errors=2)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport urllib.request\nfrom lxml import etree\nimport pandas as pd\n\ndef task_func(url):\n    # Fetch the XML data from the given URL\n    with urllib.request.urlopen(url) as response:\n        xml_data = response.read()\n    \n    # Parse the XML data\n    root = etree.fromstring(xml_data)\n    \n    # Check if the XML structure is valid (has 'item' elements with 'name' and 'age')\n    if root.tag != 'root' or len(root) == 0:\n        raise ValueError(\"Invalid XML structure or empty XML data\")\n    \n    # Extract data from XML\n    data = []\n    for item in root.findall('item'):\n        name = item.find('name').text if item.find('name') is not None else None\n        age = item.find('age').text if item.find('age') is not None else None\n        if name is not None and age is not None:\n            data.append({'name': name, 'age': age})\n    \n    # Create DataFrame\n    if not data:\n        raise ValueError(\"No valid data found in XML\")\n    \n    df = pd.DataFrame(data)\n    return df\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 566,
+        "output_tokens": 243,
+        "total_tokens": 809
+      }
+    },
+    {
+      "content": "```python\nimport urllib.request\nfrom lxml import etree\nimport pandas as pd\n\ndef task_func(url):\n    # Fetch the XML data from the given URL\n    with urllib.request.urlopen(url) as response:\n        xml_data = response.read()\n    \n    # Parse the XML data\n    root = etree.fromstring(xml_data)\n    \n    # Check if the XML has the expected structure\n    if root.tag != 'root' or len(root) == 0:\n        raise ValueError(\"Invalid XML structure\")\n    \n    # Extract data from XML\n    data = []\n    for item in root:\n        if item.tag != 'item':\n            raise ValueError(\"Invalid XML structure\")\n        name = item.find('name').text if item.find('name') is not None else None\n        age = item.find('age').text if item.find('age') is not None else None\n        if name is None or age is None:\n            raise ValueError(\"Missing required fields in XML\")\n        data.append({'name': name, 'age': age})\n    \n    # Create DataFrame\n    df = pd.DataFrame(data)\n    return df\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 566,
+        "output_tokens": 231,
+        "total_tokens": 797
+      }
+    },
+    {
+      "content": "```python\nimport urllib.request\nfrom lxml import etree\nimport pandas as pd\n\ndef task_func(url):\n    # Fetch the XML data from the given URL\n    with urllib.request.urlopen(url) as response:\n        xml_data = response.read()\n    \n    # Parse the XML data\n    root = etree.fromstring(xml_data)\n    \n    # Check if the XML structure is valid (has 'item' elements with 'name' and 'age')\n    if root.tag != 'root' or len(root) == 0:\n        raise ValueError(\"Invalid XML structure\")\n    \n    # Extract data from XML\n    data = []\n    for item in root.findall('item'):\n        name = item.find('name').text\n        age = item.find('age').text\n        data.append({'name': name, 'age': age})\n    \n    # Create DataFrame\n    df = pd.DataFrame(data)\n    return df\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 566,
+        "output_tokens": 188,
+        "total_tokens": 754
+      }
+    },
+    {
+      "content": "```python\nimport urllib.request\nfrom lxml import etree\nimport pandas as pd\n\ndef task_func(url):\n    # Fetch the XML data from the given URL\n    with urllib.request.urlopen(url) as response:\n        xml_data = response.read()\n    \n    # Parse the XML data\n    root = etree.fromstring(xml_data)\n    \n    # Check if the XML structure is valid (has 'item' elements with 'name' and 'age')\n    if root.tag != 'root' or len(root) == 0:\n        raise ValueError(\"Invalid XML structure or empty XML data\")\n    \n    # Extract data from XML\n    data = []\n    for item in root.findall('item'):\n        name = item.find('name').text if item.find('name') is not None else None\n        age = item.find('age').text if item.find('age') is not None else None\n        if name is not None and age is not None:\n            data.append({'name': name, 'age': age})\n    \n    # Create DataFrame\n    if not data:\n        raise ValueError(\"No valid data found in XML\")\n    \n    df = pd.DataFrame(data)\n    return df\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 566,
+        "output_tokens": 243,
+        "total_tokens": 809
+      }
+    },
+    {
+      "content": "```python\nimport urllib.request\nfrom lxml import etree\nimport pandas as pd\n\ndef task_func(url):\n    # Fetch the XML data from the URL\n    with urllib.request.urlopen(url) as response:\n        xml_data = response.read()\n    \n    # Parse the XML data\n    root = etree.fromstring(xml_data)\n    \n    # Check if the XML has at least one item element\n    if len(root) == 0:\n        raise ValueError(\"The XML file is empty or does not contain any items.\")\n    \n    # Extract the structure of the XML\n    # Assume that the structure is consistent and that each item has the same tags\n    # Get the first item to determine the column names\n    first_item = root[0]\n    columns = [child.tag for child in first_item]\n    \n    # Extract data from each item\n    data = []\n    for item in root:\n        row = {col: item.find(col).text for col in columns}\n        data.append(row)\n    \n    # Create a DataFrame\n    df = pd.DataFrame(data)\n    \n    return df\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 566,
+        "output_tokens": 225,
+        "total_tokens": 791
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 2,
+  "samples": [
+    {
+      "bucket": "XMLSyntaxError",
+      "code": "import urllib.request\nfrom lxml import etree\nimport pandas as pd\n\ndef task_func(url):\n    # Fetch the XML data from the given URL\n    with urllib.request.urlopen(url) as response:\n        xml_data = response.read()\n    \n    # Parse the XML data\n    root = etree.fromstring(xml_data)\n    \n    # Check if the XML structure is valid (has 'item' elements with 'name' and 'age')\n    if root.tag != 'root' or len(root) == 0:\n        raise ValueError(\"Invalid XML structure or empty XML data\")\n    \n    # Extract data from XML\n    data = []\n    for item in root.findall('item'):\n        name = item.find('name').text if item.find('name') is not None else None\n        age = item.find('age').text if item.find('age') is not None else None\n        if name is not None and age is not None:\n            data.append({'name': name, 'age': age})\n    \n    # Create DataFrame\n    if not data:\n        raise ValueError(\"No valid data found in XML\")\n    \n    df = pd.DataFrame(data)\n    return df\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "XMLSyntaxError",
+        "duration_s": 0.575,
+        "exception": "XMLSyntaxError",
+        "output_tail": "..EE.\n======================================================================\nERROR: test_invalid_url (hidden_test.TestCases.test_invalid_url)\nTest that the function raises an error for an invalid URL.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-iqtul9_i/hidden_test.py\", line 52, in test_invalid_url\n    task_func(url)\n  File \"/tmp/wish-eval-iqtul9_i/solution.py\", line 7, in task_func\n    with urllib.request.urlopen(url) as response:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1134, in __call__\n    return self._mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1138, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1193, in _execute_mock_call\n    raise effect\nException: URL fetch error\n\n======================================================================\nERROR: test_non_xml_data (hidden_test.TestCases.test_non_xml_data)\nTest that the function raises an error for non-XML data.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-iqtul9_i/hidden_test.py\", line 63, in test_non_xml_data\n    task_func(url)\n  File \"/tmp/wish-eval-iqtul9_i/solution.py\", line 11, in task_func\n    root = etree.fromstring(xml_data)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"src/lxml/etree.pyx\", line 3434, in lxml.etree.fromstring\n  File \"src/lxml/parser.pxi\", line 2080, in lxml.etree._parseMemoryDocument\n  File \"src/lxml/parser.pxi\", line 1923, in lxml.etree._parseDoc\n  File \"src/lxml/parser.pxi\", line 1948, in lxml.etree._parseDoc_bytes\n  File \"src/lxml/parser.pxi\", line 1195, in lxml.etree._BaseParser._parseDoc\n  File \"src/lxml/parser.pxi\", line 647, in lxml.etree._ParserContext._handleParseResultDoc\n  File \"src/lxml/parser.pxi\", line 765, in lxml.etree._handleParseResult\n  File \"src/lxml/parser.pxi\", line 689, in lxml.etree._raiseParseError\n  File \"<string>\", line 1\nlxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1\n\n----------------------------------------------------------------------\nRan 5 tests in 0.013s\n\nFAILED (errors=2)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nFetches and parses an XML file from a specified URL, then converts it into a Pandas DataFrame.\n\n## Starting file (solution.py)\n\n```python\nimport urllib.request\n\nfrom lxml import etree\n\nimport pandas as pd\n\ndef task_func(url):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\nfrom unittest.mock import patch\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n\n    @patch('urllib.request.urlopen')\n    def test_valid_xml(self, mock_urlopen):\n        \"\"\"Test that the function returns the correct DataFrame for a given XML file.\"\"\"\n        valid_xml_data = b'<root><item><name>John</name><age>25</age></item><item><name>Jane</name><age>30</age></item></root>'\n        mock_urlopen.return_value.__enter__.return_value.read.return_value = valid_xml_data\n        url = 'http://example.com/sample_data.xml'\n        expected_df = pd.DataFrame({'name': ['John', 'Jane'], 'age': ['25', '30']})\n        result_df = task_func(url)\n        pd.testing.assert_frame_equal(result_df, expected_df)\n\n    @patch('urllib.request.urlopen')\n    def test_empty_xml(self, mock_urlopen):\n        \"\"\"Test that the function raises an error for an empty XML file.\"\"\"\n        empty_xml_data = b'<root></root>'\n        mock_urlopen.return_value.__enter__.return_value.read.return_value = empty_xml_data\n        url = 'http://example.com/empty_data.xml'\n        with self.assertRaises(ValueError):\n            task_func(url)\n\n    @patch('urllib.request.urlopen')\n    def test_different_structure_xml(self, mock_urlopen):\n        \"\"\"Test that the function raises an error for an XML file with a different structure.\"\"\"\n        different_structure_xml = b'<root><different><name>John</name></different></root>'\n        mock_urlopen.return_value.__enter__.return_value.read.return_value = different_structure_xml\n        url = 'http://example.com/different_structure_data.xml'\n        with self.assertRaises(ValueError):\n            task_func(url)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 566,
+        "output_tokens": 243,
+        "total_tokens": 809
+      }
+    },
+    {
+      "bucket": "XMLSyntaxError",
+      "code": "import urllib.request\nfrom lxml import etree\nimport pandas as pd\n\ndef task_func(url):\n    # Fetch the XML data from the given URL\n    with urllib.request.urlopen(url) as response:\n        xml_data = response.read()\n    \n    # Parse the XML data\n    root = etree.fromstring(xml_data)\n    \n    # Check if the XML has the expected structure\n    if root.tag != 'root' or len(root) == 0:\n        raise ValueError(\"Invalid XML structure\")\n    \n    # Extract data from XML\n    data = []\n    for item in root:\n        if item.tag != 'item':\n            raise ValueError(\"Invalid XML structure\")\n        name = item.find('name').text if item.find('name') is not None else None\n        age = item.find('age').text if item.find('age') is not None else None\n        if name is None or age is None:\n            raise ValueError(\"Missing required fields in XML\")\n        data.append({'name': name, 'age': age})\n    \n    # Create DataFrame\n    df = pd.DataFrame(data)\n    return df\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "XMLSyntaxError",
+        "duration_s": 0.565,
+        "exception": "XMLSyntaxError",
+        "output_tail": "..EE.\n======================================================================\nERROR: test_invalid_url (hidden_test.TestCases.test_invalid_url)\nTest that the function raises an error for an invalid URL.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-wv4v2yxu/hidden_test.py\", line 52, in test_invalid_url\n    task_func(url)\n  File \"/tmp/wish-eval-wv4v2yxu/solution.py\", line 7, in task_func\n    with urllib.request.urlopen(url) as response:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1134, in __call__\n    return self._mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1138, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1193, in _execute_mock_call\n    raise effect\nException: URL fetch error\n\n======================================================================\nERROR: test_non_xml_data (hidden_test.TestCases.test_non_xml_data)\nTest that the function raises an error for non-XML data.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-wv4v2yxu/hidden_test.py\", line 63, in test_non_xml_data\n    task_func(url)\n  File \"/tmp/wish-eval-wv4v2yxu/solution.py\", line 11, in task_func\n    root = etree.fromstring(xml_data)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"src/lxml/etree.pyx\", line 3434, in lxml.etree.fromstring\n  File \"src/lxml/parser.pxi\", line 2080, in lxml.etree._parseMemoryDocument\n  File \"src/lxml/parser.pxi\", line 1923, in lxml.etree._parseDoc\n  File \"src/lxml/parser.pxi\", line 1948, in lxml.etree._parseDoc_bytes\n  File \"src/lxml/parser.pxi\", line 1195, in lxml.etree._BaseParser._parseDoc\n  File \"src/lxml/parser.pxi\", line 647, in lxml.etree._ParserContext._handleParseResultDoc\n  File \"src/lxml/parser.pxi\", line 765, in lxml.etree._handleParseResult\n  File \"src/lxml/parser.pxi\", line 689, in lxml.etree._raiseParseError\n  File \"<string>\", line 1\nlxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1\n\n----------------------------------------------------------------------\nRan 5 tests in 0.012s\n\nFAILED (errors=2)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nFetches and parses an XML file from a specified URL, then converts it into a Pandas DataFrame.\n\n## Starting file (solution.py)\n\n```python\nimport urllib.request\n\nfrom lxml import etree\n\nimport pandas as pd\n\ndef task_func(url):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\nfrom unittest.mock import patch\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n\n    @patch('urllib.request.urlopen')\n    def test_valid_xml(self, mock_urlopen):\n        \"\"\"Test that the function returns the correct DataFrame for a given XML file.\"\"\"\n        valid_xml_data = b'<root><item><name>John</name><age>25</age></item><item><name>Jane</name><age>30</age></item></root>'\n        mock_urlopen.return_value.__enter__.return_value.read.return_value = valid_xml_data\n        url = 'http://example.com/sample_data.xml'\n        expected_df = pd.DataFrame({'name': ['John', 'Jane'], 'age': ['25', '30']})\n        result_df = task_func(url)\n        pd.testing.assert_frame_equal(result_df, expected_df)\n\n    @patch('urllib.request.urlopen')\n    def test_empty_xml(self, mock_urlopen):\n        \"\"\"Test that the function raises an error for an empty XML file.\"\"\"\n        empty_xml_data = b'<root></root>'\n        mock_urlopen.return_value.__enter__.return_value.read.return_value = empty_xml_data\n        url = 'http://example.com/empty_data.xml'\n        with self.assertRaises(ValueError):\n            task_func(url)\n\n    @patch('urllib.request.urlopen')\n    def test_different_structure_xml(self, mock_urlopen):\n        \"\"\"Test that the function raises an error for an XML file with a different structure.\"\"\"\n        different_structure_xml = b'<root><different><name>John</name></different></root>'\n        mock_urlopen.return_value.__enter__.return_value.read.return_value = different_structure_xml\n        url = 'http://example.com/different_structure_data.xml'\n        with self.assertRaises(ValueError):\n            task_func(url)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261124,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 566,
+        "output_tokens": 231,
+        "total_tokens": 797
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import urllib.request\nfrom lxml import etree\nimport pandas as pd\n\ndef task_func(url):\n    # Fetch the XML data from the given URL\n    with urllib.request.urlopen(url) as response:\n        xml_data = response.read()\n    \n    # Parse the XML data\n    root = etree.fromstring(xml_data)\n    \n    # Check if the XML structure is valid (has 'item' elements with 'name' and 'age')\n    if root.tag != 'root' or len(root) == 0:\n        raise ValueError(\"Invalid XML structure\")\n    \n    # Extract data from XML\n    data = []\n    for item in root.findall('item'):\n        name = item.find('name').text\n        age = item.find('age').text\n        data.append({'name': name, 'age': age})\n    \n    # Create DataFrame\n    df = pd.DataFrame(data)\n    return df\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.569,
+        "exception": "AssertionError",
+        "output_tail": ".py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-y1ce4v9j/hidden_test.py\", line 52, in test_invalid_url\n    task_func(url)\n  File \"/tmp/wish-eval-y1ce4v9j/solution.py\", line 7, in task_func\n    with urllib.request.urlopen(url) as response:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1134, in __call__\n    return self._mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1138, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1193, in _execute_mock_call\n    raise effect\nException: URL fetch error\n\n======================================================================\nERROR: test_non_xml_data (hidden_test.TestCases.test_non_xml_data)\nTest that the function raises an error for non-XML data.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-y1ce4v9j/hidden_test.py\", line 63, in test_non_xml_data\n    task_func(url)\n  File \"/tmp/wish-eval-y1ce4v9j/solution.py\", line 11, in task_func\n    root = etree.fromstring(xml_data)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"src/lxml/etree.pyx\", line 3434, in lxml.etree.fromstring\n  File \"src/lxml/parser.pxi\", line 2080, in lxml.etree._parseMemoryDocument\n  File \"src/lxml/parser.pxi\", line 1923, in lxml.etree._parseDoc\n  File \"src/lxml/parser.pxi\", line 1948, in lxml.etree._parseDoc_bytes\n  File \"src/lxml/parser.pxi\", line 1195, in lxml.etree._BaseParser._parseDoc\n  File \"src/lxml/parser.pxi\", line 647, in lxml.etree._ParserContext._handleParseResultDoc\n  File \"src/lxml/parser.pxi\", line 765, in lxml.etree._handleParseResult\n  File \"src/lxml/parser.pxi\", line 689, in lxml.etree._raiseParseError\n  File \"<string>\", line 1\nlxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1\n\n======================================================================\nFAIL: test_different_structure_xml (hidden_test.TestCases.test_different_structure_xml)\nTest that the function raises an error for an XML file with a different structure.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-y1ce4v9j/hidden_test.py\", line 43, in test_different_structure_xml\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n\n----------------------------------------------------------------------\nRan 5 tests in 0.013s\n\nFAILED (failures=1, errors=2)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nFetches and parses an XML file from a specified URL, then converts it into a Pandas DataFrame.\n\n## Starting file (solution.py)\n\n```python\nimport urllib.request\n\nfrom lxml import etree\n\nimport pandas as pd\n\ndef task_func(url):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\nfrom unittest.mock import patch\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n\n    @patch('urllib.request.urlopen')\n    def test_valid_xml(self, mock_urlopen):\n        \"\"\"Test that the function returns the correct DataFrame for a given XML file.\"\"\"\n        valid_xml_data = b'<root><item><name>John</name><age>25</age></item><item><name>Jane</name><age>30</age></item></root>'\n        mock_urlopen.return_value.__enter__.return_value.read.return_value = valid_xml_data\n        url = 'http://example.com/sample_data.xml'\n        expected_df = pd.DataFrame({'name': ['John', 'Jane'], 'age': ['25', '30']})\n        result_df = task_func(url)\n        pd.testing.assert_frame_equal(result_df, expected_df)\n\n    @patch('urllib.request.urlopen')\n    def test_empty_xml(self, mock_urlopen):\n        \"\"\"Test that the function raises an error for an empty XML file.\"\"\"\n        empty_xml_data = b'<root></root>'\n        mock_urlopen.return_value.__enter__.return_value.read.return_value = empty_xml_data\n        url = 'http://example.com/empty_data.xml'\n        with self.assertRaises(ValueError):\n            task_func(url)\n\n    @patch('urllib.request.urlopen')\n    def test_different_structure_xml(self, mock_urlopen):\n        \"\"\"Test that the function raises an error for an XML file with a different structure.\"\"\"\n        different_structure_xml = b'<root><different><name>John</name></different></root>'\n        mock_urlopen.return_value.__enter__.return_value.read.return_value = different_structure_xml\n        url = 'http://example.com/different_structure_data.xml'\n        with self.assertRaises(ValueError):\n            task_func(url)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261125,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 566,
+        "output_tokens": 188,
+        "total_tokens": 754
+      }
+    },
+    {
+      "bucket": "XMLSyntaxError",
+      "code": "import urllib.request\nfrom lxml import etree\nimport pandas as pd\n\ndef task_func(url):\n    # Fetch the XML data from the given URL\n    with urllib.request.urlopen(url) as response:\n        xml_data = response.read()\n    \n    # Parse the XML data\n    root = etree.fromstring(xml_data)\n    \n    # Check if the XML structure is valid (has 'item' elements with 'name' and 'age')\n    if root.tag != 'root' or len(root) == 0:\n        raise ValueError(\"Invalid XML structure or empty XML data\")\n    \n    # Extract data from XML\n    data = []\n    for item in root.findall('item'):\n        name = item.find('name').text if item.find('name') is not None else None\n        age = item.find('age').text if item.find('age') is not None else None\n        if name is not None and age is not None:\n            data.append({'name': name, 'age': age})\n    \n    # Create DataFrame\n    if not data:\n        raise ValueError(\"No valid data found in XML\")\n    \n    df = pd.DataFrame(data)\n    return df\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "XMLSyntaxError",
+        "duration_s": 0.568,
+        "exception": "XMLSyntaxError",
+        "output_tail": "..EE.\n======================================================================\nERROR: test_invalid_url (hidden_test.TestCases.test_invalid_url)\nTest that the function raises an error for an invalid URL.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-ayo7c9hp/hidden_test.py\", line 52, in test_invalid_url\n    task_func(url)\n  File \"/tmp/wish-eval-ayo7c9hp/solution.py\", line 7, in task_func\n    with urllib.request.urlopen(url) as response:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1134, in __call__\n    return self._mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1138, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1193, in _execute_mock_call\n    raise effect\nException: URL fetch error\n\n======================================================================\nERROR: test_non_xml_data (hidden_test.TestCases.test_non_xml_data)\nTest that the function raises an error for non-XML data.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-ayo7c9hp/hidden_test.py\", line 63, in test_non_xml_data\n    task_func(url)\n  File \"/tmp/wish-eval-ayo7c9hp/solution.py\", line 11, in task_func\n    root = etree.fromstring(xml_data)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"src/lxml/etree.pyx\", line 3434, in lxml.etree.fromstring\n  File \"src/lxml/parser.pxi\", line 2080, in lxml.etree._parseMemoryDocument\n  File \"src/lxml/parser.pxi\", line 1923, in lxml.etree._parseDoc\n  File \"src/lxml/parser.pxi\", line 1948, in lxml.etree._parseDoc_bytes\n  File \"src/lxml/parser.pxi\", line 1195, in lxml.etree._BaseParser._parseDoc\n  File \"src/lxml/parser.pxi\", line 647, in lxml.etree._ParserContext._handleParseResultDoc\n  File \"src/lxml/parser.pxi\", line 765, in lxml.etree._handleParseResult\n  File \"src/lxml/parser.pxi\", line 689, in lxml.etree._raiseParseError\n  File \"<string>\", line 1\nlxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1\n\n----------------------------------------------------------------------\nRan 5 tests in 0.012s\n\nFAILED (errors=2)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nFetches and parses an XML file from a specified URL, then converts it into a Pandas DataFrame.\n\n## Starting file (solution.py)\n\n```python\nimport urllib.request\n\nfrom lxml import etree\n\nimport pandas as pd\n\ndef task_func(url):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\nfrom unittest.mock import patch\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n\n    @patch('urllib.request.urlopen')\n    def test_valid_xml(self, mock_urlopen):\n        \"\"\"Test that the function returns the correct DataFrame for a given XML file.\"\"\"\n        valid_xml_data = b'<root><item><name>John</name><age>25</age></item><item><name>Jane</name><age>30</age></item></root>'\n        mock_urlopen.return_value.__enter__.return_value.read.return_value = valid_xml_data\n        url = 'http://example.com/sample_data.xml'\n        expected_df = pd.DataFrame({'name': ['John', 'Jane'], 'age': ['25', '30']})\n        result_df = task_func(url)\n        pd.testing.assert_frame_equal(result_df, expected_df)\n\n    @patch('urllib.request.urlopen')\n    def test_empty_xml(self, mock_urlopen):\n        \"\"\"Test that the function raises an error for an empty XML file.\"\"\"\n        empty_xml_data = b'<root></root>'\n        mock_urlopen.return_value.__enter__.return_value.read.return_value = empty_xml_data\n        url = 'http://example.com/empty_data.xml'\n        with self.assertRaises(ValueError):\n            task_func(url)\n\n    @patch('urllib.request.urlopen')\n    def test_different_structure_xml(self, mock_urlopen):\n        \"\"\"Test that the function raises an error for an XML file with a different structure.\"\"\"\n        different_structure_xml = b'<root><different><name>John</name></different></root>'\n        mock_urlopen.return_value.__enter__.return_value.read.return_value = different_structure_xml\n        url = 'http://example.com/different_structure_data.xml'\n        with self.assertRaises(ValueError):\n            task_func(url)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261126,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 566,
+        "output_tokens": 243,
+        "total_tokens": 809
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import urllib.request\nfrom lxml import etree\nimport pandas as pd\n\ndef task_func(url):\n    # Fetch the XML data from the URL\n    with urllib.request.urlopen(url) as response:\n        xml_data = response.read()\n    \n    # Parse the XML data\n    root = etree.fromstring(xml_data)\n    \n    # Check if the XML has at least one item element\n    if len(root) == 0:\n        raise ValueError(\"The XML file is empty or does not contain any items.\")\n    \n    # Extract the structure of the XML\n    # Assume that the structure is consistent and that each item has the same tags\n    # Get the first item to determine the column names\n    first_item = root[0]\n    columns = [child.tag for child in first_item]\n    \n    # Extract data from each item\n    data = []\n    for item in root:\n        row = {col: item.find(col).text for col in columns}\n        data.append(row)\n    \n    # Create a DataFrame\n    df = pd.DataFrame(data)\n    \n    return df\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.585,
+        "exception": "AssertionError",
+        "output_tail": ".py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-9ert7vqh/hidden_test.py\", line 52, in test_invalid_url\n    task_func(url)\n  File \"/tmp/wish-eval-9ert7vqh/solution.py\", line 7, in task_func\n    with urllib.request.urlopen(url) as response:\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1134, in __call__\n    return self._mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1138, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1193, in _execute_mock_call\n    raise effect\nException: URL fetch error\n\n======================================================================\nERROR: test_non_xml_data (hidden_test.TestCases.test_non_xml_data)\nTest that the function raises an error for non-XML data.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-9ert7vqh/hidden_test.py\", line 63, in test_non_xml_data\n    task_func(url)\n  File \"/tmp/wish-eval-9ert7vqh/solution.py\", line 11, in task_func\n    root = etree.fromstring(xml_data)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"src/lxml/etree.pyx\", line 3434, in lxml.etree.fromstring\n  File \"src/lxml/parser.pxi\", line 2080, in lxml.etree._parseMemoryDocument\n  File \"src/lxml/parser.pxi\", line 1923, in lxml.etree._parseDoc\n  File \"src/lxml/parser.pxi\", line 1948, in lxml.etree._parseDoc_bytes\n  File \"src/lxml/parser.pxi\", line 1195, in lxml.etree._BaseParser._parseDoc\n  File \"src/lxml/parser.pxi\", line 647, in lxml.etree._ParserContext._handleParseResultDoc\n  File \"src/lxml/parser.pxi\", line 765, in lxml.etree._handleParseResult\n  File \"src/lxml/parser.pxi\", line 689, in lxml.etree._raiseParseError\n  File \"<string>\", line 1\nlxml.etree.XMLSyntaxError: Start tag expected, '<' not found, line 1, column 1\n\n======================================================================\nFAIL: test_different_structure_xml (hidden_test.TestCases.test_different_structure_xml)\nTest that the function raises an error for an XML file with a different structure.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-9ert7vqh/hidden_test.py\", line 43, in test_different_structure_xml\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n\n----------------------------------------------------------------------\nRan 5 tests in 0.013s\n\nFAILED (failures=1, errors=2)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nFetches and parses an XML file from a specified URL, then converts it into a Pandas DataFrame.\n\n## Starting file (solution.py)\n\n```python\nimport urllib.request\n\nfrom lxml import etree\n\nimport pandas as pd\n\ndef task_func(url):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\nfrom unittest.mock import patch\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n\n    @patch('urllib.request.urlopen')\n    def test_valid_xml(self, mock_urlopen):\n        \"\"\"Test that the function returns the correct DataFrame for a given XML file.\"\"\"\n        valid_xml_data = b'<root><item><name>John</name><age>25</age></item><item><name>Jane</name><age>30</age></item></root>'\n        mock_urlopen.return_value.__enter__.return_value.read.return_value = valid_xml_data\n        url = 'http://example.com/sample_data.xml'\n        expected_df = pd.DataFrame({'name': ['John', 'Jane'], 'age': ['25', '30']})\n        result_df = task_func(url)\n        pd.testing.assert_frame_equal(result_df, expected_df)\n\n    @patch('urllib.request.urlopen')\n    def test_empty_xml(self, mock_urlopen):\n        \"\"\"Test that the function raises an error for an empty XML file.\"\"\"\n        empty_xml_data = b'<root></root>'\n        mock_urlopen.return_value.__enter__.return_value.read.return_value = empty_xml_data\n        url = 'http://example.com/empty_data.xml'\n        with self.assertRaises(ValueError):\n            task_func(url)\n\n    @patch('urllib.request.urlopen')\n    def test_different_structure_xml(self, mock_urlopen):\n        \"\"\"Test that the function raises an error for an XML file with a different structure.\"\"\"\n        different_structure_xml = b'<root><different><name>John</name></different></root>'\n        mock_urlopen.return_value.__enter__.return_value.read.return_value = different_structure_xml\n        url = 'http://example.com/different_structure_data.xml'\n        with self.assertRaises(ValueError):\n            task_func(url)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261127,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 566,
+        "output_tokens": 225,
+        "total_tokens": 791
+      }
+    }
+  ],
+  "seed": 20261123,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/1003",
+  "started_at": "2026-11-23T13:55:06+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/1003",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 5,
+    "input_tokens": 2830,
+    "output_tokens": 1130,
+    "total_tokens": 3960
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 5
+}

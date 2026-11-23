@@ -1,0 +1,95 @@
+{
+  "api_error": "",
+  "bucket": "AssertionError",
+  "condition": "B3",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T15:42:48+00:00",
+  "detector_questions": [],
+  "duration_s": 2.37,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 0.411,
+    "exception": "AssertionError",
+    "output_tail": "bpage. Status code: <MagicMock name='get().status_code' id='138770195306432'>\n\nEEFF\n======================================================================\nERROR: test_extraction_and_saving_default (hidden_test.TestCases.test_extraction_and_saving_default)\nTest extracting emails using default parameters and saving to default path.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-7elaholz/hidden_test.py\", line 27, in test_extraction_and_saving_default\n    args, kwargs = mocked_file.call_args\n    ^^^^^^^^^^^^\nTypeError: cannot unpack non-iterable NoneType object\n\n======================================================================\nERROR: test_extraction_custom_regex (hidden_test.TestCases.test_extraction_custom_regex)\nTest extraction with a custom regex pattern.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-7elaholz/hidden_test.py\", line 53, in test_extraction_custom_regex\n    with open(csv_path, 'r') as file:\n         ^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/wish-eval-7elaholz/tmp0zjsix9y/custom_regex.csv'\n\n======================================================================\nFAIL: test_extraction_custom_url (hidden_test.TestCases.test_extraction_custom_url)\nTest the email extraction from a custom URL and ensure file creation even if no emails are found.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-7elaholz/hidden_test.py\", line 40, in test_extraction_custom_url\n    self.assertEqual(result, csv_path)\nAssertionError: None != '/tmp/wish-eval-7elaholz/tmp2zsrvds5/output.csv'\n\n======================================================================\nFAIL: test_with_headers_customization (hidden_test.TestCases.test_with_headers_customization)\nTest extraction with customized headers.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-7elaholz/hidden_test.py\", line 63, in test_with_headers_customization\n    self.assertTrue(os.path.exists(csv_path))\nAssertionError: False is not true\n\n----------------------------------------------------------------------\nRan 4 tests in 0.008s\n\nFAILED (failures=2, errors=2)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import bs4\nimport requests\nimport re\nimport csv\n\ndef task_func(url='http://example.com', csv_path='emails.csv', regex='\\\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Z|a-z]{2,7}\\\\b', headers={'User-Agent': 'Mozilla/5.0'}):\n    # Send a GET request to the specified URL\n    response = requests.get(url, headers=headers)\n    \n    # Check if the request was successful\n    if response.status_code != 200:\n        print(f\"Failed to retrieve the webpage. Status code: {response.status_code}\")\n        return\n    \n    # Parse the HTML content using BeautifulSoup\n    soup = bs4.BeautifulSoup(response.text, 'html.parser')\n    \n    # Extract all text from the webpage\n    text = soup.get_text()\n    \n    # Use the provided regex to find all email addresses\n    email_pattern = re.compile(regex)\n    emails = email_pattern.findall(text)\n    \n    # Write the emails to a CSV file\n    with open(csv_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        writer.writerow(['Emails'])  # Write the header\n        for email in emails:\n            writer.writerow([email])\n    \n    print(f\"Found {len(emails)} email(s) and saved to {csv_path}\")\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "bpage. Status code: <MagicMock name='get().status_code' id='138770195306432'>\n\nEEFF\n======================================================================\nERROR: test_extraction_and_saving_default (hidden_test.TestCases.test_extraction_and_saving_default)\nTest extracting emails using default parameters and saving to default path.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-7elaholz/hidden_test.py\", line 27, in test_extraction_and_saving_default\n    args, kwargs = mocked_file.call_args\n    ^^^^^^^^^^^^\nTypeError: cannot unpack non-iterable NoneType object\n\n======================================================================\nERROR: test_extraction_custom_regex (hidden_test.TestCases.test_extraction_custom_regex)\nTest extraction with a custom regex pattern.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-7elaholz/hidden_test.py\", line 53, in test_extraction_custom_regex\n    with open(csv_path, 'r') as file:\n         ^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/wish-eval-7elaholz/tmp0zjsix9y/custom_regex.csv'\n\n======================================================================\nFAIL: test_extraction_custom_url (hidden_test.TestCases.test_extraction_custom_url)\nTest the email extraction from a custom URL and ensure file creation even if no emails are found.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-7elaholz/hidden_test.py\", line 40, in test_extraction_custom_url\n    self.assertEqual(result, csv_path)\nAssertionError: None != '/tmp/wish-eval-7elaholz/tmp2zsrvds5/output.csv'\n\n======================================================================\nFAIL: test_with_headers_customization (hidden_test.TestCases.test_with_headers_customization)\nTest extraction with customized headers.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-7elaholz/hidden_test.py\", line 63, in test_with_headers_customization\n    self.assertTrue(os.path.exists(csv_path))\nAssertionError: False is not true\n\n----------------------------------------------------------------------\nRan 4 tests in 0.008s\n\nFAILED (failures=2, errors=2)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport bs4\nimport requests\nimport re\nimport csv\n\ndef task_func(url='http://example.com', csv_path='emails.csv', regex='\\\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Z|a-z]{2,7}\\\\b', headers={'User-Agent': 'Mozilla/5.0'}):\n    # Send a GET request to the specified URL\n    response = requests.get(url, headers=headers)\n    \n    # Check if the request was successful\n    if response.status_code != 200:\n        print(f\"Failed to retrieve the webpage. Status code: {response.status_code}\")\n        return\n    \n    # Parse the HTML content using BeautifulSoup\n    soup = bs4.BeautifulSoup(response.text, 'html.parser')\n    \n    # Extract all text from the webpage\n    text = soup.get_text()\n    \n    # Use the provided regex to find all email addresses\n    email_pattern = re.compile(regex)\n    emails = email_pattern.findall(text)\n    \n    # Write the emails to a CSV file\n    with open(csv_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        writer.writerow(['Emails'])  # Write the header\n        for email in emails:\n            writer.writerow([email])\n    \n    print(f\"Found {len(emails)} email(s) and saved to {csv_path}\")\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b3_frontier",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 208,
+        "output_tokens": 296,
+        "total_tokens": 504
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 1,
+  "samples": [
+    {
+      "bucket": "AssertionError",
+      "code": "import bs4\nimport requests\nimport re\nimport csv\n\ndef task_func(url='http://example.com', csv_path='emails.csv', regex='\\\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Z|a-z]{2,7}\\\\b', headers={'User-Agent': 'Mozilla/5.0'}):\n    # Send a GET request to the specified URL\n    response = requests.get(url, headers=headers)\n    \n    # Check if the request was successful\n    if response.status_code != 200:\n        print(f\"Failed to retrieve the webpage. Status code: {response.status_code}\")\n        return\n    \n    # Parse the HTML content using BeautifulSoup\n    soup = bs4.BeautifulSoup(response.text, 'html.parser')\n    \n    # Extract all text from the webpage\n    text = soup.get_text()\n    \n    # Use the provided regex to find all email addresses\n    email_pattern = re.compile(regex)\n    emails = email_pattern.findall(text)\n    \n    # Write the emails to a CSV file\n    with open(csv_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        writer.writerow(['Emails'])  # Write the header\n        for email in emails:\n            writer.writerow([email])\n    \n    print(f\"Found {len(emails)} email(s) and saved to {csv_path}\")\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.411,
+        "exception": "AssertionError",
+        "output_tail": "bpage. Status code: <MagicMock name='get().status_code' id='138770195306432'>\n\nEEFF\n======================================================================\nERROR: test_extraction_and_saving_default (hidden_test.TestCases.test_extraction_and_saving_default)\nTest extracting emails using default parameters and saving to default path.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-7elaholz/hidden_test.py\", line 27, in test_extraction_and_saving_default\n    args, kwargs = mocked_file.call_args\n    ^^^^^^^^^^^^\nTypeError: cannot unpack non-iterable NoneType object\n\n======================================================================\nERROR: test_extraction_custom_regex (hidden_test.TestCases.test_extraction_custom_regex)\nTest extraction with a custom regex pattern.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-7elaholz/hidden_test.py\", line 53, in test_extraction_custom_regex\n    with open(csv_path, 'r') as file:\n         ^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: '/tmp/wish-eval-7elaholz/tmp0zjsix9y/custom_regex.csv'\n\n======================================================================\nFAIL: test_extraction_custom_url (hidden_test.TestCases.test_extraction_custom_url)\nTest the email extraction from a custom URL and ensure file creation even if no emails are found.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-7elaholz/hidden_test.py\", line 40, in test_extraction_custom_url\n    self.assertEqual(result, csv_path)\nAssertionError: None != '/tmp/wish-eval-7elaholz/tmp2zsrvds5/output.csv'\n\n======================================================================\nFAIL: test_with_headers_customization (hidden_test.TestCases.test_with_headers_customization)\nTest extraction with customized headers.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-7elaholz/hidden_test.py\", line 63, in test_with_headers_customization\n    self.assertTrue(os.path.exists(csv_path))\nAssertionError: False is not true\n\n----------------------------------------------------------------------\nRan 4 tests in 0.008s\n\nFAILED (failures=2, errors=2)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function from a short wish. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nScrapes a web page to extract all email addresses using a specified regular expression pattern and writes them to a CSV file with the header \"Emails\", ensuring the CSV is created even if no emails are found.\n\n## Function stub (solution.py)\n\n```python\nimport bs4\n\nimport requests\n\nimport re\n\nimport csv\n\ndef task_func(url='http://example.com', csv_path='emails.csv', regex='\\\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\\\.[A-Z|a-z]{2,7}\\\\b', headers={'User-Agent': 'Mozilla/5.0'}):\n    # TODO: implement this function.\n    pass\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261122,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 208,
+        "output_tokens": 296,
+        "total_tokens": 504
+      }
+    }
+  ],
+  "seed": 20261122,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/1136",
+  "started_at": "2026-11-23T15:42:48+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/1136",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 1,
+    "input_tokens": 208,
+    "output_tokens": 296,
+    "total_tokens": 504
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 1
+}

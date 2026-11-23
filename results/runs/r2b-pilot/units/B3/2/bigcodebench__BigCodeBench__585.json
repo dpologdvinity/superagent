@@ -1,0 +1,95 @@
+{
+  "api_error": "",
+  "bucket": "None",
+  "condition": "B3",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T14:13:06+00:00",
+  "detector_questions": [],
+  "duration_s": 19.999,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "None",
+    "duration_s": 18.29,
+    "exception": "",
+    "output_tail": "....\n----------------------------------------------------------------------\nRan 4 tests in 18.201s\n\nOK",
+    "pass": true,
+    "timed_out": false
+  },
+  "final_solution": "import rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # Generate RSA keys\n    (public_key, private_key) = rsa.newkeys(2048)\n    \n    # Create a zip file to store encrypted files\n    zip_filename = f\"encrypted_files_{os.path.basename(directory)}.zip\"\n    with zipfile.ZipFile(zip_filename, 'w') as zipf:\n        # Iterate over all files in the directory\n        for filename in os.listdir(directory):\n            file_path = os.path.join(directory, filename)\n            if os.path.isfile(file_path):\n                # Read the file content\n                with open(file_path, 'rb') as f:\n                    file_content = f.read()\n                \n                # Encrypt the file content using the public key\n                encrypted_content = rsa.encrypt(file_content, public_key)\n                \n                # Encode the encrypted content to base64 for storage\n                encoded_content = b64encode(encrypted_content).decode('utf-8')\n                \n                # Add the encrypted file to the zip archive\n                zipf.writestr(filename, encoded_content)\n    \n    # Return the public key and the zip file name\n    return public_key, zip_filename\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "....\n----------------------------------------------------------------------\nRan 4 tests in 18.201s\n\nOK",
+  "llm_calls": [
+    {
+      "content": "```python\nimport rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # Generate RSA keys\n    (public_key, private_key) = rsa.newkeys(2048)\n    \n    # Create a zip file to store encrypted files\n    zip_filename = f\"encrypted_files_{os.path.basename(directory)}.zip\"\n    with zipfile.ZipFile(zip_filename, 'w') as zipf:\n        # Iterate over all files in the directory\n        for filename in os.listdir(directory):\n            file_path = os.path.join(directory, filename)\n            if os.path.isfile(file_path):\n                # Read the file content\n                with open(file_path, 'rb') as f:\n                    file_content = f.read()\n                \n                # Encrypt the file content using the public key\n                encrypted_content = rsa.encrypt(file_content, public_key)\n                \n                # Encode the encrypted content to base64 for storage\n                encoded_content = b64encode(encrypted_content).decode('utf-8')\n                \n                # Add the encrypted file to the zip archive\n                zipf.writestr(filename, encoded_content)\n    \n    # Return the public key and the zip file name\n    return public_key, zip_filename\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b3_frontier",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 153,
+        "output_tokens": 258,
+        "total_tokens": 411
+      }
+    }
+  ],
+  "messages": [],
+  "pass": true,
+  "pass_at_1": true,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 2,
+  "samples": [
+    {
+      "bucket": "None",
+      "code": "import rsa\nimport os\nimport zipfile\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # Generate RSA keys\n    (public_key, private_key) = rsa.newkeys(2048)\n    \n    # Create a zip file to store encrypted files\n    zip_filename = f\"encrypted_files_{os.path.basename(directory)}.zip\"\n    with zipfile.ZipFile(zip_filename, 'w') as zipf:\n        # Iterate over all files in the directory\n        for filename in os.listdir(directory):\n            file_path = os.path.join(directory, filename)\n            if os.path.isfile(file_path):\n                # Read the file content\n                with open(file_path, 'rb') as f:\n                    file_content = f.read()\n                \n                # Encrypt the file content using the public key\n                encrypted_content = rsa.encrypt(file_content, public_key)\n                \n                # Encode the encrypted content to base64 for storage\n                encoded_content = b64encode(encrypted_content).decode('utf-8')\n                \n                # Add the encrypted file to the zip archive\n                zipf.writestr(filename, encoded_content)\n    \n    # Return the public key and the zip file name\n    return public_key, zip_filename\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "None",
+        "duration_s": 18.29,
+        "exception": "",
+        "output_tail": "....\n----------------------------------------------------------------------\nRan 4 tests in 18.201s\n\nOK",
+        "pass": true,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function from a short wish. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nGenerates RSA public and private keys, encrypts all files in the specified directory using the public key, and saves the encrypted files into a zip file, returning the public key and the name of the zip file.\n\n## Function stub (solution.py)\n\n```python\nimport rsa\n\nimport os\n\nimport zipfile\n\nfrom base64 import b64encode\n\ndef task_func(directory):\n    # TODO: implement this function.\n    pass\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": true,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 153,
+        "output_tokens": 258,
+        "total_tokens": 411
+      }
+    }
+  ],
+  "seed": 20261123,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/585",
+  "started_at": "2026-11-23T14:13:06+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/585",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 1,
+    "input_tokens": 153,
+    "output_tokens": 258,
+    "total_tokens": 411
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 1
+}
