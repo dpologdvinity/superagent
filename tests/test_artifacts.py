@@ -149,6 +149,21 @@ def test_error_behaviour_prevalence_is_reported_per_source():
     assert stats["exclusions"]["total"] == len(manifest["exclusions"])
 
 
+def test_corrected_protocol_uses_inputs_only_visible_tests():
+    tasks, manifest, _ = _load()
+    assert manifest["parser_version"] == "0.2.0"
+    assert manifest["parsing"] == {"visible_tests": "inputs_only"}
+    for task in tasks:
+        assert task["meta"]["visible_tests"] == "inputs_only"
+        if task["source"] == "bigcodebench":
+            # Documented residual: BigCodeBench's visible suite is assertion-based and
+            # is kept as-is in both modes, so its examples stay visible to the agent.
+            continue
+        assert "print(" in task["visible_asserts"]
+        assert "assert" not in task["visible_asserts"]
+    assert any(task["source"] == "bigcodebench" for task in tasks)
+
+
 def test_exclusion_details_are_portable():
     _, manifest, _ = _load()
     for item in manifest["exclusions"]:

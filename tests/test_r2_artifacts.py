@@ -6,7 +6,6 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 RUN = ROOT / "results" / "runs" / "r2-pilot"
-LEVELS = ROOT / "results" / "levels"
 
 
 def _sha256(path):
@@ -55,17 +54,28 @@ def test_r2_run_is_complete_and_holds_out_nothing():
     assert manifest["status"] == "complete"
     assert manifest["units_completed"] == manifest["units_planned"] == 2700
 
-    heldout = {
-        task["key"]
-        for task in (
-            json.loads(line)
-            for line in (LEVELS / "tasks.jsonl").read_text(encoding="utf-8").splitlines()
-            if line.strip()
-        )
-        if task["split"] == "heldout"
+    # The committed results/levels/tasks.jsonl was rebuilt for the corrected R2b protocol;
+    # the R2 pilot ran on the previous split, whose keys are archived so the held-out audit
+    # stays checkable.
+    snapshot = json.loads(
+        (ROOT / "results" / "levels_pre_r2b_split.json").read_text(encoding="utf-8")
+    )
+    assert snapshot["tasks_sha256"] == (
+        "b80c7f7250da03e98e8bde7ef14e2e8c86b779102bd2dcc8411852163d05888f"
+    )
+    assert snapshot["split_counts"] == {
+        "train": 500,
+        "evolution": 200,
+        "heldout": 300,
+        "pilot": 100,
     }
-    assert heldout
-    assert not ({row["task_key"] for row in _rows()} & heldout)
+    heldout = {key for key, split in snapshot["split"].items() if split == "heldout"}
+    pilot = {key for key, split in snapshot["split"].items() if split == "pilot"}
+    assert len(heldout) == 300 and len(pilot) == 100
+    assert set(manifest["config"]["task_keys"]) == pilot
+    task_keys = {row["task_key"] for row in _rows()}
+    assert task_keys == pilot
+    assert not (task_keys & heldout)
 
 
 def test_r2_summary_matches_the_unit_table():
