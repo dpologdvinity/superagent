@@ -27,9 +27,9 @@ macro-F1 0.792, constraints AUROC 0.952 and error-behaviour AUROC 0.744.
 
 ## Quickstart
 
-The only prerequisites for steps 1–3 and 5 are Python 3.12 and
-[`uv`](https://docs.astral.sh/uv/). Step 4 needs a Colab A100: the measured pilot is the one
-step that cannot be reproduced without a GPU.
+Steps 1–3 need Python 3.12 and [`uv`](https://docs.astral.sh/uv/). Step 4 needs a Colab
+A100, and step 5 needs a TeX distribution. The measured pilot is the one step that cannot be
+reproduced without a GPU.
 
 ### 1. Clone, install, test
 
