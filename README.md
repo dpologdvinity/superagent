@@ -59,12 +59,15 @@ levels. The run keeps 1,100 tasks of 1,682 source rows (1,651 parsed, 1,549 vali
 hidden-test failures. Downloads are cached in `data/raw/`, validation in
 `data/cache/validation/`, and derived tests in gitignored `data/derived/levels/`.
 
-Confirm the committed artifact:
+Confirm the committed task artifact:
 
 ```bash
 sha256sum results/levels/tasks.jsonl    # e4cf7564b38e17c040b8a37837c4757a8b5d4045791a1621331c91a15cd36436
-sha256sum results/levels/manifest.json  # 78278ea9851c8c6ee7a3905169992d198db18d928e3c5ac67046182b90020ac4
 ```
+
+`manifest.json` records the counts and `parsing.visible_tests = inputs_only`. Its
+`created_at`, git and timing fields are provenance from the committed build, so a clean
+rebuild reproduces the task hash and counts but not the manifest bytes.
 
 On macOS, use `shasum -a 256` instead of `sha256sum`. `make levels VISIBLE_TESTS=full`
 rebuilds the older full-mode visible tests; the committed levels are inputs-only.

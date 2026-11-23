@@ -38,7 +38,9 @@ artifact.
 1. Fresh clone into `/tmp`, then `uv sync --frozen` and `make test`: the full CPU test suite
    and committed-artifact checks.
 2. `make levels` in that clone: pinned downloads, 1,100 kept tasks, `parsing.visible_tests =
-   inputs_only`, and the committed `results/levels/tasks.jsonl` and `manifest.json` hashes.
+   inputs_only`, and the committed `results/levels/tasks.jsonl` hash. The manifest's
+   timestamps and git fields are provenance, so compare the task hash and counts rather than
+   the manifest bytes.
 3. Optional CPU refit with `make detector-smoothed` against the committed smoothed wishes.
 4. Page count of `paper/milestone/main.pdf` (3 pages: 2-page body, references on page 3) and
    a text comparison against the accepted `COMS4705_Milestone_final.pdf`.

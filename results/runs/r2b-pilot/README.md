@@ -3,9 +3,9 @@
 Measured nine-condition pilot on the disjoint 100-task development split, run under the
 corrected protocol. This directory is the committed evidence for the measured pilot; the
 operator produced the bundle in one Colab A100 session and attached the executed notebook.
-This README was written after the run, which otherwise integrated the artifact bundle
-unchanged apart from recomputing [`bootstrap.json`](bootstrap.json) /
-[`bootstrap.md`](bootstrap.md) from [`results.jsonl`](results.jsonl).
+This README was written after the run; the artifact bundle is otherwise unchanged, apart from
+recomputing [`bootstrap.json`](bootstrap.json) / [`bootstrap.md`](bootstrap.md) from
+[`results.jsonl`](results.jsonl).
 
 **Corrected protocol.** The committed levels keep the whole docstring prose before the
 examples as the intent block and render HumanEval+/MBPP+ visible tests as inputs only
