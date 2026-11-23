@@ -1,0 +1,95 @@
+{
+  "api_error": "",
+  "bucket": "AssertionError",
+  "condition": "B3",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T15:43:52+00:00",
+  "detector_questions": [],
+  "duration_s": 6.047,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 3.95,
+    "exception": "AssertionError",
+    "output_tail": "EEEFE\n======================================================================\nERROR: test_dataframe_columns (hidden_test.TestCases.test_dataframe_columns)\nTest if the DataFrame has the correct column names.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yua__6bi/hidden_test.py\", line 14, in test_dataframe_columns\n    self.assertListEqual(list(df.columns), expected_columns)\n                              ^^^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'columns'\n\n======================================================================\nERROR: test_dataframe_index (hidden_test.TestCases.test_dataframe_index)\nTest if the DataFrame has the correct index.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yua__6bi/hidden_test.py\", line 19, in test_dataframe_index\n    self.assertListEqual(list(df.index), expected_index)\n                              ^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'index'\n\n======================================================================\nERROR: test_dataframe_shape (hidden_test.TestCases.test_dataframe_shape)\nTest if the DataFrame has the correct shape.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yua__6bi/hidden_test.py\", line 9, in test_dataframe_shape\n    self.assertEqual(df.shape, (12, 5))  # 12 months and 5 products\n                     ^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'shape'\n\n======================================================================\nERROR: test_sales_range (hidden_test.TestCases.test_sales_range)\nTest if sales figures are within the expected range.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yua__6bi/hidden_test.py\", line 23, in test_sales_range\n    self.assertTrue((df >= 100).all().all() and (df <= 1000).all().all())\n                     ^^^^^^^^^\nTypeError: '>=' not supported between instances of 'NoneType' and 'int'\n\n======================================================================\nFAIL: test_returns_dataframe (hidden_test.TestCases.test_returns_dataframe)\nTest if the function returns a pandas DataFrame.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yua__6bi/hidden_test.py\", line 27, in test_returns_dataframe\n    self.assertIsInstance(df, pd.DataFrame)\nAssertionError: None is not an instance of <class 'pandas.DataFrame'>\n\n----------------------------------------------------------------------\nRan 5 tests in 0.962s\n\nFAILED (failures=1, errors=4)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\nimport seaborn as sns\n\nPRODUCTS = ['Product' + str(i) for i in range(1, 6)]\nMONTHS = ['Month' + str(i) for i in range(1, 13)]\n\ndef task_func():\n    # Generate sample sales data\n    np.random.seed(42)\n    sales_data = np.random.randint(100, 1000, size=(len(PRODUCTS), len(MONTHS)))\n    df = pd.DataFrame(sales_data, columns=MONTHS, index=PRODUCTS)\n    \n    # Total sales by product\n    total_sales = df.sum(axis=1)\n    total_sales_df = pd.DataFrame(total_sales, columns=['Total Sales'])\n    \n    # Plot total sales per product\n    plt.figure(figsize=(12, 6))\n    sns.lineplot(data=total_sales_df, palette=\"viridis\")\n    plt.title('Total Sales per Product')\n    plt.xlabel('Product')\n    plt.ylabel('Total Sales')\n    plt.show()\n    \n    # Create a heatmap of sales figures across products and months\n    plt.figure(figsize=(14, 10))\n    sns.heatmap(df, annot=True, fmt=\".0f\", cmap=\"YlGnBu\", cbar_kws={'label': 'Sales'})\n    plt.title('Sales Figures Across Products and Months')\n    plt.xlabel('Month')\n    plt.ylabel('Product')\n    plt.show()\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "EEEFE\n======================================================================\nERROR: test_dataframe_columns (hidden_test.TestCases.test_dataframe_columns)\nTest if the DataFrame has the correct column names.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yua__6bi/hidden_test.py\", line 14, in test_dataframe_columns\n    self.assertListEqual(list(df.columns), expected_columns)\n                              ^^^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'columns'\n\n======================================================================\nERROR: test_dataframe_index (hidden_test.TestCases.test_dataframe_index)\nTest if the DataFrame has the correct index.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yua__6bi/hidden_test.py\", line 19, in test_dataframe_index\n    self.assertListEqual(list(df.index), expected_index)\n                              ^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'index'\n\n======================================================================\nERROR: test_dataframe_shape (hidden_test.TestCases.test_dataframe_shape)\nTest if the DataFrame has the correct shape.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yua__6bi/hidden_test.py\", line 9, in test_dataframe_shape\n    self.assertEqual(df.shape, (12, 5))  # 12 months and 5 products\n                     ^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'shape'\n\n======================================================================\nERROR: test_sales_range (hidden_test.TestCases.test_sales_range)\nTest if sales figures are within the expected range.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yua__6bi/hidden_test.py\", line 23, in test_sales_range\n    self.assertTrue((df >= 100).all().all() and (df <= 1000).all().all())\n                     ^^^^^^^^^\nTypeError: '>=' not supported between instances of 'NoneType' and 'int'\n\n======================================================================\nFAIL: test_returns_dataframe (hidden_test.TestCases.test_returns_dataframe)\nTest if the function returns a pandas DataFrame.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yua__6bi/hidden_test.py\", line 27, in test_returns_dataframe\n    self.assertIsInstance(df, pd.DataFrame)\nAssertionError: None is not an instance of <class 'pandas.DataFrame'>\n\n----------------------------------------------------------------------\nRan 5 tests in 0.962s\n\nFAILED (failures=1, errors=4)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\nimport seaborn as sns\n\nPRODUCTS = ['Product' + str(i) for i in range(1, 6)]\nMONTHS = ['Month' + str(i) for i in range(1, 13)]\n\ndef task_func():\n    # Generate sample sales data\n    np.random.seed(42)\n    sales_data = np.random.randint(100, 1000, size=(len(PRODUCTS), len(MONTHS)))\n    df = pd.DataFrame(sales_data, columns=MONTHS, index=PRODUCTS)\n    \n    # Total sales by product\n    total_sales = df.sum(axis=1)\n    total_sales_df = pd.DataFrame(total_sales, columns=['Total Sales'])\n    \n    # Plot total sales per product\n    plt.figure(figsize=(12, 6))\n    sns.lineplot(data=total_sales_df, palette=\"viridis\")\n    plt.title('Total Sales per Product')\n    plt.xlabel('Product')\n    plt.ylabel('Total Sales')\n    plt.show()\n    \n    # Create a heatmap of sales figures across products and months\n    plt.figure(figsize=(14, 10))\n    sns.heatmap(df, annot=True, fmt=\".0f\", cmap=\"YlGnBu\", cbar_kws={'label': 'Sales'})\n    plt.title('Sales Figures Across Products and Months')\n    plt.xlabel('Month')\n    plt.ylabel('Product')\n    plt.show()\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b3_frontier",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 187,
+        "output_tokens": 315,
+        "total_tokens": 502
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 2,
+  "samples": [
+    {
+      "bucket": "AssertionError",
+      "code": "import matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\nimport seaborn as sns\n\nPRODUCTS = ['Product' + str(i) for i in range(1, 6)]\nMONTHS = ['Month' + str(i) for i in range(1, 13)]\n\ndef task_func():\n    # Generate sample sales data\n    np.random.seed(42)\n    sales_data = np.random.randint(100, 1000, size=(len(PRODUCTS), len(MONTHS)))\n    df = pd.DataFrame(sales_data, columns=MONTHS, index=PRODUCTS)\n    \n    # Total sales by product\n    total_sales = df.sum(axis=1)\n    total_sales_df = pd.DataFrame(total_sales, columns=['Total Sales'])\n    \n    # Plot total sales per product\n    plt.figure(figsize=(12, 6))\n    sns.lineplot(data=total_sales_df, palette=\"viridis\")\n    plt.title('Total Sales per Product')\n    plt.xlabel('Product')\n    plt.ylabel('Total Sales')\n    plt.show()\n    \n    # Create a heatmap of sales figures across products and months\n    plt.figure(figsize=(14, 10))\n    sns.heatmap(df, annot=True, fmt=\".0f\", cmap=\"YlGnBu\", cbar_kws={'label': 'Sales'})\n    plt.title('Sales Figures Across Products and Months')\n    plt.xlabel('Month')\n    plt.ylabel('Product')\n    plt.show()\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 3.95,
+        "exception": "AssertionError",
+        "output_tail": "EEEFE\n======================================================================\nERROR: test_dataframe_columns (hidden_test.TestCases.test_dataframe_columns)\nTest if the DataFrame has the correct column names.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yua__6bi/hidden_test.py\", line 14, in test_dataframe_columns\n    self.assertListEqual(list(df.columns), expected_columns)\n                              ^^^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'columns'\n\n======================================================================\nERROR: test_dataframe_index (hidden_test.TestCases.test_dataframe_index)\nTest if the DataFrame has the correct index.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yua__6bi/hidden_test.py\", line 19, in test_dataframe_index\n    self.assertListEqual(list(df.index), expected_index)\n                              ^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'index'\n\n======================================================================\nERROR: test_dataframe_shape (hidden_test.TestCases.test_dataframe_shape)\nTest if the DataFrame has the correct shape.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yua__6bi/hidden_test.py\", line 9, in test_dataframe_shape\n    self.assertEqual(df.shape, (12, 5))  # 12 months and 5 products\n                     ^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'shape'\n\n======================================================================\nERROR: test_sales_range (hidden_test.TestCases.test_sales_range)\nTest if sales figures are within the expected range.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yua__6bi/hidden_test.py\", line 23, in test_sales_range\n    self.assertTrue((df >= 100).all().all() and (df <= 1000).all().all())\n                     ^^^^^^^^^\nTypeError: '>=' not supported between instances of 'NoneType' and 'int'\n\n======================================================================\nFAIL: test_returns_dataframe (hidden_test.TestCases.test_returns_dataframe)\nTest if the function returns a pandas DataFrame.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yua__6bi/hidden_test.py\", line 27, in test_returns_dataframe\n    self.assertIsInstance(df, pd.DataFrame)\nAssertionError: None is not an instance of <class 'pandas.DataFrame'>\n\n----------------------------------------------------------------------\nRan 5 tests in 0.962s\n\nFAILED (failures=1, errors=4)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function from a short wish. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nGenerate a DataFrame representing monthly sales of products and visualize the total sales by creating a line plot showing total sales per product and a heatmap visualizing sales figures across products and months.\n\n## Function stub (solution.py)\n\n```python\nimport matplotlib.pyplot as plt\n\nimport numpy as np\n\nimport pandas as pd\n\nimport seaborn as sns\n\nPRODUCTS = ['Product' + str(i) for i in range(1, 6)]\n\nMONTHS = ['Month' + str(i) for i in range(1, 13)]\n\ndef task_func():\n    # TODO: implement this function.\n    pass\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 187,
+        "output_tokens": 315,
+        "total_tokens": 502
+      }
+    }
+  ],
+  "seed": 20261123,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/640",
+  "started_at": "2026-11-23T15:43:52+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/640",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 1,
+    "input_tokens": 187,
+    "output_tokens": 315,
+    "total_tokens": 502
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 1
+}

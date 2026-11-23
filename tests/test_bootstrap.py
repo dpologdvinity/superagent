@@ -10,6 +10,7 @@ from wishrec.harness.bootstrap import (
     build_bootstrap,
     load_task_means,
     main,
+    render_markdown,
 )
 
 
@@ -49,6 +50,7 @@ def _rows():
             )
             # The remaining conditions only need to exist so the CLI can evaluate the
             # full ticket contrast list.
+            rows.append(_row("H1", task, sample, passed=False))
             rows.append(_row("H2", task, sample, passed=False))
             rows.append(_row("H3", task, sample, passed=True))
             rows.append(_row("H4", task, sample, passed=False))
@@ -105,6 +107,85 @@ def test_bootstrap_rejects_duplicate_units(tmp_path):
     results = _write_results(tmp_path, rows)
     with pytest.raises(ValueError, match="duplicate unit"):
         load_task_means(results)
+
+
+def _summary(path):
+    conditions = {
+        "B1": 1.0,
+        "B2": 1 / 9,
+        "DISCARD": 0.0,
+        "H0": 0.0,
+        "H1": 0.0,
+        "H2": 0.0,
+        "H3": 1.0,
+        "H4": 0.0,
+    }
+    summary = {
+        "tasks": 3,
+        "heldout_tasks_used": 0,
+        "conditions_summary": {
+            name: {"pass_at_1": value, "units": 9}
+            for name, value in conditions.items()
+        },
+        "by_category": {
+            "constraints": {
+                "label": "Constraints and edge cases",
+                "tasks": 3,
+                "conditions": {
+                    name: {
+                        "pass_at_1": value,
+                        "pass_rate": value,
+                        "recovery": None,
+                        "units": 9,
+                        "avg_questions": 0.0,
+                        "avg_turns": 3.0,
+                    }
+                    for name, value in conditions.items()
+                },
+            }
+        },
+    }
+    path.write_text(json.dumps(summary), encoding="utf-8")
+    return path
+
+
+def test_bootstrap_attaches_checked_per_category_grouping(tmp_path):
+    results = _write_results(tmp_path, _rows())
+    summary_path = _summary(tmp_path / "summary.json")
+    summary = build_bootstrap(
+        results,
+        resamples=50,
+        seed=7,
+        contrasts=(("B1", "H0"),),
+        summary_path=summary_path,
+    )
+    assert summary["summary"] == str(summary_path)
+    assert summary["summary_sha256"]
+    grouping = summary["by_category"]
+    assert set(grouping) == {"constraints"}
+    assert grouping["constraints"]["tasks"] == 3
+    assert grouping["constraints"]["conditions"]["B2"]["pass_at_1"] == pytest.approx(
+        1 / 9
+    )
+    markdown = render_markdown(summary)
+    assert "Per-category grouping" in markdown
+    assert "| constraints | 3 |" in markdown
+
+
+def test_bootstrap_rejects_a_summary_that_disagrees(tmp_path):
+    results = _write_results(tmp_path, _rows())
+    summary_path = _summary(tmp_path / "summary.json")
+    summary = json.loads(summary_path.read_text(encoding="utf-8"))
+    summary["conditions_summary"]["B1"]["pass_at_1"] = 0.0
+    summary_path.write_text(json.dumps(summary), encoding="utf-8")
+    with pytest.raises(ValueError, match="pass@1 disagrees"):
+        build_bootstrap(
+            results,
+            resamples=50,
+            seed=7,
+            contrasts=(("B1", "H0"),),
+            summary_path=summary_path,
+        )
 
 
 def test_bootstrap_cli_writes_json_and_markdown(tmp_path):

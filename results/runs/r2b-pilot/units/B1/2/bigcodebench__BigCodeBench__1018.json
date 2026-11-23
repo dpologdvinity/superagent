@@ -1,0 +1,178 @@
+{
+  "api_error": "",
+  "bucket": "None",
+  "condition": "B1",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T14:25:36+00:00",
+  "detector_questions": [],
+  "duration_s": 2.165,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "None",
+    "duration_s": 0.419,
+    "exception": "",
+    "output_tail": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.003s\n\nOK",
+    "pass": true,
+    "timed_out": false
+  },
+  "final_solution": "from bs4 import BeautifulSoup\nimport requests\n\nURL = 'http://example.com'\n\ndef task_func(url=URL, from_encoding='cp1251', use_lxml=False):\n    try:\n        if not url:\n            return None\n        response = requests.get(url)\n        if response.status_code != 200:\n            return None\n        content = response.content.decode(from_encoding)\n        parser = 'lxml' if use_lxml else 'html.parser'\n        return BeautifulSoup(content, parser)\n    except Exception as e:\n        return None",
+  "follow_up_questions": [],
+  "hidden_duration_s": 0.419,
+  "hidden_output_tail": "......\n----------------------------------------------------------------------\nRan 6 tests in 0.003s\n\nOK",
+  "llm_calls": [
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"from bs4 import BeautifulSoup\\nimport requests\\n\\nURL = 'http://example.com'\\n\\ndef task_func(url=URL, from_encoding='cp1251', use_lxml=False):\\n    try:\\n        if not url:\\n            return None\\n        response = requests.get(url)\\n        if response.status_code != 200:\\n            return None\\n        content = response.content.decode(from_encoding)\\n        parser = 'lxml' if use_lxml else 'html.parser'\\n        return BeautifulSoup(content, parser)\\n    except Exception as e:\\n        return None\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1117,
+        "output_tokens": 157,
+        "total_tokens": 1274
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1291,
+        "output_tokens": 16,
+        "total_tokens": 1307
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1324,
+        "output_tokens": 7,
+        "total_tokens": 1331
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. You cannot ask the stakeholder questions in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Specification (complete)\n\nIntent:\nFetches a web page from a given URL, decodes its content from a specified encoding, and returns the parsed HTML using BeautifulSoup. If specified, 'lxml' is used as the parser for improved performance. In case of any failure (like network issues, invalid URL, or decoding errors), the function returns None.\n\nSignature and types:\nArgs:\n- url (str): The URL of the webpage to fetch. Defaults to the constant URL.\n- from_encoding (str): The original encoding of the webpage content. Defaults to 'cp1251'.\n- use_lxml (bool): Flag to use 'lxml' as the parser for BeautifulSoup. If False, the default 'html.parser' is used. Defaults to False.\n\nReturns:\n- BeautifulSoup object if the fetch and parse are successful.\n- None if the URL is invalid, the request fails, or parsing fails.\n\nExamples:\n```python\n>>> html = task_func('http://example.com', 'cp1251', True)\n>>> print(html.prettify()) if html else print(\"Error fetching or parsing the webpage.\")\n```\n\nConstraints and edge cases:\nNotes:\n- Notes:\n- The function returns None if the URL is empty or None.\n- Network errors, HTTP errors, and decoding issues are caught and result in None being returned.\n- If the HTTP response status code is 200 (indicating success), the content is decoded using the specified encoding\n- If the response status code is not 200, it implies an unsuccessful HTTP request (e.g., 404 Not Found, 403 Forbidden).\n- In such cases, the function returns None, indicating that the webpage could not be successfully retrieved or was not available.\n\nRequirements:\n- bs4\n- requests\n\n## Starting file (solution.py)\n\n```python\nfrom bs4 import BeautifulSoup\n\nimport requests\n\nURL = 'http://example.com'\n\ndef task_func(url=URL, from_encoding='cp1251', use_lxml=False):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nfrom bs4 import BeautifulSoup\nimport unittest\nfrom unittest.mock import patch, MagicMock\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for task_func.\"\"\"\n\n    @patch('requests.get')\n    def test_successful_fetch_and_parse_html_parser(self, mock_get):\n        \"\"\"Test if the function correctly fetches and parses a webpage with valid encoding using html.parser.\"\"\"\n        mock_get.return_value = MagicMock(status_code=200, content=b'Valid HTML content')\n        result = task_func('http://example.com', 'utf8')\n        self.assertIsInstance(result, BeautifulSoup)\n\n    @patch('requests.get')\n    def test_successful_fetch_and_parse_lxml_parser(self, mock_get):\n        \"\"\"Test if the function correctly fetches and parses a webpage with valid encoding using lxml.\"\"\"\n        mock_get.return_value = MagicMock(status_code=200, content=b'Valid HTML content')\n        result = task_func('http://example.com', 'utf8', use_lxml=True)\n        self.assertIsInstance(result, BeautifulSoup)\n\n    @patch('requests.get')\n    def test_connection_error_handling(self, mock_get):\n        \"\"\"Test how the function handles connection errors.\"\"\"\n        mock_get.side_effect = requests.exceptions.ConnectionError()\n        result = task_func('http://example.com', 'utf8')\n        self.assertIsNone(result)\n```\n\nImplement `solution.py` from the complete specification.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"from bs4 import BeautifulSoup\\nimport requests\\n\\nURL = 'http://example.com'\\n\\ndef task_func(url=URL, from_encoding='cp1251', use_lxml=False):\\n    try:\\n        if not url:\\n            return None\\n        response = requests.get(url)\\n        if response.status_code != 200:\\n            return None\\n        content = response.content.decode(from_encoding)\\n        parser = 'lxml' if use_lxml else 'html.parser'\\n        return BeautifulSoup(content, parser)\\n    except Exception as e:\\n        return None\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 497 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests passed.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant"
+    }
+  ],
+  "pass": true,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 2,
+  "seed": 20261123,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/1018",
+  "stakeholder_answers": [],
+  "started_at": "2026-11-23T14:25:33+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/1018",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "from bs4 import BeautifulSoup\nimport requests\n\nURL = 'http://example.com'\n\ndef task_func(url=URL, from_encoding='cp1251', use_lxml=False):\n    try:\n        if not url:\n            return None\n        response = requests.get(url)\n        if response.status_code != 200:\n            return None\n        content = response.content.decode(from_encoding)\n        parser = 'lxml' if use_lxml else 'html.parser'\n        return BeautifulSoup(content, parser)\n    except Exception as e:\n        return None",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 497 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests passed."
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 0.411,
+        "exception": "None",
+        "ok": true,
+        "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.002s\n\nOK"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 3,
+    "input_tokens": 3732,
+    "output_tokens": 180,
+    "total_tokens": 3912
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 3
+}

@@ -1,0 +1,316 @@
+{
+  "api_error": "",
+  "bucket": "AssertionError",
+  "condition": "H1",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T13:23:32+00:00",
+  "detector_questions": [],
+  "duration_s": 4.01,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 0.105,
+    "exception": "AssertionError",
+    "output_tail": "F....\n======================================================================\nFAIL: test_empty_metrics (hidden_test.TestCases.test_empty_metrics)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-tlm9a1jz/hidden_test.py\", line 52, in test_empty_metrics\n    self.assertEqual(mock_file_handle.write.call_count, 2)\nAssertionError: 1 != 2\n\n----------------------------------------------------------------------\nRan 5 tests in 0.007s\n\nFAILED (failures=1)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import os\n\nfrom datetime import datetime\n\nLOG_DIR = './logs'\n\ndef task_func(metrics, filename, log_dir=LOG_DIR):\n    if not isinstance(filename, str):\n        raise ValueError('Filename must be a string')\n    if not isinstance(metrics, dict):\n        raise ValueError('Metrics must be a dictionary')\n    \n    log_path = os.path.join(log_dir, filename)\n    \n    with open(log_path, 'a') as f:\n        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')\n        line = f\"[{timestamp}] {metrics}\\n\"\n        f.write(line)\n    \n    return True",
+  "follow_up_questions": [],
+  "hidden_duration_s": 0.105,
+  "hidden_output_tail": "F....\n======================================================================\nFAIL: test_empty_metrics (hidden_test.TestCases.test_empty_metrics)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-tlm9a1jz/hidden_test.py\", line 52, in test_empty_metrics\n    self.assertEqual(mock_file_handle.write.call_count, 2)\nAssertionError: 1 != 2\n\n----------------------------------------------------------------------\nRan 5 tests in 0.007s\n\nFAILED (failures=1)",
+  "llm_calls": [
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"acceptance_tests.py\", \"content\": \"from solution import task_func\\nimport unittest\\nfrom unittest.mock import patch, mock_open, MagicMock\\n\\nclass TestCases(unittest.TestCase):\\n\\n    def setUp(self):\\n        self.metrics = {'accuracy': 0.98, 'loss': 0.05}\\n        self.filename = 'metrics.log'\\n        self.log_dir = './temp_logs'\\n\\n    def test_non_string_filename(self):\\n        with self.assertRaises(ValueError):\\n            task_func(self.metrics, 12345, log_dir=self.log_dir)\\n\\n    def test_non_dictionary_metrics(self):\\n        with self.assertRaises(ValueError):\\n            task_func('accuracy: 0.95', self.filename, log_dir=self.log_dir)\\n\\n    @patch('os.makedirs')\\n    @patch('builtins.open', new_callable=mock_open)\\n    @patch('os.path.exists', return_value=True)\\n    def test_normal_metrics_logging(self, mock_exists, mock_file, mock_makedirs):\\n        result = task_func(self.metrics, self.filename, log_dir=self.log_dir)\\n        self.assertTrue(result)\\n        mock_file.assert_called_once_with(os.path.join(self.log_dir, self.filename), 'a')\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 748,
+        "output_tokens": 288,
+        "total_tokens": 1036
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1056,
+        "output_tokens": 14,
+        "total_tokens": 1070
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "read_error"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1100,
+        "output_tokens": 13,
+        "total_tokens": 1113
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import os\\n\\nfrom datetime import datetime\\n\\nLOG_DIR = './logs'\\n\\ndef task_func(metrics, filename, log_dir=LOG_DIR):\\n    if not isinstance(filename, str):\\n        raise ValueError('Filename must be a string')\\n    if not isinstance(metrics, dict):\\n        raise ValueError('Metrics must be a dictionary')\\n    \\n    log_path = os.path.join(log_dir, filename)\\n    \\n    with open(log_path, 'a') as f:\\n        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')\\n        line = f\\\"[{timestamp}] {metrics}\\\\n\\\"\\n        f.write(line)\\n    \\n    return True\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1403,
+        "output_tokens": 180,
+        "total_tokens": 1583
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1606,
+        "output_tokens": 17,
+        "total_tokens": 1623
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1639,
+        "output_tokens": 7,
+        "total_tokens": 1646
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. You cannot ask the stakeholder questions in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Wish\n\nThe function writes a dictionary of metrics to a log file, adding a timestamp to each entry before appending them.\n\n## Starting file (solution.py)\n\n```python\nimport os\n\nfrom datetime import datetime\n\nLOG_DIR = './logs'\n\ndef task_func(metrics, filename, log_dir=LOG_DIR):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nfrom unittest.mock import patch, mock_open, MagicMock\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.metrics = {'accuracy': 0.98, 'loss': 0.05}\n        self.filename = 'metrics.log'\n        self.log_dir = './temp_logs'\n\n    def test_non_string_filename(self):\n        with self.assertRaises(ValueError):\n            task_func(self.metrics, 12345, log_dir=self.log_dir)\n\n    def test_non_dictionary_metrics(self):\n        with self.assertRaises(ValueError):\n            task_func('accuracy: 0.95', self.filename, log_dir=self.log_dir)\n\n    @patch('os.makedirs')\n    @patch('builtins.open', new_callable=mock_open)\n    @patch('os.path.exists', return_value=True)\n    def test_normal_metrics_logging(self, mock_exists, mock_file, mock_makedirs):\n        result = task_func(self.metrics, self.filename, log_dir=self.log_dir)\n        self.assertTrue(result)\n        mock_file.assert_called_once_with(os.path.join(self.log_dir, self.filename), 'a')\n```\n\nBefore implementing, write your acceptance tests to `acceptance_tests.py` with write_file. Then implement `solution.py` and run the visible tests.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"acceptance_tests.py\", \"content\": \"from solution import task_func\\nimport unittest\\nfrom unittest.mock import patch, mock_open, MagicMock\\n\\nclass TestCases(unittest.TestCase):\\n\\n    def setUp(self):\\n        self.metrics = {'accuracy': 0.98, 'loss': 0.05}\\n        self.filename = 'metrics.log'\\n        self.log_dir = './temp_logs'\\n\\n    def test_non_string_filename(self):\\n        with self.assertRaises(ValueError):\\n            task_func(self.metrics, 12345, log_dir=self.log_dir)\\n\\n    def test_non_dictionary_metrics(self):\\n        with self.assertRaises(ValueError):\\n            task_func('accuracy: 0.95', self.filename, log_dir=self.log_dir)\\n\\n    @patch('os.makedirs')\\n    @patch('builtins.open', new_callable=mock_open)\\n    @patch('os.path.exists', return_value=True)\\n    def test_normal_metrics_logging(self, mock_exists, mock_file, mock_makedirs):\\n        result = task_func(self.metrics, self.filename, log_dir=self.log_dir)\\n        self.assertTrue(result)\\n        mock_file.assert_called_once_with(os.path.join(self.log_dir, self.filename), 'a')\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 1014 characters to acceptance_tests.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests failed (AssertionError). Call read_error to see the traceback.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "read_error"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "FFF\n======================================================================\nFAIL: test_non_dictionary_metrics (visible_test.TestCases.test_non_dictionary_metrics)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-csbah6s_/visible_test.py\", line 19, in test_non_dictionary_metrics\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n\n======================================================================\nFAIL: test_non_string_filename (visible_test.TestCases.test_non_string_filename)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-csbah6s_/visible_test.py\", line 15, in test_non_string_filename\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n\n======================================================================\nFAIL: test_normal_metrics_logging (visible_test.TestCases.test_normal_metrics_logging)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-csbah6s_/visible_test.py\", line 27, in test_normal_metrics_logging\n    self.assertTrue(result)\nAssertionError: None is not true\n\n----------------------------------------------------------------------\nRan 3 tests in 0.003s\n\nFAILED (failures=3)",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import os\\n\\nfrom datetime import datetime\\n\\nLOG_DIR = './logs'\\n\\ndef task_func(metrics, filename, log_dir=LOG_DIR):\\n    if not isinstance(filename, str):\\n        raise ValueError('Filename must be a string')\\n    if not isinstance(metrics, dict):\\n        raise ValueError('Metrics must be a dictionary')\\n    \\n    log_path = os.path.join(log_dir, filename)\\n    \\n    with open(log_path, 'a') as f:\\n        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')\\n        line = f\\\"[{timestamp}] {metrics}\\\\n\\\"\\n        f.write(line)\\n    \\n    return True\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 543 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests passed.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant"
+    }
+  ],
+  "pass": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 1,
+  "seed": 20261122,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/804",
+  "stakeholder_answers": [],
+  "started_at": "2026-11-23T13:23:28+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/804",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "from solution import task_func\nimport unittest\nfrom unittest.mock import patch, mock_open, MagicMock\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.metrics = {'accuracy': 0.98, 'loss': 0.05}\n        self.filename = 'metrics.log'\n        self.log_dir = './temp_logs'\n\n    def test_non_string_filename(self):\n        with self.assertRaises(ValueError):\n            task_func(self.metrics, 12345, log_dir=self.log_dir)\n\n    def test_non_dictionary_metrics(self):\n        with self.assertRaises(ValueError):\n            task_func('accuracy: 0.95', self.filename, log_dir=self.log_dir)\n\n    @patch('os.makedirs')\n    @patch('builtins.open', new_callable=mock_open)\n    @patch('os.path.exists', return_value=True)\n    def test_normal_metrics_logging(self, mock_exists, mock_file, mock_makedirs):\n        result = task_func(self.metrics, self.filename, log_dir=self.log_dir)\n        self.assertTrue(result)\n        mock_file.assert_called_once_with(os.path.join(self.log_dir, self.filename), 'a')",
+          "path": "acceptance_tests.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 1014 characters to acceptance_tests.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests failed (AssertionError). Call read_error to see the traceback."
+      },
+      {
+        "arguments": {},
+        "name": "read_error",
+        "ok": true,
+        "result": "FFF\n======================================================================\nFAIL: test_non_dictionary_metrics (visible_test.TestCases.test_non_dictionary_metrics)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-csbah6s_/visible_test.py\", line 19, in test_non_dictionary_metrics\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n\n======================================================================\nFAIL: test_non_string_filename (visible_test.TestCases.test_non_string_filename)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-csbah6s_/visible_test.py\", line 15, in test_non_string_filename\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n\n======================================================================\nFAIL: test_normal_metrics_logging (visible_test.TestCases.test_normal_metrics_logging)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-csbah6s_/visible_test.py\", line 27, in test_normal_metrics_logging\n    self.assertTrue(result)\nAssertionError: None is not true\n\n----------------------------------------------------------------------\nRan 3 tests in 0.003s\n\nFAILED (failures=3)"
+      },
+      {
+        "arguments": {
+          "content": "import os\n\nfrom datetime import datetime\n\nLOG_DIR = './logs'\n\ndef task_func(metrics, filename, log_dir=LOG_DIR):\n    if not isinstance(filename, str):\n        raise ValueError('Filename must be a string')\n    if not isinstance(metrics, dict):\n        raise ValueError('Metrics must be a dictionary')\n    \n    log_path = os.path.join(log_dir, filename)\n    \n    with open(log_path, 'a') as f:\n        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')\n        line = f\"[{timestamp}] {metrics}\\n\"\n        f.write(line)\n    \n    return True",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 543 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests passed."
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 0.099,
+        "exception": "AssertionError",
+        "ok": false,
+        "output": "FFF\n======================================================================\nFAIL: test_non_dictionary_metrics (visible_test.TestCases.test_non_dictionary_metrics)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-csbah6s_/visible_test.py\", line 19, in test_non_dictionary_metrics\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n\n======================================================================\nFAIL: test_non_string_filename (visible_test.TestCases.test_non_string_filename)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-csbah6s_/visible_test.py\", line 15, in test_non_string_filename\n    with self.assertRaises(ValueError):\nAssertionError: ValueError not raised\n\n======================================================================\nFAIL: test_normal_metrics_logging (visible_test.TestCases.test_normal_metrics_logging)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-csbah6s_/visible_test.py\", line 27, in test_normal_metrics_logging\n    self.assertTrue(result)\nAssertionError: None is not true\n\n----------------------------------------------------------------------\nRan 3 tests in 0.003s\n\nFAILED (failures=3)"
+      },
+      {
+        "duration_s": 0.098,
+        "exception": "None",
+        "ok": true,
+        "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.003s\n\nOK"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 6,
+    "input_tokens": 7552,
+    "output_tokens": 519,
+    "total_tokens": 8071
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 6
+}

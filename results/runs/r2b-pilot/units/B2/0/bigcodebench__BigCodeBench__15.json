@@ -1,0 +1,275 @@
+{
+  "api_error": "",
+  "bucket": "AssertionError",
+  "condition": "B2",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T15:22:40+00:00",
+  "detector_questions": [],
+  "duration_s": 8.508,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 0.071,
+    "exception": "AssertionError",
+    "output_tail": "F..FF.\n======================================================================\nFAIL: test_command_failure_with_specific_exit_code (hidden_test.TestCases.test_command_failure_with_specific_exit_code)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-jxf158ae/hidden_test.py\", line 77, in test_command_failure_with_specific_exit_code\n    self.assertIn(\"Error executing command\", content)\nAssertionError: 'Error executing command' not found in \"Error: Command 'exit 1' returned non-zero exit status 1.\\nExit Code: 1\"\n\n======================================================================\nFAIL: test_invalid_command (hidden_test.TestCases.test_invalid_command)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-jxf158ae/hidden_test.py\", line 44, in test_invalid_command\n    self.assertIn(\"not found\", content)\nAssertionError: 'not found' not found in \"Error: Command 'invalid_command_xyz' returned non-zero exit status 127.\\nExit Code: 127\"\n\n======================================================================\nFAIL: test_mixed_commands (hidden_test.TestCases.test_mixed_commands)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-jxf158ae/hidden_test.py\", line 64, in test_mixed_commands\n    self.assertIn(\"not found\", content)\nAssertionError: 'not found' not found in \"Error: Command 'invalid_command_abc' returned non-zero exit status 127.\\nExit Code: 127\"\n\n----------------------------------------------------------------------\nRan 6 tests in 0.008s\n\nFAILED (failures=3)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import subprocess\nimport csv\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # Ensure the output directory exists\n    os.makedirs(output_dir_path, exist_ok=True)\n    \n    # Read the CSV file\n    with open(commands_file_path, 'r') as file:\n        reader = csv.reader(file)\n        commands = [row[0] for row in reader if row]\n    \n    # Execute each command and write output to a unique file\n    output_files = []\n    for idx, command in enumerate(commands):\n        output_file = os.path.join(output_dir_path, f'output_{idx}.txt')\n        output_files.append(output_file)\n        \n        try:\n            result = subprocess.run(\n                command,\n                shell=True,\n                check=True,\n                stdout=subprocess.PIPE,\n                stderr=subprocess.PIPE\n            )\n            with open(output_file, 'w') as f:\n                f.write(result.stdout.decode())\n        except subprocess.CalledProcessError as e:\n            with open(output_file, 'w') as f:\n                f.write(f\"Error: {e}\\nExit Code: {e.returncode}\")\n    \n    return output_files\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "F..FF.\n======================================================================\nFAIL: test_command_failure_with_specific_exit_code (hidden_test.TestCases.test_command_failure_with_specific_exit_code)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-jxf158ae/hidden_test.py\", line 77, in test_command_failure_with_specific_exit_code\n    self.assertIn(\"Error executing command\", content)\nAssertionError: 'Error executing command' not found in \"Error: Command 'exit 1' returned non-zero exit status 1.\\nExit Code: 1\"\n\n======================================================================\nFAIL: test_invalid_command (hidden_test.TestCases.test_invalid_command)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-jxf158ae/hidden_test.py\", line 44, in test_invalid_command\n    self.assertIn(\"not found\", content)\nAssertionError: 'not found' not found in \"Error: Command 'invalid_command_xyz' returned non-zero exit status 127.\\nExit Code: 127\"\n\n======================================================================\nFAIL: test_mixed_commands (hidden_test.TestCases.test_mixed_commands)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-jxf158ae/hidden_test.py\", line 64, in test_mixed_commands\n    self.assertIn(\"not found\", content)\nAssertionError: 'not found' not found in \"Error: Command 'invalid_command_abc' returned non-zero exit status 127.\\nExit Code: 127\"\n\n----------------------------------------------------------------------\nRan 6 tests in 0.008s\n\nFAILED (failures=3)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport subprocess\nimport csv\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # Ensure the output directory exists\n    os.makedirs(output_dir_path, exist_ok=True)\n    \n    # Read the CSV file\n    with open(commands_file_path, 'r') as file:\n        reader = csv.reader(file)\n        commands = [row[0] for row in reader if row]\n    \n    # Execute each command and write output to a unique file\n    output_files = []\n    for idx, command in enumerate(commands):\n        output_file = os.path.join(output_dir_path, f'output_{idx}.txt')\n        output_files.append(output_file)\n        \n        try:\n            result = subprocess.run(\n                command,\n                shell=True,\n                check=True,\n                stdout=subprocess.PIPE,\n                stderr=subprocess.PIPE\n            )\n            with open(output_file, 'w') as f:\n                f.write(result.stdout.decode())\n        except subprocess.CalledProcessError as e:\n            with open(output_file, 'w') as f:\n                f.write(f\"Error: {e}\\nExit Code: {e.returncode}\")\n    \n    return output_files\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 541,
+        "output_tokens": 240,
+        "total_tokens": 781
+      }
+    },
+    {
+      "content": "```python\nimport subprocess\nimport csv\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # Ensure the output directory exists\n    os.makedirs(output_dir_path, exist_ok=True)\n    \n    # Read the commands from the CSV file\n    with open(commands_file_path, 'r') as csvfile:\n        csv_reader = csv.reader(csvfile)\n        commands = [row[0] for row in csv_reader if row]\n    \n    # Execute each command and write output to a unique file\n    output_files = []\n    for i, command in enumerate(commands):\n        output_file_path = os.path.join(output_dir_path, f\"output_{i}.txt\")\n        output_files.append(output_file_path)\n        \n        # Execute the command\n        result = subprocess.run(\n            command,\n            shell=True,\n            stdout=subprocess.PIPE,\n            stderr=subprocess.PIPE,\n            text=True\n        )\n        \n        # Write the output or error message to the file\n        with open(output_file_path, 'w') as f:\n            if result.returncode == 0:\n                f.write(result.stdout)\n            else:\n                f.write(f\"Error: {result.stderr}\\nExit Code: {result.returncode}\")\n    \n    return output_files\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 541,
+        "output_tokens": 255,
+        "total_tokens": 796
+      }
+    },
+    {
+      "content": "```python\nimport subprocess\nimport csv\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # Ensure the output directory exists\n    os.makedirs(output_dir_path, exist_ok=True)\n    \n    # Read the CSV file\n    with open(commands_file_path, 'r') as file:\n        reader = csv.reader(file)\n        commands = [row[0] for row in reader if row]\n    \n    # Execute each command and write output to a unique file\n    results = []\n    for idx, command in enumerate(commands):\n        output_file = os.path.join(output_dir_path, f\"command_{idx}.txt\")\n        try:\n            result = subprocess.run(\n                command,\n                shell=True,\n                check=True,\n                stdout=subprocess.PIPE,\n                stderr=subprocess.PIPE\n            )\n            with open(output_file, 'w') as f:\n                f.write(result.stdout.decode())\n            results.append(output_file)\n        except subprocess.CalledProcessError as e:\n            error_message = e.stderr.decode()\n            with open(output_file, 'w') as f:\n                f.write(error_message)\n            results.append(output_file)\n    \n    return results\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 541,
+        "output_tokens": 237,
+        "total_tokens": 778
+      }
+    },
+    {
+      "content": "```python\nimport subprocess\nimport csv\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # Ensure the output directory exists\n    os.makedirs(output_dir_path, exist_ok=True)\n    \n    # Read the CSV file\n    with open(commands_file_path, 'r') as csvfile:\n        csv_reader = csv.reader(csvfile)\n        commands = [row[0] for row in csv_reader if row]\n    \n    # Execute each command and save output\n    output_files = []\n    for i, command in enumerate(commands):\n        # Generate a unique output file name\n        output_file = os.path.join(output_dir_path, f'output_{i}.txt')\n        output_files.append(output_file)\n        \n        # Execute the command\n        result = subprocess.run(\n            command,\n            shell=True,\n            capture_output=True,\n            text=True\n        )\n        \n        # Write output or error message to the file\n        with open(output_file, 'w') as f:\n            if result.returncode == 0:\n                f.write(result.stdout)\n            else:\n                f.write(f\"Error: {result.stderr}\\nExit code: {result.returncode}\")\n    \n    return output_files\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 541,
+        "output_tokens": 248,
+        "total_tokens": 789
+      }
+    },
+    {
+      "content": "```python\nimport subprocess\nimport csv\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # Ensure the output directory exists\n    os.makedirs(output_dir_path, exist_ok=True)\n    \n    # Read commands from CSV file\n    with open(commands_file_path, 'r') as csvfile:\n        csv_reader = csv.reader(csvfile)\n        commands = [row[0] for row in csv_reader if row]\n    \n    # Execute each command and write output to a unique file\n    output_files = []\n    for idx, command in enumerate(commands):\n        output_file = os.path.join(output_dir_path, f\"output_{idx}.txt\")\n        output_files.append(output_file)\n        \n        # Execute the command\n        result = subprocess.run(\n            command,\n            shell=True,\n            stdout=subprocess.PIPE,\n            stderr=subprocess.PIPE,\n            text=True\n        )\n        \n        # Write the output or error message to the file\n        with open(output_file, 'w') as f:\n            if result.returncode == 0:\n                f.write(result.stdout)\n            else:\n                f.write(f\"Error: {result.stderr}\\nExit Code: {result.returncode}\")\n    \n    return output_files\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 541,
+        "output_tokens": 250,
+        "total_tokens": 791
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 0,
+  "samples": [
+    {
+      "bucket": "AssertionError",
+      "code": "import subprocess\nimport csv\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # Ensure the output directory exists\n    os.makedirs(output_dir_path, exist_ok=True)\n    \n    # Read the CSV file\n    with open(commands_file_path, 'r') as file:\n        reader = csv.reader(file)\n        commands = [row[0] for row in reader if row]\n    \n    # Execute each command and write output to a unique file\n    output_files = []\n    for idx, command in enumerate(commands):\n        output_file = os.path.join(output_dir_path, f'output_{idx}.txt')\n        output_files.append(output_file)\n        \n        try:\n            result = subprocess.run(\n                command,\n                shell=True,\n                check=True,\n                stdout=subprocess.PIPE,\n                stderr=subprocess.PIPE\n            )\n            with open(output_file, 'w') as f:\n                f.write(result.stdout.decode())\n        except subprocess.CalledProcessError as e:\n            with open(output_file, 'w') as f:\n                f.write(f\"Error: {e}\\nExit Code: {e.returncode}\")\n    \n    return output_files\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.071,
+        "exception": "AssertionError",
+        "output_tail": "F..FF.\n======================================================================\nFAIL: test_command_failure_with_specific_exit_code (hidden_test.TestCases.test_command_failure_with_specific_exit_code)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-jxf158ae/hidden_test.py\", line 77, in test_command_failure_with_specific_exit_code\n    self.assertIn(\"Error executing command\", content)\nAssertionError: 'Error executing command' not found in \"Error: Command 'exit 1' returned non-zero exit status 1.\\nExit Code: 1\"\n\n======================================================================\nFAIL: test_invalid_command (hidden_test.TestCases.test_invalid_command)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-jxf158ae/hidden_test.py\", line 44, in test_invalid_command\n    self.assertIn(\"not found\", content)\nAssertionError: 'not found' not found in \"Error: Command 'invalid_command_xyz' returned non-zero exit status 127.\\nExit Code: 127\"\n\n======================================================================\nFAIL: test_mixed_commands (hidden_test.TestCases.test_mixed_commands)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-jxf158ae/hidden_test.py\", line 64, in test_mixed_commands\n    self.assertIn(\"not found\", content)\nAssertionError: 'not found' not found in \"Error: Command 'invalid_command_abc' returned non-zero exit status 127.\\nExit Code: 127\"\n\n----------------------------------------------------------------------\nRan 6 tests in 0.008s\n\nFAILED (failures=3)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nRead the list of shell commands from a CSV file and execute each command, writing its output to a unique file in the specified output directory. If a command fails, append the error message and exit code to the corresponding output file.\n\n## Starting file (solution.py)\n\n```python\nimport subprocess\n\nimport csv\n\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport tempfile\nimport shutil\nimport os\nimport csv\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.temp_dir = tempfile.mkdtemp()\n        self.output_dir_path = tempfile.mkdtemp()\n\n    def tearDown(self):\n        shutil.rmtree(self.temp_dir)\n        shutil.rmtree(self.output_dir_path)\n\n    def test_successful_command_execution(self):\n        commands_path = os.path.join(self.temp_dir, 'valid_commands.csv')\n        with open(commands_path, 'w', newline='') as file:\n            writer = csv.writer(file)\n            writer.writerow(['echo Hello'])\n        result = task_func(commands_path, self.output_dir_path)\n        self.assertEqual(len(result), 1)\n        with open(os.path.join(self.output_dir_path, result[0]), 'r') as f:\n            content = f.read()\n            self.assertIn('Hello', content)\n\n    def test_file_not_found(self):\n        with self.assertRaises(FileNotFoundError):\n            task_func(os.path.join(self.temp_dir, 'nonexistent.csv'), self.output_dir_path)\n\n    def test_invalid_command(self):\n        commands_path = os.path.join(self.temp_dir, 'invalid_command.csv')\n        with open(commands_path, 'w', newline='') as file:\n            writer = csv.writer(file)\n            writer.writerow(['invalid_command_xyz'])\n        result = task_func(commands_path, self.output_dir_path)\n        self.assertEqual(len(result), 1)\n        with open(os.path.join(self.output_dir_path, result[0]), 'r') as f:\n            content = f.read()\n            self.assertIn('invalid_command_xyz', content)\n            self.assertIn('not found', content)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261121,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 541,
+        "output_tokens": 240,
+        "total_tokens": 781
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import subprocess\nimport csv\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # Ensure the output directory exists\n    os.makedirs(output_dir_path, exist_ok=True)\n    \n    # Read the commands from the CSV file\n    with open(commands_file_path, 'r') as csvfile:\n        csv_reader = csv.reader(csvfile)\n        commands = [row[0] for row in csv_reader if row]\n    \n    # Execute each command and write output to a unique file\n    output_files = []\n    for i, command in enumerate(commands):\n        output_file_path = os.path.join(output_dir_path, f\"output_{i}.txt\")\n        output_files.append(output_file_path)\n        \n        # Execute the command\n        result = subprocess.run(\n            command,\n            shell=True,\n            stdout=subprocess.PIPE,\n            stderr=subprocess.PIPE,\n            text=True\n        )\n        \n        # Write the output or error message to the file\n        with open(output_file_path, 'w') as f:\n            if result.returncode == 0:\n                f.write(result.stdout)\n            else:\n                f.write(f\"Error: {result.stderr}\\nExit Code: {result.returncode}\")\n    \n    return output_files\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.073,
+        "exception": "AssertionError",
+        "output_tail": "F.....\n======================================================================\nFAIL: test_command_failure_with_specific_exit_code (hidden_test.TestCases.test_command_failure_with_specific_exit_code)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-koqc1e29/hidden_test.py\", line 77, in test_command_failure_with_specific_exit_code\n    self.assertIn(\"Error executing command\", content)\nAssertionError: 'Error executing command' not found in 'Error: \\nExit Code: 1'\n\n----------------------------------------------------------------------\nRan 6 tests in 0.008s\n\nFAILED (failures=1)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nRead the list of shell commands from a CSV file and execute each command, writing its output to a unique file in the specified output directory. If a command fails, append the error message and exit code to the corresponding output file.\n\n## Starting file (solution.py)\n\n```python\nimport subprocess\n\nimport csv\n\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport tempfile\nimport shutil\nimport os\nimport csv\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.temp_dir = tempfile.mkdtemp()\n        self.output_dir_path = tempfile.mkdtemp()\n\n    def tearDown(self):\n        shutil.rmtree(self.temp_dir)\n        shutil.rmtree(self.output_dir_path)\n\n    def test_successful_command_execution(self):\n        commands_path = os.path.join(self.temp_dir, 'valid_commands.csv')\n        with open(commands_path, 'w', newline='') as file:\n            writer = csv.writer(file)\n            writer.writerow(['echo Hello'])\n        result = task_func(commands_path, self.output_dir_path)\n        self.assertEqual(len(result), 1)\n        with open(os.path.join(self.output_dir_path, result[0]), 'r') as f:\n            content = f.read()\n            self.assertIn('Hello', content)\n\n    def test_file_not_found(self):\n        with self.assertRaises(FileNotFoundError):\n            task_func(os.path.join(self.temp_dir, 'nonexistent.csv'), self.output_dir_path)\n\n    def test_invalid_command(self):\n        commands_path = os.path.join(self.temp_dir, 'invalid_command.csv')\n        with open(commands_path, 'w', newline='') as file:\n            writer = csv.writer(file)\n            writer.writerow(['invalid_command_xyz'])\n        result = task_func(commands_path, self.output_dir_path)\n        self.assertEqual(len(result), 1)\n        with open(os.path.join(self.output_dir_path, result[0]), 'r') as f:\n            content = f.read()\n            self.assertIn('invalid_command_xyz', content)\n            self.assertIn('not found', content)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261122,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 541,
+        "output_tokens": 255,
+        "total_tokens": 796
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import subprocess\nimport csv\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # Ensure the output directory exists\n    os.makedirs(output_dir_path, exist_ok=True)\n    \n    # Read the CSV file\n    with open(commands_file_path, 'r') as file:\n        reader = csv.reader(file)\n        commands = [row[0] for row in reader if row]\n    \n    # Execute each command and write output to a unique file\n    results = []\n    for idx, command in enumerate(commands):\n        output_file = os.path.join(output_dir_path, f\"command_{idx}.txt\")\n        try:\n            result = subprocess.run(\n                command,\n                shell=True,\n                check=True,\n                stdout=subprocess.PIPE,\n                stderr=subprocess.PIPE\n            )\n            with open(output_file, 'w') as f:\n                f.write(result.stdout.decode())\n            results.append(output_file)\n        except subprocess.CalledProcessError as e:\n            error_message = e.stderr.decode()\n            with open(output_file, 'w') as f:\n                f.write(error_message)\n            results.append(output_file)\n    \n    return results\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.076,
+        "exception": "AssertionError",
+        "output_tail": "F.....\n======================================================================\nFAIL: test_command_failure_with_specific_exit_code (hidden_test.TestCases.test_command_failure_with_specific_exit_code)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-i95_zqq9/hidden_test.py\", line 77, in test_command_failure_with_specific_exit_code\n    self.assertIn(\"Error executing command\", content)\nAssertionError: 'Error executing command' not found in ''\n\n----------------------------------------------------------------------\nRan 6 tests in 0.008s\n\nFAILED (failures=1)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nRead the list of shell commands from a CSV file and execute each command, writing its output to a unique file in the specified output directory. If a command fails, append the error message and exit code to the corresponding output file.\n\n## Starting file (solution.py)\n\n```python\nimport subprocess\n\nimport csv\n\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport tempfile\nimport shutil\nimport os\nimport csv\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.temp_dir = tempfile.mkdtemp()\n        self.output_dir_path = tempfile.mkdtemp()\n\n    def tearDown(self):\n        shutil.rmtree(self.temp_dir)\n        shutil.rmtree(self.output_dir_path)\n\n    def test_successful_command_execution(self):\n        commands_path = os.path.join(self.temp_dir, 'valid_commands.csv')\n        with open(commands_path, 'w', newline='') as file:\n            writer = csv.writer(file)\n            writer.writerow(['echo Hello'])\n        result = task_func(commands_path, self.output_dir_path)\n        self.assertEqual(len(result), 1)\n        with open(os.path.join(self.output_dir_path, result[0]), 'r') as f:\n            content = f.read()\n            self.assertIn('Hello', content)\n\n    def test_file_not_found(self):\n        with self.assertRaises(FileNotFoundError):\n            task_func(os.path.join(self.temp_dir, 'nonexistent.csv'), self.output_dir_path)\n\n    def test_invalid_command(self):\n        commands_path = os.path.join(self.temp_dir, 'invalid_command.csv')\n        with open(commands_path, 'w', newline='') as file:\n            writer = csv.writer(file)\n            writer.writerow(['invalid_command_xyz'])\n        result = task_func(commands_path, self.output_dir_path)\n        self.assertEqual(len(result), 1)\n        with open(os.path.join(self.output_dir_path, result[0]), 'r') as f:\n            content = f.read()\n            self.assertIn('invalid_command_xyz', content)\n            self.assertIn('not found', content)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 541,
+        "output_tokens": 237,
+        "total_tokens": 778
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import subprocess\nimport csv\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # Ensure the output directory exists\n    os.makedirs(output_dir_path, exist_ok=True)\n    \n    # Read the CSV file\n    with open(commands_file_path, 'r') as csvfile:\n        csv_reader = csv.reader(csvfile)\n        commands = [row[0] for row in csv_reader if row]\n    \n    # Execute each command and save output\n    output_files = []\n    for i, command in enumerate(commands):\n        # Generate a unique output file name\n        output_file = os.path.join(output_dir_path, f'output_{i}.txt')\n        output_files.append(output_file)\n        \n        # Execute the command\n        result = subprocess.run(\n            command,\n            shell=True,\n            capture_output=True,\n            text=True\n        )\n        \n        # Write output or error message to the file\n        with open(output_file, 'w') as f:\n            if result.returncode == 0:\n                f.write(result.stdout)\n            else:\n                f.write(f\"Error: {result.stderr}\\nExit code: {result.returncode}\")\n    \n    return output_files\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.071,
+        "exception": "AssertionError",
+        "output_tail": "F.....\n======================================================================\nFAIL: test_command_failure_with_specific_exit_code (hidden_test.TestCases.test_command_failure_with_specific_exit_code)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-y_b9jg4j/hidden_test.py\", line 77, in test_command_failure_with_specific_exit_code\n    self.assertIn(\"Error executing command\", content)\nAssertionError: 'Error executing command' not found in 'Error: \\nExit code: 1'\n\n----------------------------------------------------------------------\nRan 6 tests in 0.008s\n\nFAILED (failures=1)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nRead the list of shell commands from a CSV file and execute each command, writing its output to a unique file in the specified output directory. If a command fails, append the error message and exit code to the corresponding output file.\n\n## Starting file (solution.py)\n\n```python\nimport subprocess\n\nimport csv\n\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport tempfile\nimport shutil\nimport os\nimport csv\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.temp_dir = tempfile.mkdtemp()\n        self.output_dir_path = tempfile.mkdtemp()\n\n    def tearDown(self):\n        shutil.rmtree(self.temp_dir)\n        shutil.rmtree(self.output_dir_path)\n\n    def test_successful_command_execution(self):\n        commands_path = os.path.join(self.temp_dir, 'valid_commands.csv')\n        with open(commands_path, 'w', newline='') as file:\n            writer = csv.writer(file)\n            writer.writerow(['echo Hello'])\n        result = task_func(commands_path, self.output_dir_path)\n        self.assertEqual(len(result), 1)\n        with open(os.path.join(self.output_dir_path, result[0]), 'r') as f:\n            content = f.read()\n            self.assertIn('Hello', content)\n\n    def test_file_not_found(self):\n        with self.assertRaises(FileNotFoundError):\n            task_func(os.path.join(self.temp_dir, 'nonexistent.csv'), self.output_dir_path)\n\n    def test_invalid_command(self):\n        commands_path = os.path.join(self.temp_dir, 'invalid_command.csv')\n        with open(commands_path, 'w', newline='') as file:\n            writer = csv.writer(file)\n            writer.writerow(['invalid_command_xyz'])\n        result = task_func(commands_path, self.output_dir_path)\n        self.assertEqual(len(result), 1)\n        with open(os.path.join(self.output_dir_path, result[0]), 'r') as f:\n            content = f.read()\n            self.assertIn('invalid_command_xyz', content)\n            self.assertIn('not found', content)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261124,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 541,
+        "output_tokens": 248,
+        "total_tokens": 789
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import subprocess\nimport csv\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # Ensure the output directory exists\n    os.makedirs(output_dir_path, exist_ok=True)\n    \n    # Read commands from CSV file\n    with open(commands_file_path, 'r') as csvfile:\n        csv_reader = csv.reader(csvfile)\n        commands = [row[0] for row in csv_reader if row]\n    \n    # Execute each command and write output to a unique file\n    output_files = []\n    for idx, command in enumerate(commands):\n        output_file = os.path.join(output_dir_path, f\"output_{idx}.txt\")\n        output_files.append(output_file)\n        \n        # Execute the command\n        result = subprocess.run(\n            command,\n            shell=True,\n            stdout=subprocess.PIPE,\n            stderr=subprocess.PIPE,\n            text=True\n        )\n        \n        # Write the output or error message to the file\n        with open(output_file, 'w') as f:\n            if result.returncode == 0:\n                f.write(result.stdout)\n            else:\n                f.write(f\"Error: {result.stderr}\\nExit Code: {result.returncode}\")\n    \n    return output_files\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.071,
+        "exception": "AssertionError",
+        "output_tail": "F.....\n======================================================================\nFAIL: test_command_failure_with_specific_exit_code (hidden_test.TestCases.test_command_failure_with_specific_exit_code)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-t3cr4b3d/hidden_test.py\", line 77, in test_command_failure_with_specific_exit_code\n    self.assertIn(\"Error executing command\", content)\nAssertionError: 'Error executing command' not found in 'Error: \\nExit Code: 1'\n\n----------------------------------------------------------------------\nRan 6 tests in 0.008s\n\nFAILED (failures=1)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nRead the list of shell commands from a CSV file and execute each command, writing its output to a unique file in the specified output directory. If a command fails, append the error message and exit code to the corresponding output file.\n\n## Starting file (solution.py)\n\n```python\nimport subprocess\n\nimport csv\n\nimport os\n\ndef task_func(commands_file_path, output_dir_path):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport tempfile\nimport shutil\nimport os\nimport csv\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.temp_dir = tempfile.mkdtemp()\n        self.output_dir_path = tempfile.mkdtemp()\n\n    def tearDown(self):\n        shutil.rmtree(self.temp_dir)\n        shutil.rmtree(self.output_dir_path)\n\n    def test_successful_command_execution(self):\n        commands_path = os.path.join(self.temp_dir, 'valid_commands.csv')\n        with open(commands_path, 'w', newline='') as file:\n            writer = csv.writer(file)\n            writer.writerow(['echo Hello'])\n        result = task_func(commands_path, self.output_dir_path)\n        self.assertEqual(len(result), 1)\n        with open(os.path.join(self.output_dir_path, result[0]), 'r') as f:\n            content = f.read()\n            self.assertIn('Hello', content)\n\n    def test_file_not_found(self):\n        with self.assertRaises(FileNotFoundError):\n            task_func(os.path.join(self.temp_dir, 'nonexistent.csv'), self.output_dir_path)\n\n    def test_invalid_command(self):\n        commands_path = os.path.join(self.temp_dir, 'invalid_command.csv')\n        with open(commands_path, 'w', newline='') as file:\n            writer = csv.writer(file)\n            writer.writerow(['invalid_command_xyz'])\n        result = task_func(commands_path, self.output_dir_path)\n        self.assertEqual(len(result), 1)\n        with open(os.path.join(self.output_dir_path, result[0]), 'r') as f:\n            content = f.read()\n            self.assertIn('invalid_command_xyz', content)\n            self.assertIn('not found', content)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261125,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 541,
+        "output_tokens": 250,
+        "total_tokens": 791
+      }
+    }
+  ],
+  "seed": 20261121,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/15",
+  "started_at": "2026-11-23T15:22:40+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/15",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 5,
+    "input_tokens": 2705,
+    "output_tokens": 1230,
+    "total_tokens": 3935
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 5
+}

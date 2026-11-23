@@ -1,0 +1,178 @@
+{
+  "api_error": "",
+  "bucket": "None",
+  "condition": "B1",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T13:03:39+00:00",
+  "detector_questions": [],
+  "duration_s": 4.811,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "None",
+    "duration_s": 1.398,
+    "exception": "",
+    "output_tail": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.063s\n\nOK",
+    "pass": true,
+    "timed_out": false
+  },
+  "final_solution": "import numpy as np\nfrom operator import itemgetter\nimport matplotlib.pyplot as plt\n\ndef task_func(data):\n    # Find the tuple with the maximum value at index 1\n    max_tuple = max(data, key=itemgetter(1))\n\n    # Extract x and y values for plotting\n    x_values = [t[0] for t in data]\n    y_values = [t[1] for t in data]\n\n    # Create the scatter plot\n    fig, ax = plt.subplots()\n    ax.scatter(x_values, y_values, label='Data Points')\n\n    # Highlight the max tuple\n    ax.scatter(max_tuple[0], max_tuple[1], color='red', s=100, label='Max Tuple')\n\n    # Set plot properties\n    ax.set_title('Max Tuple Highlighted')\n    ax.set_xlabel('x')\n    ax.set_ylabel('y')\n    ax.legend()\n\n    return ax",
+  "follow_up_questions": [],
+  "hidden_duration_s": 1.398,
+  "hidden_output_tail": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.063s\n\nOK",
+  "llm_calls": [
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import numpy as np\\nfrom operator import itemgetter\\nimport matplotlib.pyplot as plt\\n\\ndef task_func(data):\\n    # Find the tuple with the maximum value at index 1\\n    max_tuple = max(data, key=itemgetter(1))\\n\\n    # Extract x and y values for plotting\\n    x_values = [t[0] for t in data]\\n    y_values = [t[1] for t in data]\\n\\n    # Create the scatter plot\\n    fig, ax = plt.subplots()\\n    ax.scatter(x_values, y_values, label='Data Points')\\n\\n    # Highlight the max tuple\\n    ax.scatter(max_tuple[0], max_tuple[1], color='red', s=100, label='Max Tuple')\\n\\n    # Set plot properties\\n    ax.set_title('Max Tuple Highlighted')\\n    ax.set_xlabel('x')\\n    ax.set_ylabel('y')\\n    ax.legend()\\n\\n    return ax\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1196,
+        "output_tokens": 243,
+        "total_tokens": 1439
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1456,
+        "output_tokens": 14,
+        "total_tokens": 1470
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1489,
+        "output_tokens": 7,
+        "total_tokens": 1496
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. You cannot ask the stakeholder questions in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Specification (complete)\n\nIntent:\nPlot a scatter graph of tuples and highlight the tuple with the maximum value at index 1.\n\nSignature and types:\nArgs:\n- data (list of tuple): A list of tuples where each tuple contains two integers.\n\nReturns:\n- matplotlib.axes.Axes: The Axes object of the plot for further manipulation and testing, with the title 'Max Tuple Highlighted', x-axis labeled 'x', y-axis labeled 'y', and a legend.\n\nExamples:\n```python\n>>> ax = task_func([(10, 20), (30, 40), (25, 50)])\n>>> type(ax)\n<class 'matplotlib.axes._axes.Axes'>\n```\n\nConstraints and edge cases:\nRequirements:\n- numpy\n- operator\n- matplotlib.pyplot\n\n## Starting file (solution.py)\n\n```python\nimport numpy as np\n\nfrom operator import itemgetter\n\nimport matplotlib.pyplot as plt\n\ndef task_func(data):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport doctest\n\nclass TestCases(unittest.TestCase):\n\n    def test_case_1(self):\n        data = [(10, 20), (30, 50), (60, 25), (80, 65)]\n        ax = task_func(data)\n        self.assertEqual(ax.get_title(), 'Max Tuple Highlighted')\n        self.assertEqual(ax.get_xlabel(), 'x')\n        self.assertEqual(ax.get_ylabel(), 'y')\n        x_data, y_data = ax.collections[0].get_offsets().T\n        self.assertTrue(np.array_equal(x_data, [10, 30, 60, 80]))\n        self.assertTrue(np.array_equal(y_data, [20, 50, 25, 65]))\n        x_max, y_max = ax.collections[1].get_offsets().T\n        self.assertEqual(x_max, 80)\n        self.assertEqual(y_max, 65)\n\n    def test_case_2(self):\n        data = [(5, 10), (15, 35), (40, 55), (70, 30)]\n        ax = task_func(data)\n        self.assertEqual(ax.get_title(), 'Max Tuple Highlighted')\n        self.assertEqual(ax.get_xlabel(), 'x')\n        self.assertEqual(ax.get_ylabel(), 'y')\n        x_data, y_data = ax.collections[0].get_offsets().T\n        self.assertTrue(np.array_equal(x_data, [5, 15, 40, 70]))\n        self.assertTrue(np.array_equal(y_data, [10, 35, 55, 30]))\n        x_max, y_max = ax.collections[1].get_offsets().T\n        self.assertEqual(x_max, 40)\n        self.assertEqual(y_max, 55)\n\n    def test_case_3(self):\n        data = [(3, 7), (9, 11), (13, 17), (19, 23)]\n        ax = task_func(data)\n        self.assertEqual(ax.get_title(), 'Max Tuple Highlighted')\n        self.assertEqual(ax.get_xlabel(), 'x')\n        self.assertEqual(ax.get_ylabel(), 'y')\n        x_data, y_data = ax.collections[0].get_offsets().T\n        self.assertTrue(np.array_equal(x_data, [3, 9, 13, 19]))\n        self.assertTrue(np.array_equal(y_data, [7, 11, 17, 23]))\n        x_max, y_max = ax.collections[1].get_offsets().T\n        self.assertEqual(x_max, 19)\n        self.assertEqual(y_max, 23)\n```\n\nImplement `solution.py` from the complete specification.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import numpy as np\\nfrom operator import itemgetter\\nimport matplotlib.pyplot as plt\\n\\ndef task_func(data):\\n    # Find the tuple with the maximum value at index 1\\n    max_tuple = max(data, key=itemgetter(1))\\n\\n    # Extract x and y values for plotting\\n    x_values = [t[0] for t in data]\\n    y_values = [t[1] for t in data]\\n\\n    # Create the scatter plot\\n    fig, ax = plt.subplots()\\n    ax.scatter(x_values, y_values, label='Data Points')\\n\\n    # Highlight the max tuple\\n    ax.scatter(max_tuple[0], max_tuple[1], color='red', s=100, label='Max Tuple')\\n\\n    # Set plot properties\\n    ax.set_title('Max Tuple Highlighted')\\n    ax.set_xlabel('x')\\n    ax.set_ylabel('y')\\n    ax.legend()\\n\\n    return ax\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 694 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests passed.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant"
+    }
+  ],
+  "pass": true,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 0,
+  "seed": 20261121,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/209",
+  "stakeholder_answers": [],
+  "started_at": "2026-11-23T13:03:34+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/209",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "import numpy as np\nfrom operator import itemgetter\nimport matplotlib.pyplot as plt\n\ndef task_func(data):\n    # Find the tuple with the maximum value at index 1\n    max_tuple = max(data, key=itemgetter(1))\n\n    # Extract x and y values for plotting\n    x_values = [t[0] for t in data]\n    y_values = [t[1] for t in data]\n\n    # Create the scatter plot\n    fig, ax = plt.subplots()\n    ax.scatter(x_values, y_values, label='Data Points')\n\n    # Highlight the max tuple\n    ax.scatter(max_tuple[0], max_tuple[1], color='red', s=100, label='Max Tuple')\n\n    # Set plot properties\n    ax.set_title('Max Tuple Highlighted')\n    ax.set_xlabel('x')\n    ax.set_ylabel('y')\n    ax.legend()\n\n    return ax",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 694 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests passed."
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 1.413,
+        "exception": "None",
+        "ok": true,
+        "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.043s\n\nOK"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 3,
+    "input_tokens": 4141,
+    "output_tokens": 264,
+    "total_tokens": 4405
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 3
+}

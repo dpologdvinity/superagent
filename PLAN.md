@@ -2,14 +2,14 @@
 
 The submitted milestone is
 [`paper/milestone/submitted/main.pdf`](paper/milestone/submitted/main.pdf). The rebuild ran in
-four phases: R0 (data), R1 (harness + detector) and R2 (the operator's A100 pilot) are complete,
-and R3's measured pilot paper is written; the 300 held-out final study remains future work. The
-revised measured milestone is
+four phases: R0 (data), R1 (harness + detector), R2 (the operator's first A100 pilot) and R2b
+(the corrected A100 re-run) are complete, and the R6 paper revision is written; the 300
+held-out final study remains future work. The revised measured milestone is
 [`paper/milestone/main.pdf`](paper/milestone/main.pdf) and the full report is
 [`paper/main.pdf`](paper/main.pdf).
 
 Budget target: **18 GPU-hours** for the pilot, one 24 GB GPU, and **$0 paid API**. R0 and R1
-use CPU and local network only. The measured pilot used 2.509 GPU-hours and $0 paid API.
+use CPU and local network only. The corrected pilot used 2.902 GPU-hours and $0 paid API.
 
 ## R0: scaffold + data foundation (complete)
 
@@ -159,14 +159,15 @@ is used.
 
 **Acceptance.** All pilot units complete or are reported missing; the main-table metrics are
 computed from measured traces; the held-out split is untouched; the GPU-hour budget is
-recorded. **Status:** complete. The operator ran the prepared notebook on one
+recorded. **Status:** complete (historical). The operator ran the prepared notebook on one
 A100-SXM4-80GB (commit `8b355d66`, vLLM 0.34.0, `Qwen/Qwen3-8B-AWQ`, text tool transport):
 2,700/2,700 units, 0 held-out tasks, 2.509 GPU-hours, 21.76M tokens, $0 paid API. The
 committed run is [`results/runs/r2-pilot/`](results/runs/r2-pilot/). Headline result: B1
 58.3% vs H0 47.7% (+10.7 pp, 95% CI [+2.7, +18.7]), while H3 48.7% does not beat H2 49.0%
 or H4 49.3% (both intervals cross zero); H1 38.0%, DISCARD 42.0%, B2 48.3% (pass@5 52.3%),
-B3 31.7%. The paired task-level bootstrap, per-category grouping, failure buckets and
-smoothed detector refit are in the same run directory.
+B3 31.7%. These numbers are the earlier measurement; they must not be mixed with R2b. The
+paired task-level bootstrap, per-category grouping, failure buckets and smoothed detector
+refit are in the same run directory.
 
 ## R3: measured paper (pilot complete; held-out study pending)
 
@@ -184,17 +185,19 @@ full-run plan.
 **Acceptance.** Every headline number traces to a committed artifact; the paper and the
 repository agree; no held-out task influenced training, calibration or threshold selection.
 
-**Status.** Complete. [`paper/main.tex`](paper/main.tex) / [`paper/main.pdf`](paper/main.pdf)
-is the full measured report (all nine conditions, the eight paired contrasts, per-category
-grouping, detector table, failure analysis and limitations). The revised milestone
+**Status.** Complete for R2/R3 and superseded by R6 for the headline numbers. The corrected
+[`paper/main.tex`](paper/main.tex) / [`paper/main.pdf`](paper/main.pdf) is the full measured
+report (all nine conditions, the nine paired contrasts, per-category grouping, detector
+table, failure analysis and limitations). The corrected milestone
 [`paper/milestone/main.tex`](paper/milestone/main.tex) /
 [`paper/milestone/main.pdf`](paper/milestone/main.pdf) is the short artifact-backed version
-with a two-page body and references on page 3; the submitted milestone is preserved
-byte-identically under [`paper/milestone/submitted/`](paper/milestone/submitted/). The 300
-held-out tasks and the second seed remain for the full study: the pilot reports a measured
-negative result, not the final evaluation.
+with a two-page body and references on page 3; the R2 milestone snapshot is preserved under
+[`paper/milestone/r2/`](paper/milestone/r2/) and the submitted milestone byte-identically
+under [`paper/milestone/submitted/`](paper/milestone/submitted/). The 300 held-out tasks and
+the second seed remain for the full study: the pilot reports a measured result, not the final
+evaluation.
 
-## R4/R5: operationalization disclosure and corrected re-run (prepared)
+## R4/R5/R6: operationalization disclosure, corrected levels and corrected run (complete)
 
 R4 disclosed the measured pilot's intent/visible-test operationalization issues in the paper
 and [`paper/operationalization-notes.md`](paper/operationalization-notes.md). R5 rebuilt
@@ -202,9 +205,13 @@ and [`paper/operationalization-notes.md`](paper/operationalization-notes.md). R5
 with whole-prose intent and `VISIBLE_TESTS=inputs_only` for HumanEval+/MBPP+, keeping the
 BigCodeBench assertion-based visible-test residual. The superseded R0/R2 split is archived in
 [`results/levels_pre_r2b_split.json`](results/levels_pre_r2b_split.json), so the R2 artifacts
-remain auditable. The corrected R2b A100 run is prepared in
-[`notebooks/colab_a100_vllm.ipynb`](notebooks/colab_a100_vllm.ipynb) and [`COLAB.md`](COLAB.md);
-the A100 execution and the paper update that replaces the R2 pilot are separate.
+remain auditable. R6 integrated the operator's corrected A100 run under
+[`results/runs/r2b-pilot/`](results/runs/r2b-pilot/) and replaced the paper and milestone
+numbers. The corrected run has 2,700/2,700 units, no held-out task, 2.902 GPU-hours and $0
+paid API; B1 62.3% vs H0 52.0% (+10.3 pp [+3.0, +17.7]), H3 53.7% vs H2 44.3% (+9.3 pp
+[+1.7, +17.0]) and H4 51.7% (+2.0 pp [−6.3, +9.7]), with H3−H0 +1.7 pp [−5.7, +9.0];
+H2, DISCARD and H1 are below H0. The per-category grouping, failure buckets and detector
+refit are in the same run directory.
 
 ## Risks and mitigations
 

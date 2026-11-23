@@ -1,0 +1,95 @@
+{
+  "api_error": "",
+  "bucket": "TypeError",
+  "condition": "B3",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T14:11:43+00:00",
+  "detector_questions": [],
+  "duration_s": 1.64,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "TypeError",
+    "duration_s": 0.608,
+    "exception": "TypeError",
+    "output_tail": "^\n  File \"/tmp/wish-eval-8b8pzxts/hidden_test.py\", line 52, in test_invalid_url\n    task_func(url)\n  File \"/tmp/wish-eval-8b8pzxts/solution.py\", line 7, in task_func\n    response = urllib.request.urlopen(url)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1134, in __call__\n    return self._mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1138, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1193, in _execute_mock_call\n    raise effect\nException: URL fetch error\n\n======================================================================\nERROR: test_non_xml_data (hidden_test.TestCases.test_non_xml_data)\nTest that the function raises an error for non-XML data.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-8b8pzxts/hidden_test.py\", line 63, in test_non_xml_data\n    task_func(url)\n  File \"/tmp/wish-eval-8b8pzxts/solution.py\", line 11, in task_func\n    xml_tree = etree.fromstring(xml_content)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"src/lxml/etree.pyx\", line 3434, in lxml.etree.fromstring\n  File \"src/lxml/parser.pxi\", line 2080, in lxml.etree._parseMemoryDocument\n  File \"src/lxml/parser.pxi\", line 1927, in lxml.etree._parseDoc\n  File \"src/lxml/parser.pxi\", line 1952, in lxml.etree._parseDoc_charbuffer\nTypeError: memoryview: a bytes-like object is required, not 'MagicMock'\n\n======================================================================\nERROR: test_valid_xml (hidden_test.TestCases.test_valid_xml)\nTest that the function returns the correct DataFrame for a given XML file.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-8b8pzxts/hidden_test.py\", line 19, in test_valid_xml\n    result_df = task_func(url)\n                ^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-8b8pzxts/solution.py\", line 11, in task_func\n    xml_tree = etree.fromstring(xml_content)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"src/lxml/etree.pyx\", line 3434, in lxml.etree.fromstring\n  File \"src/lxml/parser.pxi\", line 2080, in lxml.etree._parseMemoryDocument\n  File \"src/lxml/parser.pxi\", line 1927, in lxml.etree._parseDoc\n  File \"src/lxml/parser.pxi\", line 1952, in lxml.etree._parseDoc_charbuffer\nTypeError: memoryview: a bytes-like object is required, not 'MagicMock'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.011s\n\nFAILED (errors=5)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import urllib.request\nfrom lxml import etree\nimport pandas as pd\n\ndef task_func(url):\n    # Fetch the XML file from the specified URL\n    response = urllib.request.urlopen(url)\n    xml_content = response.read()\n    \n    # Parse the XML content\n    xml_tree = etree.fromstring(xml_content)\n    \n    # Convert XML to a Pandas DataFrame\n    # Extracting data from XML\n    data = []\n    for element in xml_tree.iter():\n        row = {}\n        for key, value in element.attrib.items():\n            row[key] = value\n        row['text'] = element.text\n        data.append(row)\n    \n    # Create DataFrame\n    df = pd.DataFrame(data)\n    \n    return df\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "^\n  File \"/tmp/wish-eval-8b8pzxts/hidden_test.py\", line 52, in test_invalid_url\n    task_func(url)\n  File \"/tmp/wish-eval-8b8pzxts/solution.py\", line 7, in task_func\n    response = urllib.request.urlopen(url)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1134, in __call__\n    return self._mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1138, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1193, in _execute_mock_call\n    raise effect\nException: URL fetch error\n\n======================================================================\nERROR: test_non_xml_data (hidden_test.TestCases.test_non_xml_data)\nTest that the function raises an error for non-XML data.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-8b8pzxts/hidden_test.py\", line 63, in test_non_xml_data\n    task_func(url)\n  File \"/tmp/wish-eval-8b8pzxts/solution.py\", line 11, in task_func\n    xml_tree = etree.fromstring(xml_content)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"src/lxml/etree.pyx\", line 3434, in lxml.etree.fromstring\n  File \"src/lxml/parser.pxi\", line 2080, in lxml.etree._parseMemoryDocument\n  File \"src/lxml/parser.pxi\", line 1927, in lxml.etree._parseDoc\n  File \"src/lxml/parser.pxi\", line 1952, in lxml.etree._parseDoc_charbuffer\nTypeError: memoryview: a bytes-like object is required, not 'MagicMock'\n\n======================================================================\nERROR: test_valid_xml (hidden_test.TestCases.test_valid_xml)\nTest that the function returns the correct DataFrame for a given XML file.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-8b8pzxts/hidden_test.py\", line 19, in test_valid_xml\n    result_df = task_func(url)\n                ^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-8b8pzxts/solution.py\", line 11, in task_func\n    xml_tree = etree.fromstring(xml_content)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"src/lxml/etree.pyx\", line 3434, in lxml.etree.fromstring\n  File \"src/lxml/parser.pxi\", line 2080, in lxml.etree._parseMemoryDocument\n  File \"src/lxml/parser.pxi\", line 1927, in lxml.etree._parseDoc\n  File \"src/lxml/parser.pxi\", line 1952, in lxml.etree._parseDoc_charbuffer\nTypeError: memoryview: a bytes-like object is required, not 'MagicMock'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.011s\n\nFAILED (errors=5)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport urllib.request\nfrom lxml import etree\nimport pandas as pd\n\ndef task_func(url):\n    # Fetch the XML file from the specified URL\n    response = urllib.request.urlopen(url)\n    xml_content = response.read()\n    \n    # Parse the XML content\n    xml_tree = etree.fromstring(xml_content)\n    \n    # Convert XML to a Pandas DataFrame\n    # Extracting data from XML\n    data = []\n    for element in xml_tree.iter():\n        row = {}\n        for key, value in element.attrib.items():\n            row[key] = value\n        row['text'] = element.text\n        data.append(row)\n    \n    # Create DataFrame\n    df = pd.DataFrame(data)\n    \n    return df\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b3_frontier",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 126,
+        "output_tokens": 152,
+        "total_tokens": 278
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 0,
+  "samples": [
+    {
+      "bucket": "TypeError",
+      "code": "import urllib.request\nfrom lxml import etree\nimport pandas as pd\n\ndef task_func(url):\n    # Fetch the XML file from the specified URL\n    response = urllib.request.urlopen(url)\n    xml_content = response.read()\n    \n    # Parse the XML content\n    xml_tree = etree.fromstring(xml_content)\n    \n    # Convert XML to a Pandas DataFrame\n    # Extracting data from XML\n    data = []\n    for element in xml_tree.iter():\n        row = {}\n        for key, value in element.attrib.items():\n            row[key] = value\n        row['text'] = element.text\n        data.append(row)\n    \n    # Create DataFrame\n    df = pd.DataFrame(data)\n    \n    return df\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "TypeError",
+        "duration_s": 0.608,
+        "exception": "TypeError",
+        "output_tail": "^\n  File \"/tmp/wish-eval-8b8pzxts/hidden_test.py\", line 52, in test_invalid_url\n    task_func(url)\n  File \"/tmp/wish-eval-8b8pzxts/solution.py\", line 7, in task_func\n    response = urllib.request.urlopen(url)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1134, in __call__\n    return self._mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1138, in _mock_call\n    return self._execute_mock_call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1193, in _execute_mock_call\n    raise effect\nException: URL fetch error\n\n======================================================================\nERROR: test_non_xml_data (hidden_test.TestCases.test_non_xml_data)\nTest that the function raises an error for non-XML data.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-8b8pzxts/hidden_test.py\", line 63, in test_non_xml_data\n    task_func(url)\n  File \"/tmp/wish-eval-8b8pzxts/solution.py\", line 11, in task_func\n    xml_tree = etree.fromstring(xml_content)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"src/lxml/etree.pyx\", line 3434, in lxml.etree.fromstring\n  File \"src/lxml/parser.pxi\", line 2080, in lxml.etree._parseMemoryDocument\n  File \"src/lxml/parser.pxi\", line 1927, in lxml.etree._parseDoc\n  File \"src/lxml/parser.pxi\", line 1952, in lxml.etree._parseDoc_charbuffer\nTypeError: memoryview: a bytes-like object is required, not 'MagicMock'\n\n======================================================================\nERROR: test_valid_xml (hidden_test.TestCases.test_valid_xml)\nTest that the function returns the correct DataFrame for a given XML file.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-8b8pzxts/hidden_test.py\", line 19, in test_valid_xml\n    result_df = task_func(url)\n                ^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-8b8pzxts/solution.py\", line 11, in task_func\n    xml_tree = etree.fromstring(xml_content)\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"src/lxml/etree.pyx\", line 3434, in lxml.etree.fromstring\n  File \"src/lxml/parser.pxi\", line 2080, in lxml.etree._parseMemoryDocument\n  File \"src/lxml/parser.pxi\", line 1927, in lxml.etree._parseDoc\n  File \"src/lxml/parser.pxi\", line 1952, in lxml.etree._parseDoc_charbuffer\nTypeError: memoryview: a bytes-like object is required, not 'MagicMock'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.011s\n\nFAILED (errors=5)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function from a short wish. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nFetches and parses an XML file from a specified URL, then converts it into a Pandas DataFrame.\n\n## Function stub (solution.py)\n\n```python\nimport urllib.request\n\nfrom lxml import etree\n\nimport pandas as pd\n\ndef task_func(url):\n    # TODO: implement this function.\n    pass\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261121,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 126,
+        "output_tokens": 152,
+        "total_tokens": 278
+      }
+    }
+  ],
+  "seed": 20261121,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/1003",
+  "started_at": "2026-11-23T14:11:43+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/1003",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 1,
+    "input_tokens": 126,
+    "output_tokens": 152,
+    "total_tokens": 278
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 1
+}

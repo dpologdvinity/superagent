@@ -1,0 +1,224 @@
+{
+  "api_error": "",
+  "bucket": "AssertionError",
+  "condition": "H1",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T14:48:16+00:00",
+  "detector_questions": [],
+  "duration_s": 9.313,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 2.462,
+    "exception": "AssertionError",
+    "output_tail": "....F...\n======================================================================\nFAIL: test_plot_title (hidden_test.TestCases.test_plot_title)\nTest if the plot title correctly reflects the mean and standard deviation.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_7fwxlnc/hidden_test.py\", line 29, in test_plot_title\n    self.assertIn(\"mean = 0.00,  std = 1.00\", fig.axes[0].get_title())\nAssertionError: 'mean = 0.00,  std = 1.00' not found in 'Mean: 0.00, Std Dev: 1.00'\n\n----------------------------------------------------------------------\nRan 8 tests in 0.208s\n\nFAILED (failures=1)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import numpy as np\n\nfrom scipy.stats import norm\n\nimport matplotlib.pyplot as plt\n\n\ndef task_func(mean, std_dev, num_samples):\n    # Generate samples from a normal distribution\n    samples = np.random.normal(mean, std_dev, num_samples)\n\n    # Create a histogram\n    plt.hist(samples, bins=30, density=True, alpha=0.6, color='g')\n\n    # Overlay the probability density function\n    x = np.linspace(mean - 3*std_dev, mean + 3*std_dev, 1000)\n    pdf = norm.pdf(x, mean, std_dev)\n    plt.plot(x, pdf, 'k', linewidth=2)\n\n    # Title the plot with the mean and standard deviation\n    plt.title(f\"Mean: {mean:.2f}, Std Dev: {std_dev:.2f}\")\n\n    # Return both the samples and the plot\n    return samples, plt.gcf()",
+  "follow_up_questions": [],
+  "hidden_duration_s": 2.462,
+  "hidden_output_tail": "....F...\n======================================================================\nFAIL: test_plot_title (hidden_test.TestCases.test_plot_title)\nTest if the plot title correctly reflects the mean and standard deviation.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-_7fwxlnc/hidden_test.py\", line 29, in test_plot_title\n    self.assertIn(\"mean = 0.00,  std = 1.00\", fig.axes[0].get_title())\nAssertionError: 'mean = 0.00,  std = 1.00' not found in 'Mean: 0.00, Std Dev: 1.00'\n\n----------------------------------------------------------------------\nRan 8 tests in 0.208s\n\nFAILED (failures=1)",
+  "llm_calls": [
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"acceptance_tests.py\", \"content\": \"from solution import task_func\\nimport unittest\\nimport numpy as np\\n\\nclass AcceptanceTests(unittest.TestCase):\\n    def setUp(self):\\n        \\\"\\\"\\\" Set up for each test, fixing the random seed for reproducibility. \\\"\\\"\\\"\\n        np.random.seed(0)\\n\\n    def test_plot_title(self):\\n        \\\"\\\"\\\" Test if the plot title correctly displays the mean and standard deviation. \\\"\\\"\\\"\\n        samples, _ = task_func(0, 1, 1000)\\n        fig = task_func(0, 1, 1000)[1]\\n        title = fig.suptitle().get_text()\\n        self.assertEqual(title, 'Mean: 0.00, Std Dev: 1.00')\\n\\n    def test_density_overlay(self):\\n        \\\"\\\"\\\" Test if the probability density function is correctly overlaid on the histogram. \\\"\\\"\\\"\\n        samples, _ = task_func(0, 1, 1000)\\n        fig = task_func(0, 1, 1000)[1]\\n        ax = fig.get_axes()[0]\\n        self.assertTrue(np.allclose(ax.lines[1].get_ydata(), norm.pdf(samples, 0, 1)))\\n\\n    def test_samples_mean_std(self):\\n        \\\"\\\"\\\" Test if the mean and standard deviation of the samples are approximately correct. \\\"\\\"\\\"\\n        samples, _ = task_func(0, 1, 1000)\\n        self.assertAlmostEqual(np.mean(samples), 0, places=1)\\n        self.assertAlmostEqual(np.std(samples), 1, places=1)\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 740,
+        "output_tokens": 390,
+        "total_tokens": 1130
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import numpy as np\\n\\nfrom scipy.stats import norm\\n\\nimport matplotlib.pyplot as plt\\n\\n\\ndef task_func(mean, std_dev, num_samples):\\n    # Generate samples from a normal distribution\\n    samples = np.random.normal(mean, std_dev, num_samples)\\n\\n    # Create a histogram\\n    plt.hist(samples, bins=30, density=True, alpha=0.6, color='g')\\n\\n    # Overlay the probability density function\\n    x = np.linspace(mean - 3*std_dev, mean + 3*std_dev, 1000)\\n    pdf = norm.pdf(x, mean, std_dev)\\n    plt.plot(x, pdf, 'k', linewidth=2)\\n\\n    # Title the plot with the mean and standard deviation\\n    plt.title(f\\\"Mean: {mean:.2f}, Std Dev: {std_dev:.2f}\\\")\\n\\n    # Return both the samples and the plot\\n    return samples, plt.gcf()\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1150,
+        "output_tokens": 235,
+        "total_tokens": 1385
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1411,
+        "output_tokens": 9,
+        "total_tokens": 1420
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1444,
+        "output_tokens": 7,
+        "total_tokens": 1451
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. You cannot ask the stakeholder questions in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Wish\n\nGenerate a histogram of samples from a normal distribution and overlay the corresponding probability density function, with the plot titled using the mean and standard deviation of the generated samples. Return both the plot and the samples.\n\n## Starting file (solution.py)\n\n```python\nimport numpy as np\n\nfrom scipy.stats import norm\n\nimport matplotlib.pyplot as plt\n\ndef task_func(mean, std_dev, num_samples):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport numpy as np\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        \"\"\" Set up for each test, fixing the random seed for reproducibility. \"\"\"\n        np.random.seed(0)\n\n    def test_samples_length(self):\n        \"\"\" Test if the number of generated samples is correct. \"\"\"\n        samples, _ = task_func(0, 1, 1000)\n        self.assertEqual(len(samples), 1000)\n\n    def test_samples_type(self):\n        \"\"\" Test the type of the samples. \"\"\"\n        samples, _ = task_func(0, 1, 1000)\n        self.assertIsInstance(samples, np.ndarray)\n\n    def test_mean_approximation(self):\n        \"\"\" Test if the mean of the samples is approximately equal to the specified mean. \"\"\"\n        samples, _ = task_func(0, 1, 1000)\n        self.assertAlmostEqual(np.mean(samples), 0, places=1)\n```\n\nBefore implementing, write your acceptance tests to `acceptance_tests.py` with write_file. Then implement `solution.py` and run the visible tests.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"acceptance_tests.py\", \"content\": \"from solution import task_func\\nimport unittest\\nimport numpy as np\\n\\nclass AcceptanceTests(unittest.TestCase):\\n    def setUp(self):\\n        \\\"\\\"\\\" Set up for each test, fixing the random seed for reproducibility. \\\"\\\"\\\"\\n        np.random.seed(0)\\n\\n    def test_plot_title(self):\\n        \\\"\\\"\\\" Test if the plot title correctly displays the mean and standard deviation. \\\"\\\"\\\"\\n        samples, _ = task_func(0, 1, 1000)\\n        fig = task_func(0, 1, 1000)[1]\\n        title = fig.suptitle().get_text()\\n        self.assertEqual(title, 'Mean: 0.00, Std Dev: 1.00')\\n\\n    def test_density_overlay(self):\\n        \\\"\\\"\\\" Test if the probability density function is correctly overlaid on the histogram. \\\"\\\"\\\"\\n        samples, _ = task_func(0, 1, 1000)\\n        fig = task_func(0, 1, 1000)[1]\\n        ax = fig.get_axes()[0]\\n        self.assertTrue(np.allclose(ax.lines[1].get_ydata(), norm.pdf(samples, 0, 1)))\\n\\n    def test_samples_mean_std(self):\\n        \\\"\\\"\\\" Test if the mean and standard deviation of the samples are approximately correct. \\\"\\\"\\\"\\n        samples, _ = task_func(0, 1, 1000)\\n        self.assertAlmostEqual(np.mean(samples), 0, places=1)\\n        self.assertAlmostEqual(np.std(samples), 1, places=1)\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 1181 characters to acceptance_tests.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import numpy as np\\n\\nfrom scipy.stats import norm\\n\\nimport matplotlib.pyplot as plt\\n\\n\\ndef task_func(mean, std_dev, num_samples):\\n    # Generate samples from a normal distribution\\n    samples = np.random.normal(mean, std_dev, num_samples)\\n\\n    # Create a histogram\\n    plt.hist(samples, bins=30, density=True, alpha=0.6, color='g')\\n\\n    # Overlay the probability density function\\n    x = np.linspace(mean - 3*std_dev, mean + 3*std_dev, 1000)\\n    pdf = norm.pdf(x, mean, std_dev)\\n    plt.plot(x, pdf, 'k', linewidth=2)\\n\\n    # Title the plot with the mean and standard deviation\\n    plt.title(f\\\"Mean: {mean:.2f}, Std Dev: {std_dev:.2f}\\\")\\n\\n    # Return both the samples and the plot\\n    return samples, plt.gcf()\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 706 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests passed.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant"
+    }
+  ],
+  "pass": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 1,
+  "seed": 20261122,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/94",
+  "stakeholder_answers": [],
+  "started_at": "2026-11-23T14:48:06+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/94",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "from solution import task_func\nimport unittest\nimport numpy as np\n\nclass AcceptanceTests(unittest.TestCase):\n    def setUp(self):\n        \"\"\" Set up for each test, fixing the random seed for reproducibility. \"\"\"\n        np.random.seed(0)\n\n    def test_plot_title(self):\n        \"\"\" Test if the plot title correctly displays the mean and standard deviation. \"\"\"\n        samples, _ = task_func(0, 1, 1000)\n        fig = task_func(0, 1, 1000)[1]\n        title = fig.suptitle().get_text()\n        self.assertEqual(title, 'Mean: 0.00, Std Dev: 1.00')\n\n    def test_density_overlay(self):\n        \"\"\" Test if the probability density function is correctly overlaid on the histogram. \"\"\"\n        samples, _ = task_func(0, 1, 1000)\n        fig = task_func(0, 1, 1000)[1]\n        ax = fig.get_axes()[0]\n        self.assertTrue(np.allclose(ax.lines[1].get_ydata(), norm.pdf(samples, 0, 1)))\n\n    def test_samples_mean_std(self):\n        \"\"\" Test if the mean and standard deviation of the samples are approximately correct. \"\"\"\n        samples, _ = task_func(0, 1, 1000)\n        self.assertAlmostEqual(np.mean(samples), 0, places=1)\n        self.assertAlmostEqual(np.std(samples), 1, places=1)",
+          "path": "acceptance_tests.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 1181 characters to acceptance_tests.py."
+      },
+      {
+        "arguments": {
+          "content": "import numpy as np\n\nfrom scipy.stats import norm\n\nimport matplotlib.pyplot as plt\n\n\ndef task_func(mean, std_dev, num_samples):\n    # Generate samples from a normal distribution\n    samples = np.random.normal(mean, std_dev, num_samples)\n\n    # Create a histogram\n    plt.hist(samples, bins=30, density=True, alpha=0.6, color='g')\n\n    # Overlay the probability density function\n    x = np.linspace(mean - 3*std_dev, mean + 3*std_dev, 1000)\n    pdf = norm.pdf(x, mean, std_dev)\n    plt.plot(x, pdf, 'k', linewidth=2)\n\n    # Title the plot with the mean and standard deviation\n    plt.title(f\"Mean: {mean:.2f}, Std Dev: {std_dev:.2f}\")\n\n    # Return both the samples and the plot\n    return samples, plt.gcf()",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 706 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests passed."
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 2.404,
+        "exception": "None",
+        "ok": true,
+        "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.115s\n\nOK"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 4,
+    "input_tokens": 4745,
+    "output_tokens": 641,
+    "total_tokens": 5386
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 4
+}

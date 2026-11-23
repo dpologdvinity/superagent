@@ -1,0 +1,178 @@
+{
+  "api_error": "",
+  "bucket": "AssertionError",
+  "condition": "H0",
+  "config_hash": "b596e22fff787a175caeb4efa64c47aaaa7f9031e79f5b861245fe1fd305f8a3",
+  "created_at": "2026-11-23T12:59:01+00:00",
+  "detector_questions": [],
+  "duration_s": 2.234,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 0.47,
+    "exception": "AssertionError",
+    "output_tail": "..F...\n======================================================================\nFAIL: test_incorrect_encoding_handling (hidden_test.TestCases.test_incorrect_encoding_handling)\nTest how the function handles incorrect or unsupported encodings.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-tyb3h94z/hidden_test.py\", line 38, in test_incorrect_encoding_handling\n    self.assertIsNone(result)\nAssertionError: Valid HTML content is not None\n\n----------------------------------------------------------------------\nRan 6 tests in 0.073s\n\nFAILED (failures=1)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "from bs4 import BeautifulSoup\nimport requests\n\nURL = 'http://example.com'\n\ndef task_func(url=URL, from_encoding='cp1251', use_lxml=False):\n    try:\n        response = requests.get(url)\n        response.raise_for_status()\n        \n        soup = BeautifulSoup(response.content, 'html.parser' if not use_lxml else 'lxml')\n        return soup\n    except Exception as e:\n        return None",
+  "follow_up_questions": [],
+  "hidden_duration_s": 0.47,
+  "hidden_output_tail": "..F...\n======================================================================\nFAIL: test_incorrect_encoding_handling (hidden_test.TestCases.test_incorrect_encoding_handling)\nTest how the function handles incorrect or unsupported encodings.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-tyb3h94z/hidden_test.py\", line 38, in test_incorrect_encoding_handling\n    self.assertIsNone(result)\nAssertionError: Valid HTML content is not None\n\n----------------------------------------------------------------------\nRan 6 tests in 0.073s\n\nFAILED (failures=1)",
+  "llm_calls": [
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"from bs4 import BeautifulSoup\\nimport requests\\n\\nURL = 'http://example.com'\\n\\ndef task_func(url=URL, from_encoding='cp1251', use_lxml=False):\\n    try:\\n        response = requests.get(url)\\n        response.raise_for_status()\\n        \\n        soup = BeautifulSoup(response.content, 'html.parser' if not use_lxml else 'lxml')\\n        return soup\\n    except Exception as e:\\n        return None\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 802,
+        "output_tokens": 124,
+        "total_tokens": 926
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 952,
+        "output_tokens": 46,
+        "total_tokens": 998
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 985,
+        "output_tokens": 7,
+        "total_tokens": 992
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. You cannot ask the stakeholder questions in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Wish\n\nFetch a web page from the given URL, decode its content using the specified encoding, and return the parsed HTML using BeautifulSoup, with 'lxml' as the parser if specified, while returning None in case of any failure.\n\n## Starting file (solution.py)\n\n```python\nfrom bs4 import BeautifulSoup\n\nimport requests\n\nURL = 'http://example.com'\n\ndef task_func(url=URL, from_encoding='cp1251', use_lxml=False):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nfrom bs4 import BeautifulSoup\nimport unittest\nfrom unittest.mock import patch, MagicMock\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for task_func.\"\"\"\n\n    @patch('requests.get')\n    def test_successful_fetch_and_parse_html_parser(self, mock_get):\n        \"\"\"Test if the function correctly fetches and parses a webpage with valid encoding using html.parser.\"\"\"\n        mock_get.return_value = MagicMock(status_code=200, content=b'Valid HTML content')\n        result = task_func('http://example.com', 'utf8')\n        self.assertIsInstance(result, BeautifulSoup)\n\n    @patch('requests.get')\n    def test_successful_fetch_and_parse_lxml_parser(self, mock_get):\n        \"\"\"Test if the function correctly fetches and parses a webpage with valid encoding using lxml.\"\"\"\n        mock_get.return_value = MagicMock(status_code=200, content=b'Valid HTML content')\n        result = task_func('http://example.com', 'utf8', use_lxml=True)\n        self.assertIsInstance(result, BeautifulSoup)\n\n    @patch('requests.get')\n    def test_connection_error_handling(self, mock_get):\n        \"\"\"Test how the function handles connection errors.\"\"\"\n        mock_get.side_effect = requests.exceptions.ConnectionError()\n        result = task_func('http://example.com', 'utf8')\n        self.assertIsNone(result)\n```\n\nImplement `solution.py` from the wish, then run the visible tests.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"from bs4 import BeautifulSoup\\nimport requests\\n\\nURL = 'http://example.com'\\n\\ndef task_func(url=URL, from_encoding='cp1251', use_lxml=False):\\n    try:\\n        response = requests.get(url)\\n        response.raise_for_status()\\n        \\n        soup = BeautifulSoup(response.content, 'html.parser' if not use_lxml else 'lxml')\\n        return soup\\n    except Exception as e:\\n        return None\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 386 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests passed.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant"
+    }
+  ],
+  "pass": false,
+  "questions": 0,
+  "run_id": "r2b-dry",
+  "sample_index": 0,
+  "seed": 20261121,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/1018",
+  "stakeholder_answers": [],
+  "started_at": "2026-11-23T12:58:59+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/1018",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "from bs4 import BeautifulSoup\nimport requests\n\nURL = 'http://example.com'\n\ndef task_func(url=URL, from_encoding='cp1251', use_lxml=False):\n    try:\n        response = requests.get(url)\n        response.raise_for_status()\n        \n        soup = BeautifulSoup(response.content, 'html.parser' if not use_lxml else 'lxml')\n        return soup\n    except Exception as e:\n        return None",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 386 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests passed."
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 0.463,
+        "exception": "None",
+        "ok": true,
+        "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.067s\n\nOK"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 3,
+    "input_tokens": 2739,
+    "output_tokens": 177,
+    "total_tokens": 2916
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 3
+}

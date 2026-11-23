@@ -1,0 +1,178 @@
+{
+  "api_error": "",
+  "bucket": "None",
+  "condition": "B1",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T14:29:55+00:00",
+  "detector_questions": [],
+  "duration_s": 2.721,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "None",
+    "duration_s": 0.062,
+    "exception": "",
+    "output_tail": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.002s\n\nOK",
+    "pass": true,
+    "timed_out": false
+  },
+  "final_solution": "import csv\nimport os\nfrom datetime import datetime\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    file_path = os.path.join(output_dir, 'sensor_data.csv')\n    \n    # Create output directory if it doesn't exist\n    os.makedirs(output_dir, exist_ok=True)\n    \n    # Generate sensor data\n    with open(file_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        \n        # Write header\n        writer.writerow(['Time', 'Temperature', 'Humidity', 'Pressure'])\n        \n        # Generate data for the specified number of hours\n        for hour in range(hours):\n            # Generate time in HH:MM:SS format\n            time_str = datetime.now().strftime('%H:%M:%S')\n            \n            # Generate random sensor values\n            temperature = randint(20, 30)\n            humidity = randint(40, 60)\n            pressure = randint(1000, 1020)\n            \n            # Write data row\n            writer.writerow([time_str, temperature, humidity, pressure])\n    \n    return file_path",
+  "follow_up_questions": [],
+  "hidden_duration_s": 0.062,
+  "hidden_output_tail": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.002s\n\nOK",
+  "llm_calls": [
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import csv\\nimport os\\nfrom datetime import datetime\\nfrom random import randint\\n\\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\\nOUTPUT_DIR = './output'\\n\\ndef task_func(hours, output_dir=OUTPUT_DIR):\\n    file_path = os.path.join(output_dir, 'sensor_data.csv')\\n    \\n    # Create output directory if it doesn't exist\\n    os.makedirs(output_dir, exist_ok=True)\\n    \\n    # Generate sensor data\\n    with open(file_path, 'w', newline='') as csvfile:\\n        writer = csv.writer(csvfile)\\n        \\n        # Write header\\n        writer.writerow(['Time', 'Temperature', 'Humidity', 'Pressure'])\\n        \\n        # Generate data for the specified number of hours\\n        for hour in range(hours):\\n            # Generate time in HH:MM:SS format\\n            time_str = datetime.now().strftime('%H:%M:%S')\\n            \\n            # Generate random sensor values\\n            temperature = randint(20, 30)\\n            humidity = randint(40, 60)\\n            pressure = randint(1000, 1020)\\n            \\n            # Write data row\\n            writer.writerow([time_str, temperature, humidity, pressure])\\n    \\n    return file_path\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 912,
+        "output_tokens": 320,
+        "total_tokens": 1232
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1250,
+        "output_tokens": 31,
+        "total_tokens": 1281
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1283,
+        "output_tokens": 7,
+        "total_tokens": 1290
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. You cannot ask the stakeholder questions in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Specification (complete)\n\nIntent:\nCreate sensor data for the specified number of hours and save it in a CSV file with coloumns 'Time', 'Temperature', 'Humidity' and 'Pressure'.\n\nSignature and types:\nArgs:\n- hours (int): The number of hours for which sensor data is to be generated.\n- output_dir (str, optional): The output file path\n\nReturns:\n- hours (int): Number of hours to generate data for.\n\nExamples:\n```python\n>>> file_path = task_func(1)  # Generate data for 1 hour\n>>> os.path.exists(file_path)  # Check if the file was actually created\nTrue\n>>> isinstance(file_path, str)  # Validate that the return type is a string\nTrue\n>>> 'sensor_data.csv' in file_path  # Ensure the filename is correct\nTrue\n```\n\nConstraints and edge cases:\nRequirements:\n- datetime\n- os\n- random\n- csv\n\n## Starting file (solution.py)\n\n```python\nimport csv\n\nimport os\n\nfrom datetime import datetime\n\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\n\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport os\nimport shutil\nFILE_PATH = os.path.join(OUTPUT_DIR, 'sensor_data.csv')\n\nclass TestCases(unittest.TestCase):\n\n    def tearDown(self):\n        \"\"\"Clean up any files created during the tests.\"\"\"\n        if os.path.exists(OUTPUT_DIR):\n            shutil.rmtree(OUTPUT_DIR)\n\n    def test_csv_file_creation(self):\n        \"\"\"Test if the CSV file is successfully created.\"\"\"\n        task_func(1)\n        self.assertTrue(os.path.exists(FILE_PATH))\n\n    def test_csv_file_rows(self):\n        \"\"\"Test if the CSV file contains the correct number of rows for 24 hours.\"\"\"\n        task_func(24)\n        with open(FILE_PATH, 'r') as f:\n            self.assertEqual(len(f.readlines()), 25)\n\n    def test_csv_file_header(self):\n        \"\"\"Test if the CSV file header matches the expected sensors.\"\"\"\n        task_func(0)\n        with open(FILE_PATH, 'r') as f:\n            reader = csv.reader(f)\n            header = next(reader)\n            self.assertEqual(header, ['Time', 'Temperature', 'Humidity', 'Pressure'])\n```\n\nImplement `solution.py` from the complete specification.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import csv\\nimport os\\nfrom datetime import datetime\\nfrom random import randint\\n\\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\\nOUTPUT_DIR = './output'\\n\\ndef task_func(hours, output_dir=OUTPUT_DIR):\\n    file_path = os.path.join(output_dir, 'sensor_data.csv')\\n    \\n    # Create output directory if it doesn't exist\\n    os.makedirs(output_dir, exist_ok=True)\\n    \\n    # Generate sensor data\\n    with open(file_path, 'w', newline='') as csvfile:\\n        writer = csv.writer(csvfile)\\n        \\n        # Write header\\n        writer.writerow(['Time', 'Temperature', 'Humidity', 'Pressure'])\\n        \\n        # Generate data for the specified number of hours\\n        for hour in range(hours):\\n            # Generate time in HH:MM:SS format\\n            time_str = datetime.now().strftime('%H:%M:%S')\\n            \\n            # Generate random sensor values\\n            temperature = randint(20, 30)\\n            humidity = randint(40, 60)\\n            pressure = randint(1000, 1020)\\n            \\n            # Write data row\\n            writer.writerow([time_str, temperature, humidity, pressure])\\n    \\n    return file_path\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 1113 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests passed.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant"
+    }
+  ],
+  "pass": true,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 0,
+  "seed": 20261121,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/592",
+  "stakeholder_answers": [],
+  "started_at": "2026-11-23T14:29:52+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/592",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "import csv\nimport os\nfrom datetime import datetime\nfrom random import randint\n\nSENSORS = ['Temperature', 'Humidity', 'Pressure']\nOUTPUT_DIR = './output'\n\ndef task_func(hours, output_dir=OUTPUT_DIR):\n    file_path = os.path.join(output_dir, 'sensor_data.csv')\n    \n    # Create output directory if it doesn't exist\n    os.makedirs(output_dir, exist_ok=True)\n    \n    # Generate sensor data\n    with open(file_path, 'w', newline='') as csvfile:\n        writer = csv.writer(csvfile)\n        \n        # Write header\n        writer.writerow(['Time', 'Temperature', 'Humidity', 'Pressure'])\n        \n        # Generate data for the specified number of hours\n        for hour in range(hours):\n            # Generate time in HH:MM:SS format\n            time_str = datetime.now().strftime('%H:%M:%S')\n            \n            # Generate random sensor values\n            temperature = randint(20, 30)\n            humidity = randint(40, 60)\n            pressure = randint(1000, 1020)\n            \n            # Write data row\n            writer.writerow([time_str, temperature, humidity, pressure])\n    \n    return file_path",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 1113 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests passed."
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 0.063,
+        "exception": "None",
+        "ok": true,
+        "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.001s\n\nOK"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 3,
+    "input_tokens": 3445,
+    "output_tokens": 358,
+    "total_tokens": 3803
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 3
+}

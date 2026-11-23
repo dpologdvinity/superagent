@@ -1,0 +1,95 @@
+{
+  "api_error": "",
+  "bucket": "AssertionError",
+  "condition": "B3",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T15:44:04+00:00",
+  "detector_questions": [],
+  "duration_s": 1.87,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 0.105,
+    "exception": "AssertionError",
+    "output_tail": "FF..F\n======================================================================\nFAIL: test_executing_files (hidden_test.TestCases.test_executing_files)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-6kztrap7/hidden_test.py\", line 39, in test_executing_files\n    self.assertEqual(outputs, [\"Execution Result\"])\nAssertionError: Lists differ: [] != ['Execution Result']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\n'Execution Result'\n\n- []\n+ ['Execution Result']\n\n======================================================================\nFAIL: test_finding_executable_files (hidden_test.TestCases.test_finding_executable_files)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-6kztrap7/hidden_test.py\", line 15, in test_finding_executable_files\n    self.assertEqual(len(found_files), 1)\nAssertionError: 0 != 1\n\n======================================================================\nFAIL: test_special_characters_in_pattern (hidden_test.TestCases.test_special_characters_in_pattern)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-6kztrap7/hidden_test.py\", line 47, in test_special_characters_in_pattern\n    self.assertEqual(len(found_files), 1)\nAssertionError: 0 != 1\n\n----------------------------------------------------------------------\nRan 5 tests in 0.004s\n\nFAILED (failures=3)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import re\nimport os\nimport subprocess\n\ndef task_func(dir_path, exe_pattern, execute_files=True):\n    # Check if the directory exists\n    if not os.path.isdir(dir_path):\n        return []\n    \n    # Compile the regular expression pattern\n    pattern = re.compile(exe_pattern)\n    \n    # List to hold results\n    results = []\n    \n    # Iterate over files in the directory\n    for filename in os.listdir(dir_path):\n        file_path = os.path.join(dir_path, filename)\n        # Check if it's a file and matches the pattern\n        if os.path.isfile(file_path) and pattern.match(filename):\n            # If execute_files is True, execute the file\n            if execute_files:\n                try:\n                    # Run the executable file\n                    result = subprocess.run(\n                        [file_path],\n                        check=True,\n                        stdout=subprocess.PIPE,\n                        stderr=subprocess.PIPE,\n                        text=True\n                    )\n                    # Append the filename and the combined output\n                    results.append((filename, result.stdout + result.stderr))\n                except subprocess.CalledProcessError as e:\n                    # Handle execution errors\n                    results.append((filename, e.stdout + e.stderr))\n            else:\n                # Otherwise, just add the filename\n                results.append((filename, \"\"))\n    \n    return results\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "FF..F\n======================================================================\nFAIL: test_executing_files (hidden_test.TestCases.test_executing_files)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-6kztrap7/hidden_test.py\", line 39, in test_executing_files\n    self.assertEqual(outputs, [\"Execution Result\"])\nAssertionError: Lists differ: [] != ['Execution Result']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\n'Execution Result'\n\n- []\n+ ['Execution Result']\n\n======================================================================\nFAIL: test_finding_executable_files (hidden_test.TestCases.test_finding_executable_files)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-6kztrap7/hidden_test.py\", line 15, in test_finding_executable_files\n    self.assertEqual(len(found_files), 1)\nAssertionError: 0 != 1\n\n======================================================================\nFAIL: test_special_characters_in_pattern (hidden_test.TestCases.test_special_characters_in_pattern)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-6kztrap7/hidden_test.py\", line 47, in test_special_characters_in_pattern\n    self.assertEqual(len(found_files), 1)\nAssertionError: 0 != 1\n\n----------------------------------------------------------------------\nRan 5 tests in 0.004s\n\nFAILED (failures=3)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport re\nimport os\nimport subprocess\n\ndef task_func(dir_path, exe_pattern, execute_files=True):\n    # Check if the directory exists\n    if not os.path.isdir(dir_path):\n        return []\n    \n    # Compile the regular expression pattern\n    pattern = re.compile(exe_pattern)\n    \n    # List to hold results\n    results = []\n    \n    # Iterate over files in the directory\n    for filename in os.listdir(dir_path):\n        file_path = os.path.join(dir_path, filename)\n        # Check if it's a file and matches the pattern\n        if os.path.isfile(file_path) and pattern.match(filename):\n            # If execute_files is True, execute the file\n            if execute_files:\n                try:\n                    # Run the executable file\n                    result = subprocess.run(\n                        [file_path],\n                        check=True,\n                        stdout=subprocess.PIPE,\n                        stderr=subprocess.PIPE,\n                        text=True\n                    )\n                    # Append the filename and the combined output\n                    results.append((filename, result.stdout + result.stderr))\n                except subprocess.CalledProcessError as e:\n                    # Handle execution errors\n                    results.append((filename, e.stdout + e.stderr))\n            else:\n                # Otherwise, just add the filename\n                results.append((filename, \"\"))\n    \n    return results\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b3_frontier",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 142,
+        "output_tokens": 266,
+        "total_tokens": 408
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 1,
+  "samples": [
+    {
+      "bucket": "AssertionError",
+      "code": "import re\nimport os\nimport subprocess\n\ndef task_func(dir_path, exe_pattern, execute_files=True):\n    # Check if the directory exists\n    if not os.path.isdir(dir_path):\n        return []\n    \n    # Compile the regular expression pattern\n    pattern = re.compile(exe_pattern)\n    \n    # List to hold results\n    results = []\n    \n    # Iterate over files in the directory\n    for filename in os.listdir(dir_path):\n        file_path = os.path.join(dir_path, filename)\n        # Check if it's a file and matches the pattern\n        if os.path.isfile(file_path) and pattern.match(filename):\n            # If execute_files is True, execute the file\n            if execute_files:\n                try:\n                    # Run the executable file\n                    result = subprocess.run(\n                        [file_path],\n                        check=True,\n                        stdout=subprocess.PIPE,\n                        stderr=subprocess.PIPE,\n                        text=True\n                    )\n                    # Append the filename and the combined output\n                    results.append((filename, result.stdout + result.stderr))\n                except subprocess.CalledProcessError as e:\n                    # Handle execution errors\n                    results.append((filename, e.stdout + e.stderr))\n            else:\n                # Otherwise, just add the filename\n                results.append((filename, \"\"))\n    \n    return results\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.105,
+        "exception": "AssertionError",
+        "output_tail": "FF..F\n======================================================================\nFAIL: test_executing_files (hidden_test.TestCases.test_executing_files)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-6kztrap7/hidden_test.py\", line 39, in test_executing_files\n    self.assertEqual(outputs, [\"Execution Result\"])\nAssertionError: Lists differ: [] != ['Execution Result']\n\nSecond list contains 1 additional elements.\nFirst extra element 0:\n'Execution Result'\n\n- []\n+ ['Execution Result']\n\n======================================================================\nFAIL: test_finding_executable_files (hidden_test.TestCases.test_finding_executable_files)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-6kztrap7/hidden_test.py\", line 15, in test_finding_executable_files\n    self.assertEqual(len(found_files), 1)\nAssertionError: 0 != 1\n\n======================================================================\nFAIL: test_special_characters_in_pattern (hidden_test.TestCases.test_special_characters_in_pattern)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-6kztrap7/hidden_test.py\", line 47, in test_special_characters_in_pattern\n    self.assertEqual(len(found_files), 1)\nAssertionError: 0 != 1\n\n----------------------------------------------------------------------\nRan 5 tests in 0.004s\n\nFAILED (failures=3)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function from a short wish. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nSearches for executable files in a specified directory that match a given regular expression pattern and either executes them or returns the list of matching file paths along with their standard outputs.\n\n## Function stub (solution.py)\n\n```python\nimport re\n\nimport os\n\nimport subprocess\n\ndef task_func(dir_path, exe_pattern, execute_files=True):\n    # TODO: implement this function.\n    pass\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261122,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 142,
+        "output_tokens": 266,
+        "total_tokens": 408
+      }
+    }
+  ],
+  "seed": 20261122,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/810",
+  "started_at": "2026-11-23T15:44:04+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/810",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 1,
+    "input_tokens": 142,
+    "output_tokens": 266,
+    "total_tokens": 408
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 1
+}

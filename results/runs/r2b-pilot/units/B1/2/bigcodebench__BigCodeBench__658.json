@@ -1,0 +1,178 @@
+{
+  "api_error": "",
+  "bucket": "None",
+  "condition": "B1",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T14:30:39+00:00",
+  "detector_questions": [],
+  "duration_s": 8.155,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "None",
+    "duration_s": 3.091,
+    "exception": "",
+    "output_tail": "/tmp/wish-eval-8zice9nw/solution.py:11: SyntaxWarning: invalid escape sequence '\\W'\n  ALPHANUMERIC = re.compile('[\\W_]+')\n[nltk_data] Downloading package stopwords to /tmp/wish-\n[nltk_data]     eval-8zice9nw/nltk_data...\n[nltk_data]   Unzipping corpora/stopwords.zip.\n.....\n----------------------------------------------------------------------\nRan 5 tests in 0.010s\n\nOK",
+    "pass": true,
+    "timed_out": false
+  },
+  "final_solution": "import re\n\nimport nltk\n\nimport pandas as pd\n\nfrom sklearn.feature_extraction.text import CountVectorizer\n\nnltk.download('stopwords')\n\nALPHANUMERIC = re.compile('[\\W_]+')\n\nSTOPWORDS = nltk.corpus.stopwords.words('english')\n\n\ndef task_func(texts):\n    # Preprocess texts\n    processed_texts = []\n    for text in texts:\n        # Remove non-alphanumeric characters (excluding spaces)\n        text = ALPHANUMERIC.sub(' ', text)\n        # Convert to lowercase\n        text = text.lower()\n        # Remove stopwords\n        words = text.split()\n        filtered_words = [word for word in words if word not in STOPWORDS]\n        processed_text = ' '.join(filtered_words)\n        processed_texts.append(processed_text)\n\n    # Create DTM\n    vectorizer = CountVectorizer()\n    dtm = vectorizer.fit_transform(processed_texts)\n    dtm = pd.DataFrame(dtm.toarray(), columns=vectorizer.get_feature_names_out())\n\n    return dtm",
+  "follow_up_questions": [],
+  "hidden_duration_s": 3.091,
+  "hidden_output_tail": "/tmp/wish-eval-8zice9nw/solution.py:11: SyntaxWarning: invalid escape sequence '\\W'\n  ALPHANUMERIC = re.compile('[\\W_]+')\n[nltk_data] Downloading package stopwords to /tmp/wish-\n[nltk_data]     eval-8zice9nw/nltk_data...\n[nltk_data]   Unzipping corpora/stopwords.zip.\n.....\n----------------------------------------------------------------------\nRan 5 tests in 0.010s\n\nOK",
+  "llm_calls": [
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import re\\n\\nimport nltk\\n\\nimport pandas as pd\\n\\nfrom sklearn.feature_extraction.text import CountVectorizer\\n\\nnltk.download('stopwords')\\n\\nALPHANUMERIC = re.compile('[\\\\W_]+')\\n\\nSTOPWORDS = nltk.corpus.stopwords.words('english')\\n\\n\\ndef task_func(texts):\\n    # Preprocess texts\\n    processed_texts = []\\n    for text in texts:\\n        # Remove non-alphanumeric characters (excluding spaces)\\n        text = ALPHANUMERIC.sub(' ', text)\\n        # Convert to lowercase\\n        text = text.lower()\\n        # Remove stopwords\\n        words = text.split()\\n        filtered_words = [word for word in words if word not in STOPWORDS]\\n        processed_text = ' '.join(filtered_words)\\n        processed_texts.append(processed_text)\\n\\n    # Create DTM\\n    vectorizer = CountVectorizer()\\n    dtm = vectorizer.fit_transform(processed_texts)\\n    dtm = pd.DataFrame(dtm.toarray(), columns=vectorizer.get_feature_names_out())\\n\\n    return dtm\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 913,
+        "output_tokens": 261,
+        "total_tokens": 1174
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1200,
+        "output_tokens": 11,
+        "total_tokens": 1211
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1233,
+        "output_tokens": 7,
+        "total_tokens": 1240
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. You cannot ask the stakeholder questions in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Specification (complete)\n\nIntent:\nCreates a document-term matrix (DTM) from a list of text documents using CountVectorizer from Scikit-learn. Texts are preprocessed by removing non-alphanumeric characters (excluding spaces), converting to lowercase, and excluding English stop words defined in NLTK.\n\nSignature and types:\nArgs:\n- texts (list of str): The list of text documents to convert into a DTM.\n\nReturns:\n- pd.DataFrame: A DataFrame where rows represent documents and columns represent unique terms;\n- cell values indicate the frequency of a term in a document.\n\nExamples:\n```python\n>>> texts = [\"Hello, world!\", \"Machine learning is great.\", \"Python is my favorite programming language.\"]\n>>> dtm = task_func(texts)\n```\n\nConstraints and edge cases:\nRequirements:\n- re\n- nltk\n- pandas\n- sklearn.feature_extraction.text\n\n## Starting file (solution.py)\n\n```python\nimport re\n\nimport nltk\n\nimport pandas as pd\n\nfrom sklearn.feature_extraction.text import CountVectorizer\n\nnltk.download('stopwords')\n\nALPHANUMERIC = re.compile('[\\\\W_]+')\n\nSTOPWORDS = nltk.corpus.stopwords.words('english')\n\ndef task_func(texts):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        self.texts = ['Hello, world!', 'Data science is about the extraction of knowledge from data.', 'Machine learning is a fascinating field.', 'Python is a versatile programming language.', 'Stop words are filtered out in text preprocessing.']\n\n    def test_dtm_shape(self):\n        \"\"\"Ensure the DTM has the correct shape.\"\"\"\n        dtm = task_func(self.texts)\n        self.assertEqual(dtm.shape[0], len(self.texts), 'DTM should have one row per document.')\n\n    def test_dtm_non_negative(self):\n        \"\"\"Ensure all values in the DTM are non-negative.\"\"\"\n        dtm = task_func(self.texts)\n        self.assertTrue((dtm >= 0).all().all(), 'All DTM values should be non-negative.')\n\n    def test_stopwords_removal(self):\n        \"\"\"Check if common stopwords are removed.\"\"\"\n        dtm = task_func(['This is a test.', 'Another test here.'])\n        self.assertNotIn('is', dtm.columns, 'Stopwords should be removed from DTM columns.')\n```\n\nImplement `solution.py` from the complete specification.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import re\\n\\nimport nltk\\n\\nimport pandas as pd\\n\\nfrom sklearn.feature_extraction.text import CountVectorizer\\n\\nnltk.download('stopwords')\\n\\nALPHANUMERIC = re.compile('[\\\\W_]+')\\n\\nSTOPWORDS = nltk.corpus.stopwords.words('english')\\n\\n\\ndef task_func(texts):\\n    # Preprocess texts\\n    processed_texts = []\\n    for text in texts:\\n        # Remove non-alphanumeric characters (excluding spaces)\\n        text = ALPHANUMERIC.sub(' ', text)\\n        # Convert to lowercase\\n        text = text.lower()\\n        # Remove stopwords\\n        words = text.split()\\n        filtered_words = [word for word in words if word not in STOPWORDS]\\n        processed_text = ' '.join(filtered_words)\\n        processed_texts.append(processed_text)\\n\\n    # Create DTM\\n    vectorizer = CountVectorizer()\\n    dtm = vectorizer.fit_transform(processed_texts)\\n    dtm = pd.DataFrame(dtm.toarray(), columns=vectorizer.get_feature_names_out())\\n\\n    return dtm\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 913 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests passed.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant"
+    }
+  ],
+  "pass": true,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 2,
+  "seed": 20261123,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/658",
+  "stakeholder_answers": [],
+  "started_at": "2026-11-23T14:30:31+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/658",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "import re\n\nimport nltk\n\nimport pandas as pd\n\nfrom sklearn.feature_extraction.text import CountVectorizer\n\nnltk.download('stopwords')\n\nALPHANUMERIC = re.compile('[\\W_]+')\n\nSTOPWORDS = nltk.corpus.stopwords.words('english')\n\n\ndef task_func(texts):\n    # Preprocess texts\n    processed_texts = []\n    for text in texts:\n        # Remove non-alphanumeric characters (excluding spaces)\n        text = ALPHANUMERIC.sub(' ', text)\n        # Convert to lowercase\n        text = text.lower()\n        # Remove stopwords\n        words = text.split()\n        filtered_words = [word for word in words if word not in STOPWORDS]\n        processed_text = ' '.join(filtered_words)\n        processed_texts.append(processed_text)\n\n    # Create DTM\n    vectorizer = CountVectorizer()\n    dtm = vectorizer.fit_transform(processed_texts)\n    dtm = pd.DataFrame(dtm.toarray(), columns=vectorizer.get_feature_names_out())\n\n    return dtm",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 913 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests passed."
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 3.05,
+        "exception": "None",
+        "ok": true,
+        "output": "/tmp/wish-loop-hvgbou8x/solution.py:11: SyntaxWarning: invalid escape sequence '\\W'\n  ALPHANUMERIC = re.compile('[\\W_]+')\n[nltk_data] Downloading package stopwords to /tmp/wish-loop-\n[nltk_data]     hvgbou8x/nltk_data...\n[nltk_data]   Unzipping corpora/stopwords.zip.\n...\n----------------------------------------------------------------------\nRan 3 tests in 0.008s\n\nOK"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 3,
+    "input_tokens": 3346,
+    "output_tokens": 279,
+    "total_tokens": 3625
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 3
+}

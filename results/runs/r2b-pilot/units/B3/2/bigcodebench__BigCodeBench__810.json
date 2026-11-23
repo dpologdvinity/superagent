@@ -1,0 +1,95 @@
+{
+  "api_error": "",
+  "bucket": "AssertionError",
+  "condition": "B3",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T14:13:34+00:00",
+  "detector_questions": [],
+  "duration_s": 2.026,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 0.102,
+    "exception": "AssertionError",
+    "output_tail": "====================================\nFAIL: test_executing_files (hidden_test.TestCases.test_executing_files)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-mpm9tsre/hidden_test.py\", line 39, in test_executing_files\n    self.assertEqual(outputs, [\"Execution Result\"])\nAssertionError: 'Directory does not exist' != ['Execution Result']\n\n======================================================================\nFAIL: test_finding_executable_files (hidden_test.TestCases.test_finding_executable_files)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-mpm9tsre/hidden_test.py\", line 15, in test_finding_executable_files\n    self.assertEqual(len(found_files), 1)\nAssertionError: 24 != 1\n\n======================================================================\nFAIL: test_invalid_directory (hidden_test.TestCases.test_invalid_directory)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-mpm9tsre/hidden_test.py\", line 21, in test_invalid_directory\n    self.assertEqual(found_files, [])\nAssertionError: 'Directory does not exist' != []\n\n======================================================================\nFAIL: test_no_matching_files (hidden_test.TestCases.test_no_matching_files)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-mpm9tsre/hidden_test.py\", line 28, in test_no_matching_files\n    self.assertEqual(found_files, [])\nAssertionError: 'Directory does not exist' != []\n\n======================================================================\nFAIL: test_special_characters_in_pattern (hidden_test.TestCases.test_special_characters_in_pattern)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-mpm9tsre/hidden_test.py\", line 47, in test_special_characters_in_pattern\n    self.assertEqual(len(found_files), 1)\nAssertionError: 24 != 1\n\n----------------------------------------------------------------------\nRan 5 tests in 0.004s\n\nFAILED (failures=5)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import re\nimport os\nimport subprocess\n\ndef task_func(dir_path, exe_pattern, execute_files=True):\n    # Check if the directory exists\n    if not os.path.exists(dir_path):\n        return \"Directory does not exist\"\n    \n    # Find all files in the directory that match the pattern\n    matching_files = []\n    for filename in os.listdir(dir_path):\n        file_path = os.path.join(dir_path, filename)\n        if os.path.isfile(file_path) and re.search(exe_pattern, filename):\n            matching_files.append(file_path)\n    \n    # If no matching files, return the list\n    if not matching_files:\n        return \"No matching files found\"\n    \n    # Process each matching file\n    results = []\n    for file_path in matching_files:\n        try:\n            # Execute the file\n            result = subprocess.run(\n                [file_path],\n                check=True,\n                stdout=subprocess.PIPE,\n                stderr=subprocess.PIPE,\n                text=True\n            )\n            output = result.stdout.strip()\n            error = result.stderr.strip()\n            if execute_files:\n                results.append((file_path, output, error))\n            else:\n                results.append((file_path, output, error))\n        except subprocess.CalledProcessError as e:\n            results.append((file_path, \"\", e.stderr.strip()))\n        except Exception as e:\n            results.append((file_path, \"\", str(e)))\n    \n    return results\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "====================================\nFAIL: test_executing_files (hidden_test.TestCases.test_executing_files)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-mpm9tsre/hidden_test.py\", line 39, in test_executing_files\n    self.assertEqual(outputs, [\"Execution Result\"])\nAssertionError: 'Directory does not exist' != ['Execution Result']\n\n======================================================================\nFAIL: test_finding_executable_files (hidden_test.TestCases.test_finding_executable_files)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-mpm9tsre/hidden_test.py\", line 15, in test_finding_executable_files\n    self.assertEqual(len(found_files), 1)\nAssertionError: 24 != 1\n\n======================================================================\nFAIL: test_invalid_directory (hidden_test.TestCases.test_invalid_directory)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-mpm9tsre/hidden_test.py\", line 21, in test_invalid_directory\n    self.assertEqual(found_files, [])\nAssertionError: 'Directory does not exist' != []\n\n======================================================================\nFAIL: test_no_matching_files (hidden_test.TestCases.test_no_matching_files)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-mpm9tsre/hidden_test.py\", line 28, in test_no_matching_files\n    self.assertEqual(found_files, [])\nAssertionError: 'Directory does not exist' != []\n\n======================================================================\nFAIL: test_special_characters_in_pattern (hidden_test.TestCases.test_special_characters_in_pattern)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-mpm9tsre/hidden_test.py\", line 47, in test_special_characters_in_pattern\n    self.assertEqual(len(found_files), 1)\nAssertionError: 24 != 1\n\n----------------------------------------------------------------------\nRan 5 tests in 0.004s\n\nFAILED (failures=5)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport re\nimport os\nimport subprocess\n\ndef task_func(dir_path, exe_pattern, execute_files=True):\n    # Check if the directory exists\n    if not os.path.exists(dir_path):\n        return \"Directory does not exist\"\n    \n    # Find all files in the directory that match the pattern\n    matching_files = []\n    for filename in os.listdir(dir_path):\n        file_path = os.path.join(dir_path, filename)\n        if os.path.isfile(file_path) and re.search(exe_pattern, filename):\n            matching_files.append(file_path)\n    \n    # If no matching files, return the list\n    if not matching_files:\n        return \"No matching files found\"\n    \n    # Process each matching file\n    results = []\n    for file_path in matching_files:\n        try:\n            # Execute the file\n            result = subprocess.run(\n                [file_path],\n                check=True,\n                stdout=subprocess.PIPE,\n                stderr=subprocess.PIPE,\n                text=True\n            )\n            output = result.stdout.strip()\n            error = result.stderr.strip()\n            if execute_files:\n                results.append((file_path, output, error))\n            else:\n                results.append((file_path, output, error))\n        except subprocess.CalledProcessError as e:\n            results.append((file_path, \"\", e.stderr.strip()))\n        except Exception as e:\n            results.append((file_path, \"\", str(e)))\n    \n    return results\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b3_frontier",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 142,
+        "output_tokens": 290,
+        "total_tokens": 432
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 2,
+  "samples": [
+    {
+      "bucket": "AssertionError",
+      "code": "import re\nimport os\nimport subprocess\n\ndef task_func(dir_path, exe_pattern, execute_files=True):\n    # Check if the directory exists\n    if not os.path.exists(dir_path):\n        return \"Directory does not exist\"\n    \n    # Find all files in the directory that match the pattern\n    matching_files = []\n    for filename in os.listdir(dir_path):\n        file_path = os.path.join(dir_path, filename)\n        if os.path.isfile(file_path) and re.search(exe_pattern, filename):\n            matching_files.append(file_path)\n    \n    # If no matching files, return the list\n    if not matching_files:\n        return \"No matching files found\"\n    \n    # Process each matching file\n    results = []\n    for file_path in matching_files:\n        try:\n            # Execute the file\n            result = subprocess.run(\n                [file_path],\n                check=True,\n                stdout=subprocess.PIPE,\n                stderr=subprocess.PIPE,\n                text=True\n            )\n            output = result.stdout.strip()\n            error = result.stderr.strip()\n            if execute_files:\n                results.append((file_path, output, error))\n            else:\n                results.append((file_path, output, error))\n        except subprocess.CalledProcessError as e:\n            results.append((file_path, \"\", e.stderr.strip()))\n        except Exception as e:\n            results.append((file_path, \"\", str(e)))\n    \n    return results\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.102,
+        "exception": "AssertionError",
+        "output_tail": "====================================\nFAIL: test_executing_files (hidden_test.TestCases.test_executing_files)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-mpm9tsre/hidden_test.py\", line 39, in test_executing_files\n    self.assertEqual(outputs, [\"Execution Result\"])\nAssertionError: 'Directory does not exist' != ['Execution Result']\n\n======================================================================\nFAIL: test_finding_executable_files (hidden_test.TestCases.test_finding_executable_files)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-mpm9tsre/hidden_test.py\", line 15, in test_finding_executable_files\n    self.assertEqual(len(found_files), 1)\nAssertionError: 24 != 1\n\n======================================================================\nFAIL: test_invalid_directory (hidden_test.TestCases.test_invalid_directory)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-mpm9tsre/hidden_test.py\", line 21, in test_invalid_directory\n    self.assertEqual(found_files, [])\nAssertionError: 'Directory does not exist' != []\n\n======================================================================\nFAIL: test_no_matching_files (hidden_test.TestCases.test_no_matching_files)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-mpm9tsre/hidden_test.py\", line 28, in test_no_matching_files\n    self.assertEqual(found_files, [])\nAssertionError: 'Directory does not exist' != []\n\n======================================================================\nFAIL: test_special_characters_in_pattern (hidden_test.TestCases.test_special_characters_in_pattern)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-mpm9tsre/hidden_test.py\", line 47, in test_special_characters_in_pattern\n    self.assertEqual(len(found_files), 1)\nAssertionError: 24 != 1\n\n----------------------------------------------------------------------\nRan 5 tests in 0.004s\n\nFAILED (failures=5)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function from a short wish. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nSearches for executable files in a specified directory that match a given regular expression pattern and either executes them or returns the list of matching file paths along with their standard outputs.\n\n## Function stub (solution.py)\n\n```python\nimport re\n\nimport os\n\nimport subprocess\n\ndef task_func(dir_path, exe_pattern, execute_files=True):\n    # TODO: implement this function.\n    pass\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 142,
+        "output_tokens": 290,
+        "total_tokens": 432
+      }
+    }
+  ],
+  "seed": 20261123,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/810",
+  "started_at": "2026-11-23T14:13:34+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/810",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 1,
+    "input_tokens": 142,
+    "output_tokens": 290,
+    "total_tokens": 432
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 1
+}

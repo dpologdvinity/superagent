@@ -1,0 +1,95 @@
+{
+  "api_error": "",
+  "bucket": "AssertionError",
+  "condition": "B3",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T14:12:08+00:00",
+  "detector_questions": [],
+  "duration_s": 4.559,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 2.129,
+    "exception": "AssertionError",
+    "output_tail": " 58.71    56.0  23.164324\nWolf      55.08    51.0  27.493883\nStatistics of Animal Counts:\n           mean  median    std_dev\nLion      54.77    53.0  27.409799\nTiger     53.30    52.0  25.948218\nElephant  52.87    53.0  25.997175\nGiraffe   54.71    50.0  27.116893\nZebra     51.25    47.5  25.921179\nMonkey    59.46    61.5  25.885293\nBear      58.35    61.5  24.182793\nDeer      53.89    54.0  27.431331\nRabbit    58.71    56.0  23.164324\nWolf      55.08    51.0  27.493883\n\nEFEEE\n======================================================================\nERROR: test_custom_animals (hidden_test.TestCases.test_custom_animals)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-88tupwh_/hidden_test.py\", line 21, in test_custom_animals\n    self.assertEqual(len(report), len(custom_animals))\n                     ^^^^^^^^^^^\nTypeError: object of type 'NoneType' has no len()\n\n======================================================================\nERROR: test_default_animals (hidden_test.TestCases.test_default_animals)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-88tupwh_/hidden_test.py\", line 10, in test_default_animals\n    self.assertEqual(len(report), 5)  # Default number of animals\n                     ^^^^^^^^^^^\nTypeError: object of type 'NoneType' has no len()\n\n======================================================================\nERROR: test_positive_counts (hidden_test.TestCases.test_positive_counts)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-88tupwh_/hidden_test.py\", line 29, in test_positive_counts\n    self.assertTrue(all(report['Mean'] > 0))\n                        ~~~~~~^^^^^^^^\nTypeError: 'NoneType' object is not subscriptable\n\n======================================================================\nERROR: test_statistics_columns (hidden_test.TestCases.test_statistics_columns)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-88tupwh_/hidden_test.py\", line 26, in test_statistics_columns\n    self.assertListEqual(list(report.columns), expected_columns)\n                              ^^^^^^^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'columns'\n\n======================================================================\nFAIL: test_data_frame_structure (hidden_test.TestCases.test_data_frame_structure)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-88tupwh_/hidden_test.py\", line 35, in test_data_frame_structure\n    self.assertIsInstance(report, pd.DataFrame)\nAssertionError: None is not an instance of <class 'pandas.DataFrame'>\n\n----------------------------------------------------------------------\nRan 5 tests in 0.416s\n\nFAILED (failures=1, errors=4)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import pandas as pd\nfrom random import randint, seed as random_seed\nimport statistics\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef task_func(animals=None, seed=42):\n    # Set the seed for reproducibility\n    random_seed(seed)\n    \n    # If no animals are provided, use default list\n    if animals is None:\n        animals = ['Lion', 'Tiger', 'Elephant', 'Giraffe', 'Zebra', 'Monkey', 'Bear', 'Deer', 'Rabbit', 'Wolf']\n    \n    # Generate random counts for each animal\n    data = {}\n    for animal in animals:\n        counts = [randint(10, 100) for _ in range(100)]\n        data[animal] = counts\n    \n    # Create DataFrame\n    df = pd.DataFrame(data)\n    \n    # Calculate mean, median, and standard deviation for each animal\n    stats = {}\n    for animal in animals:\n        stats[animal] = {\n            'mean': np.mean(df[animal]),\n            'median': np.median(df[animal]),\n            'std_dev': np.std(df[animal])\n        }\n    \n    # Convert stats to DataFrame\n    stats_df = pd.DataFrame(stats).T\n    \n    # Print the stats DataFrame\n    print(\"Statistics of Animal Counts:\")\n    print(stats_df)\n    \n    # Plot a bar chart of the mean counts\n    mean_counts = stats_df['mean']\n    plt.figure(figsize=(10, 6))\n    mean_counts.plot(kind='bar', color='skyblue')\n    plt.title('Mean Count of Animals in Zoo')\n    plt.xlabel('Animal')\n    plt.ylabel('Mean Count')\n    plt.xticks(rotation=45)\n    plt.tight_layout()\n    plt.show()\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": " 58.71    56.0  23.164324\nWolf      55.08    51.0  27.493883\nStatistics of Animal Counts:\n           mean  median    std_dev\nLion      54.77    53.0  27.409799\nTiger     53.30    52.0  25.948218\nElephant  52.87    53.0  25.997175\nGiraffe   54.71    50.0  27.116893\nZebra     51.25    47.5  25.921179\nMonkey    59.46    61.5  25.885293\nBear      58.35    61.5  24.182793\nDeer      53.89    54.0  27.431331\nRabbit    58.71    56.0  23.164324\nWolf      55.08    51.0  27.493883\n\nEFEEE\n======================================================================\nERROR: test_custom_animals (hidden_test.TestCases.test_custom_animals)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-88tupwh_/hidden_test.py\", line 21, in test_custom_animals\n    self.assertEqual(len(report), len(custom_animals))\n                     ^^^^^^^^^^^\nTypeError: object of type 'NoneType' has no len()\n\n======================================================================\nERROR: test_default_animals (hidden_test.TestCases.test_default_animals)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-88tupwh_/hidden_test.py\", line 10, in test_default_animals\n    self.assertEqual(len(report), 5)  # Default number of animals\n                     ^^^^^^^^^^^\nTypeError: object of type 'NoneType' has no len()\n\n======================================================================\nERROR: test_positive_counts (hidden_test.TestCases.test_positive_counts)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-88tupwh_/hidden_test.py\", line 29, in test_positive_counts\n    self.assertTrue(all(report['Mean'] > 0))\n                        ~~~~~~^^^^^^^^\nTypeError: 'NoneType' object is not subscriptable\n\n======================================================================\nERROR: test_statistics_columns (hidden_test.TestCases.test_statistics_columns)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-88tupwh_/hidden_test.py\", line 26, in test_statistics_columns\n    self.assertListEqual(list(report.columns), expected_columns)\n                              ^^^^^^^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'columns'\n\n======================================================================\nFAIL: test_data_frame_structure (hidden_test.TestCases.test_data_frame_structure)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-88tupwh_/hidden_test.py\", line 35, in test_data_frame_structure\n    self.assertIsInstance(report, pd.DataFrame)\nAssertionError: None is not an instance of <class 'pandas.DataFrame'>\n\n----------------------------------------------------------------------\nRan 5 tests in 0.416s\n\nFAILED (failures=1, errors=4)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport pandas as pd\nfrom random import randint, seed as random_seed\nimport statistics\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef task_func(animals=None, seed=42):\n    # Set the seed for reproducibility\n    random_seed(seed)\n    \n    # If no animals are provided, use default list\n    if animals is None:\n        animals = ['Lion', 'Tiger', 'Elephant', 'Giraffe', 'Zebra', 'Monkey', 'Bear', 'Deer', 'Rabbit', 'Wolf']\n    \n    # Generate random counts for each animal\n    data = {}\n    for animal in animals:\n        counts = [randint(10, 100) for _ in range(100)]\n        data[animal] = counts\n    \n    # Create DataFrame\n    df = pd.DataFrame(data)\n    \n    # Calculate mean, median, and standard deviation for each animal\n    stats = {}\n    for animal in animals:\n        stats[animal] = {\n            'mean': np.mean(df[animal]),\n            'median': np.median(df[animal]),\n            'std_dev': np.std(df[animal])\n        }\n    \n    # Convert stats to DataFrame\n    stats_df = pd.DataFrame(stats).T\n    \n    # Print the stats DataFrame\n    print(\"Statistics of Animal Counts:\")\n    print(stats_df)\n    \n    # Plot a bar chart of the mean counts\n    mean_counts = stats_df['mean']\n    plt.figure(figsize=(10, 6))\n    mean_counts.plot(kind='bar', color='skyblue')\n    plt.title('Mean Count of Animals in Zoo')\n    plt.xlabel('Animal')\n    plt.ylabel('Mean Count')\n    plt.xticks(rotation=45)\n    plt.tight_layout()\n    plt.show()\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b3_frontier",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 162,
+        "output_tokens": 374,
+        "total_tokens": 536
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 0,
+  "samples": [
+    {
+      "bucket": "AssertionError",
+      "code": "import pandas as pd\nfrom random import randint, seed as random_seed\nimport statistics\nimport numpy as np\nimport matplotlib.pyplot as plt\n\ndef task_func(animals=None, seed=42):\n    # Set the seed for reproducibility\n    random_seed(seed)\n    \n    # If no animals are provided, use default list\n    if animals is None:\n        animals = ['Lion', 'Tiger', 'Elephant', 'Giraffe', 'Zebra', 'Monkey', 'Bear', 'Deer', 'Rabbit', 'Wolf']\n    \n    # Generate random counts for each animal\n    data = {}\n    for animal in animals:\n        counts = [randint(10, 100) for _ in range(100)]\n        data[animal] = counts\n    \n    # Create DataFrame\n    df = pd.DataFrame(data)\n    \n    # Calculate mean, median, and standard deviation for each animal\n    stats = {}\n    for animal in animals:\n        stats[animal] = {\n            'mean': np.mean(df[animal]),\n            'median': np.median(df[animal]),\n            'std_dev': np.std(df[animal])\n        }\n    \n    # Convert stats to DataFrame\n    stats_df = pd.DataFrame(stats).T\n    \n    # Print the stats DataFrame\n    print(\"Statistics of Animal Counts:\")\n    print(stats_df)\n    \n    # Plot a bar chart of the mean counts\n    mean_counts = stats_df['mean']\n    plt.figure(figsize=(10, 6))\n    mean_counts.plot(kind='bar', color='skyblue')\n    plt.title('Mean Count of Animals in Zoo')\n    plt.xlabel('Animal')\n    plt.ylabel('Mean Count')\n    plt.xticks(rotation=45)\n    plt.tight_layout()\n    plt.show()\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 2.129,
+        "exception": "AssertionError",
+        "output_tail": " 58.71    56.0  23.164324\nWolf      55.08    51.0  27.493883\nStatistics of Animal Counts:\n           mean  median    std_dev\nLion      54.77    53.0  27.409799\nTiger     53.30    52.0  25.948218\nElephant  52.87    53.0  25.997175\nGiraffe   54.71    50.0  27.116893\nZebra     51.25    47.5  25.921179\nMonkey    59.46    61.5  25.885293\nBear      58.35    61.5  24.182793\nDeer      53.89    54.0  27.431331\nRabbit    58.71    56.0  23.164324\nWolf      55.08    51.0  27.493883\n\nEFEEE\n======================================================================\nERROR: test_custom_animals (hidden_test.TestCases.test_custom_animals)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-88tupwh_/hidden_test.py\", line 21, in test_custom_animals\n    self.assertEqual(len(report), len(custom_animals))\n                     ^^^^^^^^^^^\nTypeError: object of type 'NoneType' has no len()\n\n======================================================================\nERROR: test_default_animals (hidden_test.TestCases.test_default_animals)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-88tupwh_/hidden_test.py\", line 10, in test_default_animals\n    self.assertEqual(len(report), 5)  # Default number of animals\n                     ^^^^^^^^^^^\nTypeError: object of type 'NoneType' has no len()\n\n======================================================================\nERROR: test_positive_counts (hidden_test.TestCases.test_positive_counts)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-88tupwh_/hidden_test.py\", line 29, in test_positive_counts\n    self.assertTrue(all(report['Mean'] > 0))\n                        ~~~~~~^^^^^^^^\nTypeError: 'NoneType' object is not subscriptable\n\n======================================================================\nERROR: test_statistics_columns (hidden_test.TestCases.test_statistics_columns)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-88tupwh_/hidden_test.py\", line 26, in test_statistics_columns\n    self.assertListEqual(list(report.columns), expected_columns)\n                              ^^^^^^^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'columns'\n\n======================================================================\nFAIL: test_data_frame_structure (hidden_test.TestCases.test_data_frame_structure)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-88tupwh_/hidden_test.py\", line 35, in test_data_frame_structure\n    self.assertIsInstance(report, pd.DataFrame)\nAssertionError: None is not an instance of <class 'pandas.DataFrame'>\n\n----------------------------------------------------------------------\nRan 5 tests in 0.416s\n\nFAILED (failures=1, errors=4)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function from a short wish. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nGenerate a report on the number of animals in a zoo by creating a DataFrame that includes the mean, median, and standard deviation of random counts for each animal, and produce a bar chart of these counts.\n\n## Function stub (solution.py)\n\n```python\nimport pandas as pd\n\nfrom random import randint, seed as random_seed\n\nimport statistics\n\nimport numpy as np\n\ndef task_func(animals=None, seed=42):\n    # TODO: implement this function.\n    pass\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261121,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 162,
+        "output_tokens": 374,
+        "total_tokens": 536
+      }
+    }
+  ],
+  "seed": 20261121,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/126",
+  "started_at": "2026-11-23T14:12:08+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/126",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 1,
+    "input_tokens": 162,
+    "output_tokens": 374,
+    "total_tokens": 536
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 1
+}

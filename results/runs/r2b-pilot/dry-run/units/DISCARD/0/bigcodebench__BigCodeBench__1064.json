@@ -1,0 +1,555 @@
+{
+  "api_error": "",
+  "bucket": "None",
+  "condition": "DISCARD",
+  "config_hash": "b596e22fff787a175caeb4efa64c47aaaa7f9031e79f5b861245fe1fd305f8a3",
+  "created_at": "2026-11-23T13:02:19+00:00",
+  "detector_questions": [
+    {
+      "answer": null,
+      "category": "constraints",
+      "label": "constraints and edge cases",
+      "question": "What constraints and edge cases should the implementation handle (for example empty inputs, duplicates, ordering, or bounds)?",
+      "score": 0.981904
+    },
+    {
+      "answer": null,
+      "category": "signature_types",
+      "label": "signature and types",
+      "question": "What are the exact function signature, parameter types, and return type?",
+      "score": 0.499004
+    },
+    {
+      "answer": null,
+      "category": "error_behaviour",
+      "label": "error behaviour",
+      "question": "What should happen on invalid or unexpected input — which exceptions should be raised, or what should be returned?",
+      "score": 0.278753
+    }
+  ],
+  "duration_s": 21.738,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "None",
+    "duration_s": 3.086,
+    "exception": "",
+    "output_tail": "Row sums:\nRow 0: 3\nRow 1: 6\nRow 2: 9\nRow 3: 12\nRow 4: 15\nRow sums:\nRow 0: 3\nRow 1: 3\nRow 2: 3\nRow 3: 3\nRow 4: 3\nRow sums:\nRow 0: 0\nRow 1: 3\nRow 2: 6\nRow 3: 9\nRow 4: 12\nRow sums:\nRow 0: 0.0\nRow 1: 0.0\nRow 2: 0.0\nRow 3: 0.0\nRow 4: 0.0\nRow sums:\nRow 0: 3.0\nRow 1: 3.0\nRow 2: 3.0\nRow 3: 3.0\nRow 4: 3.0\n\n.....\n----------------------------------------------------------------------\nRan 5 tests in 0.393s\n\nOK",
+    "pass": true,
+    "timed_out": false
+  },
+  "final_solution": "import numpy as np\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\ndef task_func(arr):\n    \"\"\"\n    Plots a heatmap of a 2D numerical array using a color range determined by its minimum and maximum values,\n    and prints the sum of each row.\n\n    Parameters:\n    arr (np.ndarray): A 2D numerical array.\n\n    Returns:\n    matplotlib.axes.Axes: The Axes object containing the heatmap.\n\n    Raises:\n    ValueError: If the input is not a 2D array or contains non-numeric values.\n    \"\"\"\n    \n    # Validate input\n    if not isinstance(arr, np.ndarray):\n        raise ValueError(\"Input must be a numpy array.\")\n    if arr.ndim != 2:\n        raise ValueError(\"Input must be a 2D array.\")\n    if not np.issubdtype(arr.dtype, np.number):\n        raise ValueError(\"Input array must contain numeric values.\")\n\n    # Calculate row sums\n    row_sums = np.sum(arr, axis=1)\n    print(\"Row sums:\")\n    for i, row_sum in enumerate(row_sums):\n        print(f\"Row {i}: {row_sum}\")\n\n    # Create heatmap\n    ax = sns.heatmap(arr, annot=True, cmap='viridis', cbar=True, square=True)\n    ax.set_title('Heatmap of the 2D Array')\n\n    # Set colorbar range based on array values\n    # Correctly access the colorbar and set vmin/vmax\n    colorbar = ax.collections[0].colorbar\n    colorbar.set_ticks([np.min(arr), np.max(arr)])\n    colorbar.set_ticklabels([np.min(arr), np.max(arr)])\n\n    return ax",
+  "follow_up_questions": [],
+  "hidden_duration_s": 3.086,
+  "hidden_output_tail": "Row sums:\nRow 0: 3\nRow 1: 6\nRow 2: 9\nRow 3: 12\nRow 4: 15\nRow sums:\nRow 0: 3\nRow 1: 3\nRow 2: 3\nRow 3: 3\nRow 4: 3\nRow sums:\nRow 0: 0\nRow 1: 3\nRow 2: 6\nRow 3: 9\nRow 4: 12\nRow sums:\nRow 0: 0.0\nRow 1: 0.0\nRow 2: 0.0\nRow 3: 0.0\nRow 4: 0.0\nRow sums:\nRow 0: 3.0\nRow 1: 3.0\nRow 2: 3.0\nRow 3: 3.0\nRow 4: 3.0\n\n.....\n----------------------------------------------------------------------\nRan 5 tests in 0.393s\n\nOK",
+  "llm_calls": [
+    {
+      "content": "The implementation should handle the following constraints and edge cases:\n\n- Empty input: The function should handle cases where the input array is empty.\n- Non-numeric values: The function should handle cases where the array contains non-numeric values, though the specification indicates the array is of numerical values.\n- Duplicate values: The function should handle cases where the array contains duplicate values.\n- Bounds: The function should handle cases where the array contains values at the bounds of the color range.",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "stakeholder",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 293,
+        "output_tokens": 96,
+        "total_tokens": 389
+      }
+    },
+    {
+      "content": "The function signature is:\n\n```python\ndef task_func(arr: numpy.ndarray) -> matplotlib.axes.Axes\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "stakeholder",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 285,
+        "output_tokens": 24,
+        "total_tokens": 309
+      }
+    },
+    {
+      "content": "That is not specified.",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "stakeholder",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 292,
+        "output_tokens": 6,
+        "total_tokens": 298
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import numpy as np\\nimport seaborn as sns\\nimport matplotlib.pyplot as plt\\n\\ndef task_func(arr):\\n    \\\"\\\"\\\"\\n    Plots a heatmap of a 2D numerical array using a color range determined by its minimum and maximum values,\\n    and prints the sum of each row.\\n\\n    Parameters:\\n    arr (np.ndarray): A 2D numerical array.\\n\\n    Returns:\\n    matplotlib.axes.Axes: The Axes object containing the heatmap.\\n\\n    Raises:\\n    ValueError: If the input is not a 2D array or contains non-numeric values.\\n    \\\"\\\"\\\"\\n    \\n    # Validate input\\n    if not isinstance(arr, np.ndarray):\\n        raise ValueError(\\\"Input must be a numpy array.\\\")\\n    if arr.ndim != 2:\\n        raise ValueError(\\\"Input must be a 2D array.\\\")\\n    if not np.issubdtype(arr.dtype, np.number):\\n        raise ValueError(\\\"Input array must contain numeric values.\\\")\\n\\n    # Calculate row sums\\n    row_sums = np.sum(arr, axis=1)\\n    print(\\\"Row sums:\\\")\\n    for i, row_sum in enumerate(row_sums):\\n        print(f\\\"Row {i}: {row_sum}\\\")\\n\\n    # Create heatmap\\n    ax = sns.heatmap(arr, annot=True, cmap='viridis', cbar=True, square=True)\\n    ax.set_title('Heatmap of the 2D Array')\\n\\n    # Set colorbar range based on array values\\n    ax.collections[0].colorbar.set_vmin(np.min(arr))\\n    ax.collections[0].colorbar.set_vmax(np.max(arr))\\n\\n    return ax\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 962,
+        "output_tokens": 404,
+        "total_tokens": 1366
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1384,
+        "output_tokens": 14,
+        "total_tokens": 1398
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "read_error"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1428,
+        "output_tokens": 13,
+        "total_tokens": 1441
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import numpy as np\\nimport seaborn as sns\\nimport matplotlib.pyplot as plt\\n\\ndef task_func(arr):\\n    \\\"\\\"\\\"\\n    Plots a heatmap of a 2D numerical array using a color range determined by its minimum and maximum values,\\n    and prints the sum of each row.\\n\\n    Parameters:\\n    arr (np.ndarray): A 2D numerical array.\\n\\n    Returns:\\n    matplotlib.axes.Axes: The Axes object containing the heatmap.\\n\\n    Raises:\\n    ValueError: If the input is not a 2D array or contains non-numeric values.\\n    \\\"\\\"\\\"\\n    \\n    # Validate input\\n    if not isinstance(arr, np.ndarray):\\n        raise ValueError(\\\"Input must be a numpy array.\\\")\\n    if arr.ndim != 2:\\n        raise ValueError(\\\"Input must be a 2D array.\\\")\\n    if not np.issubdtype(arr.dtype, np.number):\\n        raise ValueError(\\\"Input array must contain numeric values.\\\")\\n\\n    # Calculate row sums\\n    row_sums = np.sum(arr, axis=1)\\n    print(\\\"Row sums:\\\")\\n    for i, row_sum in enumerate(row_sums):\\n        print(f\\\"Row {i}: {row_sum}\\\")\\n\\n    # Create heatmap\\n    ax = sns.heatmap(arr, annot=True, cmap='viridis', cbar=True, square=True)\\n    ax.set_title('Heatmap of the 2D Array')\\n\\n    # Set colorbar range based on array values\\n    # Correctly access the colorbar and set vmin/vmax\\n    colorbar = ax.collections[0].colorbar\\n    colorbar.set_vmin(np.min(arr))\\n    colorbar.set_vmax(np.max(arr))\\n\\n    return ax\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 2078,
+        "output_tokens": 414,
+        "total_tokens": 2492
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 2516,
+        "output_tokens": 17,
+        "total_tokens": 2533
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "read_error"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 2560,
+        "output_tokens": 16,
+        "total_tokens": 2576
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"import numpy as np\\nimport seaborn as sns\\nimport matplotlib.pyplot as plt\\n\\ndef task_func(arr):\\n    \\\"\\\"\\\"\\n    Plots a heatmap of a 2D numerical array using a color range determined by its minimum and maximum values,\\n    and prints the sum of each row.\\n\\n    Parameters:\\n    arr (np.ndarray): A 2D numerical array.\\n\\n    Returns:\\n    matplotlib.axes.Axes: The Axes object containing the heatmap.\\n\\n    Raises:\\n    ValueError: If the input is not a 2D array or contains non-numeric values.\\n    \\\"\\\"\\\"\\n    \\n    # Validate input\\n    if not isinstance(arr, np.ndarray):\\n        raise ValueError(\\\"Input must be a numpy array.\\\")\\n    if arr.ndim != 2:\\n        raise ValueError(\\\"Input must be a 2D array.\\\")\\n    if not np.issubdtype(arr.dtype, np.number):\\n        raise ValueError(\\\"Input array must contain numeric values.\\\")\\n\\n    # Calculate row sums\\n    row_sums = np.sum(arr, axis=1)\\n    print(\\\"Row sums:\\\")\\n    for i, row_sum in enumerate(row_sums):\\n        print(f\\\"Row {i}: {row_sum}\\\")\\n\\n    # Create heatmap\\n    ax = sns.heatmap(arr, annot=True, cmap='viridis', cbar=True, square=True)\\n    ax.set_title('Heatmap of the 2D Array')\\n\\n    # Set colorbar range based on array values\\n    # Correctly access the colorbar and set vmin/vmax\\n    colorbar = ax.collections[0].colorbar\\n    colorbar.set_ticks([np.min(arr), np.max(arr)])\\n    colorbar.set_ticklabels([np.min(arr), np.max(arr)])\\n\\n    return ax\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 3180,
+        "output_tokens": 423,
+        "total_tokens": 3603
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 3627,
+        "output_tokens": 17,
+        "total_tokens": 3644
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 3780,
+        "output_tokens": 7,
+        "total_tokens": 3787
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. The stakeholder is unavailable and no answers are available in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Wish\n\nPlots a heatmap of a 2D numerical array using a color range determined by its minimum and maximum values, and prints the sum of each row.\n\n## Questions asked to the stakeholder\n\nThe stakeholder was asked the following questions, but the answers are unavailable. Code defensively for these categories:\n\n- **constraints**: What constraints and edge cases should the implementation handle (for example empty inputs, duplicates, ordering, or bounds)?\n- **signature_types**: What are the exact function signature, parameter types, and return type?\n- **error_behaviour**: What should happen on invalid or unexpected input — which exceptions should be raised, or what should be returned?\n\n## Starting file (solution.py)\n\n```python\nimport numpy as np\n\nimport seaborn as sns\n\ndef task_func(arr):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport numpy as np\nimport matplotlib.pyplot as plt\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the function task_func.\"\"\"\n\n    def tearDown(self):\n        plt.clf()\n\n    def test_scenario_1(self):\n        \"\"\"Scenario 1: Testing with a 2D array created by adding row and column indices.\"\"\"\n        arr = np.array([[i + j for i in range(3)] for j in range(5)])\n        expected_vmax = np.max(arr)\n        ax = task_func(arr)\n        self.assertEqual(ax.get_title(), 'Heatmap of the 2D Array')\n        self.assertEqual(ax.collections[0].colorbar.vmax, expected_vmax)\n\n    def test_scenario_2(self):\n        \"\"\"Scenario 2: Testing with a 2D array where each column has identical values based on the column index.\"\"\"\n        arr = np.array([[i for i in range(3)] for j in range(5)])\n        expected_vmax = np.max(arr)\n        ax = task_func(arr)\n        self.assertEqual(ax.get_title(), 'Heatmap of the 2D Array')\n        self.assertEqual(ax.collections[0].colorbar.vmax, expected_vmax)\n\n    def test_scenario_3(self):\n        \"\"\"Scenario 3: Testing with a 2D array where each row has identical values based on the row index.\"\"\"\n        arr = np.array([[j for i in range(3)] for j in range(5)])\n        expected_vmax = np.max(arr)\n        ax = task_func(arr)\n        self.assertEqual(ax.get_title(), 'Heatmap of the 2D Array')\n        self.assertEqual(ax.collections[0].colorbar.vmax, expected_vmax)\n```\n\nThe questions above were asked, but the answers are unavailable. Implement `solution.py`, coding defensively for those categories.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import numpy as np\\nimport seaborn as sns\\nimport matplotlib.pyplot as plt\\n\\ndef task_func(arr):\\n    \\\"\\\"\\\"\\n    Plots a heatmap of a 2D numerical array using a color range determined by its minimum and maximum values,\\n    and prints the sum of each row.\\n\\n    Parameters:\\n    arr (np.ndarray): A 2D numerical array.\\n\\n    Returns:\\n    matplotlib.axes.Axes: The Axes object containing the heatmap.\\n\\n    Raises:\\n    ValueError: If the input is not a 2D array or contains non-numeric values.\\n    \\\"\\\"\\\"\\n    \\n    # Validate input\\n    if not isinstance(arr, np.ndarray):\\n        raise ValueError(\\\"Input must be a numpy array.\\\")\\n    if arr.ndim != 2:\\n        raise ValueError(\\\"Input must be a 2D array.\\\")\\n    if not np.issubdtype(arr.dtype, np.number):\\n        raise ValueError(\\\"Input array must contain numeric values.\\\")\\n\\n    # Calculate row sums\\n    row_sums = np.sum(arr, axis=1)\\n    print(\\\"Row sums:\\\")\\n    for i, row_sum in enumerate(row_sums):\\n        print(f\\\"Row {i}: {row_sum}\\\")\\n\\n    # Create heatmap\\n    ax = sns.heatmap(arr, annot=True, cmap='viridis', cbar=True, square=True)\\n    ax.set_title('Heatmap of the 2D Array')\\n\\n    # Set colorbar range based on array values\\n    ax.collections[0].colorbar.set_vmin(np.min(arr))\\n    ax.collections[0].colorbar.set_vmax(np.max(arr))\\n\\n    return ax\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 1281 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests failed (AttributeError). Call read_error to see the traceback.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "read_error"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Row sums:\nRow 0: 3\nRow 1: 6\nRow 2: 9\nRow 3: 12\nRow 4: 15\nRow sums:\nRow 0: 3\nRow 1: 3\nRow 2: 3\nRow 3: 3\nRow 4: 3\nRow sums:\nRow 0: 0\nRow 1: 3\nRow 2: 6\nRow 3: 9\nRow 4: 12\n\nEEE\n======================================================================\nERROR: test_scenario_1 (visible_test.TestCases.test_scenario_1)\nScenario 1: Testing with a 2D array created by adding row and column indices.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 18, in test_scenario_1\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 39, in task_func\n    ax.collections[0].colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n======================================================================\nERROR: test_scenario_2 (visible_test.TestCases.test_scenario_2)\nScenario 2: Testing with a 2D array where each column has identical values based on the column index.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 26, in test_scenario_2\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 39, in task_func\n    ax.collections[0].colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n======================================================================\nERROR: test_scenario_3 (visible_test.TestCases.test_scenario_3)\nScenario 3: Testing with a 2D array where each row has identical values based on the row index.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 34, in test_scenario_3\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 39, in task_func\n    ax.collections[0].colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n----------------------------------------------------------------------\nRan 3 tests in 0.240s\n\nFAILED (errors=3)",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import numpy as np\\nimport seaborn as sns\\nimport matplotlib.pyplot as plt\\n\\ndef task_func(arr):\\n    \\\"\\\"\\\"\\n    Plots a heatmap of a 2D numerical array using a color range determined by its minimum and maximum values,\\n    and prints the sum of each row.\\n\\n    Parameters:\\n    arr (np.ndarray): A 2D numerical array.\\n\\n    Returns:\\n    matplotlib.axes.Axes: The Axes object containing the heatmap.\\n\\n    Raises:\\n    ValueError: If the input is not a 2D array or contains non-numeric values.\\n    \\\"\\\"\\\"\\n    \\n    # Validate input\\n    if not isinstance(arr, np.ndarray):\\n        raise ValueError(\\\"Input must be a numpy array.\\\")\\n    if arr.ndim != 2:\\n        raise ValueError(\\\"Input must be a 2D array.\\\")\\n    if not np.issubdtype(arr.dtype, np.number):\\n        raise ValueError(\\\"Input array must contain numeric values.\\\")\\n\\n    # Calculate row sums\\n    row_sums = np.sum(arr, axis=1)\\n    print(\\\"Row sums:\\\")\\n    for i, row_sum in enumerate(row_sums):\\n        print(f\\\"Row {i}: {row_sum}\\\")\\n\\n    # Create heatmap\\n    ax = sns.heatmap(arr, annot=True, cmap='viridis', cbar=True, square=True)\\n    ax.set_title('Heatmap of the 2D Array')\\n\\n    # Set colorbar range based on array values\\n    # Correctly access the colorbar and set vmin/vmax\\n    colorbar = ax.collections[0].colorbar\\n    colorbar.set_vmin(np.min(arr))\\n    colorbar.set_vmax(np.max(arr))\\n\\n    return ax\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 1341 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests failed (AttributeError). Call read_error to see the traceback.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "read_error"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Row sums:\nRow 0: 3\nRow 1: 6\nRow 2: 9\nRow 3: 12\nRow 4: 15\nRow sums:\nRow 0: 3\nRow 1: 3\nRow 2: 3\nRow 3: 3\nRow 4: 3\nRow sums:\nRow 0: 0\nRow 1: 3\nRow 2: 6\nRow 3: 9\nRow 4: 12\n\nEEE\n======================================================================\nERROR: test_scenario_1 (visible_test.TestCases.test_scenario_1)\nScenario 1: Testing with a 2D array created by adding row and column indices.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 18, in test_scenario_1\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 41, in task_func\n    colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n======================================================================\nERROR: test_scenario_2 (visible_test.TestCases.test_scenario_2)\nScenario 2: Testing with a 2D array where each column has identical values based on the column index.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 26, in test_scenario_2\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 41, in task_func\n    colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n======================================================================\nERROR: test_scenario_3 (visible_test.TestCases.test_scenario_3)\nScenario 3: Testing with a 2D array where each row has identical values based on the row index.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 34, in test_scenario_3\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 41, in task_func\n    colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n----------------------------------------------------------------------\nRan 3 tests in 0.247s\n\nFAILED (errors=3)",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"import numpy as np\\nimport seaborn as sns\\nimport matplotlib.pyplot as plt\\n\\ndef task_func(arr):\\n    \\\"\\\"\\\"\\n    Plots a heatmap of a 2D numerical array using a color range determined by its minimum and maximum values,\\n    and prints the sum of each row.\\n\\n    Parameters:\\n    arr (np.ndarray): A 2D numerical array.\\n\\n    Returns:\\n    matplotlib.axes.Axes: The Axes object containing the heatmap.\\n\\n    Raises:\\n    ValueError: If the input is not a 2D array or contains non-numeric values.\\n    \\\"\\\"\\\"\\n    \\n    # Validate input\\n    if not isinstance(arr, np.ndarray):\\n        raise ValueError(\\\"Input must be a numpy array.\\\")\\n    if arr.ndim != 2:\\n        raise ValueError(\\\"Input must be a 2D array.\\\")\\n    if not np.issubdtype(arr.dtype, np.number):\\n        raise ValueError(\\\"Input array must contain numeric values.\\\")\\n\\n    # Calculate row sums\\n    row_sums = np.sum(arr, axis=1)\\n    print(\\\"Row sums:\\\")\\n    for i, row_sum in enumerate(row_sums):\\n        print(f\\\"Row {i}: {row_sum}\\\")\\n\\n    # Create heatmap\\n    ax = sns.heatmap(arr, annot=True, cmap='viridis', cbar=True, square=True)\\n    ax.set_title('Heatmap of the 2D Array')\\n\\n    # Set colorbar range based on array values\\n    # Correctly access the colorbar and set vmin/vmax\\n    colorbar = ax.collections[0].colorbar\\n    colorbar.set_ticks([np.min(arr), np.max(arr)])\\n    colorbar.set_ticklabels([np.min(arr), np.max(arr)])\\n\\n    return ax\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 1378 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests passed. Printed output:\nRow sums:\nRow 0: 3\nRow 1: 6\nRow 2: 9\nRow 3: 12\nRow 4: 15\nRow sums:\nRow 0: 3\nRow 1: 3\nRow 2: 3\nRow 3: 3\nRow 4: 3\nRow sums:\nRow 0: 0\nRow 1: 3\nRow 2: 6\nRow 3: 9\nRow 4: 12",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant"
+    }
+  ],
+  "pass": true,
+  "questions": 3,
+  "run_id": "r2b-dry",
+  "sample_index": 0,
+  "seed": 20261121,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/1064",
+  "stakeholder_answers": [
+    {
+      "answer": null,
+      "category": "constraints"
+    },
+    {
+      "answer": null,
+      "category": "signature_types"
+    },
+    {
+      "answer": null,
+      "category": "error_behaviour"
+    }
+  ],
+  "started_at": "2026-11-23T13:01:57+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/1064",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "import numpy as np\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\ndef task_func(arr):\n    \"\"\"\n    Plots a heatmap of a 2D numerical array using a color range determined by its minimum and maximum values,\n    and prints the sum of each row.\n\n    Parameters:\n    arr (np.ndarray): A 2D numerical array.\n\n    Returns:\n    matplotlib.axes.Axes: The Axes object containing the heatmap.\n\n    Raises:\n    ValueError: If the input is not a 2D array or contains non-numeric values.\n    \"\"\"\n    \n    # Validate input\n    if not isinstance(arr, np.ndarray):\n        raise ValueError(\"Input must be a numpy array.\")\n    if arr.ndim != 2:\n        raise ValueError(\"Input must be a 2D array.\")\n    if not np.issubdtype(arr.dtype, np.number):\n        raise ValueError(\"Input array must contain numeric values.\")\n\n    # Calculate row sums\n    row_sums = np.sum(arr, axis=1)\n    print(\"Row sums:\")\n    for i, row_sum in enumerate(row_sums):\n        print(f\"Row {i}: {row_sum}\")\n\n    # Create heatmap\n    ax = sns.heatmap(arr, annot=True, cmap='viridis', cbar=True, square=True)\n    ax.set_title('Heatmap of the 2D Array')\n\n    # Set colorbar range based on array values\n    ax.collections[0].colorbar.set_vmin(np.min(arr))\n    ax.collections[0].colorbar.set_vmax(np.max(arr))\n\n    return ax",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 1281 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests failed (AttributeError). Call read_error to see the traceback."
+      },
+      {
+        "arguments": {},
+        "name": "read_error",
+        "ok": true,
+        "result": "Row sums:\nRow 0: 3\nRow 1: 6\nRow 2: 9\nRow 3: 12\nRow 4: 15\nRow sums:\nRow 0: 3\nRow 1: 3\nRow 2: 3\nRow 3: 3\nRow 4: 3\nRow sums:\nRow 0: 0\nRow 1: 3\nRow 2: 6\nRow 3: 9\nRow 4: 12\n\nEEE\n======================================================================\nERROR: test_scenario_1 (visible_test.TestCases.test_scenario_1)\nScenario 1: Testing with a 2D array created by adding row and column indices.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 18, in test_scenario_1\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 39, in task_func\n    ax.collections[0].colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n======================================================================\nERROR: test_scenario_2 (visible_test.TestCases.test_scenario_2)\nScenario 2: Testing with a 2D array where each column has identical values based on the column index.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 26, in test_scenario_2\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 39, in task_func\n    ax.collections[0].colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n======================================================================\nERROR: test_scenario_3 (visible_test.TestCases.test_scenario_3)\nScenario 3: Testing with a 2D array where each row has identical values based on the row index.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 34, in test_scenario_3\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 39, in task_func\n    ax.collections[0].colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n----------------------------------------------------------------------\nRan 3 tests in 0.240s\n\nFAILED (errors=3)"
+      },
+      {
+        "arguments": {
+          "content": "import numpy as np\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\ndef task_func(arr):\n    \"\"\"\n    Plots a heatmap of a 2D numerical array using a color range determined by its minimum and maximum values,\n    and prints the sum of each row.\n\n    Parameters:\n    arr (np.ndarray): A 2D numerical array.\n\n    Returns:\n    matplotlib.axes.Axes: The Axes object containing the heatmap.\n\n    Raises:\n    ValueError: If the input is not a 2D array or contains non-numeric values.\n    \"\"\"\n    \n    # Validate input\n    if not isinstance(arr, np.ndarray):\n        raise ValueError(\"Input must be a numpy array.\")\n    if arr.ndim != 2:\n        raise ValueError(\"Input must be a 2D array.\")\n    if not np.issubdtype(arr.dtype, np.number):\n        raise ValueError(\"Input array must contain numeric values.\")\n\n    # Calculate row sums\n    row_sums = np.sum(arr, axis=1)\n    print(\"Row sums:\")\n    for i, row_sum in enumerate(row_sums):\n        print(f\"Row {i}: {row_sum}\")\n\n    # Create heatmap\n    ax = sns.heatmap(arr, annot=True, cmap='viridis', cbar=True, square=True)\n    ax.set_title('Heatmap of the 2D Array')\n\n    # Set colorbar range based on array values\n    # Correctly access the colorbar and set vmin/vmax\n    colorbar = ax.collections[0].colorbar\n    colorbar.set_vmin(np.min(arr))\n    colorbar.set_vmax(np.max(arr))\n\n    return ax",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 1341 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests failed (AttributeError). Call read_error to see the traceback."
+      },
+      {
+        "arguments": {},
+        "name": "read_error",
+        "ok": true,
+        "result": "Row sums:\nRow 0: 3\nRow 1: 6\nRow 2: 9\nRow 3: 12\nRow 4: 15\nRow sums:\nRow 0: 3\nRow 1: 3\nRow 2: 3\nRow 3: 3\nRow 4: 3\nRow sums:\nRow 0: 0\nRow 1: 3\nRow 2: 6\nRow 3: 9\nRow 4: 12\n\nEEE\n======================================================================\nERROR: test_scenario_1 (visible_test.TestCases.test_scenario_1)\nScenario 1: Testing with a 2D array created by adding row and column indices.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 18, in test_scenario_1\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 41, in task_func\n    colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n======================================================================\nERROR: test_scenario_2 (visible_test.TestCases.test_scenario_2)\nScenario 2: Testing with a 2D array where each column has identical values based on the column index.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 26, in test_scenario_2\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 41, in task_func\n    colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n======================================================================\nERROR: test_scenario_3 (visible_test.TestCases.test_scenario_3)\nScenario 3: Testing with a 2D array where each row has identical values based on the row index.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 34, in test_scenario_3\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 41, in task_func\n    colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n----------------------------------------------------------------------\nRan 3 tests in 0.247s\n\nFAILED (errors=3)"
+      },
+      {
+        "arguments": {
+          "content": "import numpy as np\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\ndef task_func(arr):\n    \"\"\"\n    Plots a heatmap of a 2D numerical array using a color range determined by its minimum and maximum values,\n    and prints the sum of each row.\n\n    Parameters:\n    arr (np.ndarray): A 2D numerical array.\n\n    Returns:\n    matplotlib.axes.Axes: The Axes object containing the heatmap.\n\n    Raises:\n    ValueError: If the input is not a 2D array or contains non-numeric values.\n    \"\"\"\n    \n    # Validate input\n    if not isinstance(arr, np.ndarray):\n        raise ValueError(\"Input must be a numpy array.\")\n    if arr.ndim != 2:\n        raise ValueError(\"Input must be a 2D array.\")\n    if not np.issubdtype(arr.dtype, np.number):\n        raise ValueError(\"Input array must contain numeric values.\")\n\n    # Calculate row sums\n    row_sums = np.sum(arr, axis=1)\n    print(\"Row sums:\")\n    for i, row_sum in enumerate(row_sums):\n        print(f\"Row {i}: {row_sum}\")\n\n    # Create heatmap\n    ax = sns.heatmap(arr, annot=True, cmap='viridis', cbar=True, square=True)\n    ax.set_title('Heatmap of the 2D Array')\n\n    # Set colorbar range based on array values\n    # Correctly access the colorbar and set vmin/vmax\n    colorbar = ax.collections[0].colorbar\n    colorbar.set_ticks([np.min(arr), np.max(arr)])\n    colorbar.set_ticklabels([np.min(arr), np.max(arr)])\n\n    return ax",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 1378 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests passed. Printed output:\nRow sums:\nRow 0: 3\nRow 1: 6\nRow 2: 9\nRow 3: 12\nRow 4: 15\nRow sums:\nRow 0: 3\nRow 1: 3\nRow 2: 3\nRow 3: 3\nRow 4: 3\nRow sums:\nRow 0: 0\nRow 1: 3\nRow 2: 6\nRow 3: 9\nRow 4: 12"
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 2.938,
+        "exception": "AttributeError",
+        "ok": false,
+        "output": "Row sums:\nRow 0: 3\nRow 1: 6\nRow 2: 9\nRow 3: 12\nRow 4: 15\nRow sums:\nRow 0: 3\nRow 1: 3\nRow 2: 3\nRow 3: 3\nRow 4: 3\nRow sums:\nRow 0: 0\nRow 1: 3\nRow 2: 6\nRow 3: 9\nRow 4: 12\n\nEEE\n======================================================================\nERROR: test_scenario_1 (visible_test.TestCases.test_scenario_1)\nScenario 1: Testing with a 2D array created by adding row and column indices.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 18, in test_scenario_1\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 39, in task_func\n    ax.collections[0].colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n======================================================================\nERROR: test_scenario_2 (visible_test.TestCases.test_scenario_2)\nScenario 2: Testing with a 2D array where each column has identical values based on the column index.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 26, in test_scenario_2\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 39, in task_func\n    ax.collections[0].colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n======================================================================\nERROR: test_scenario_3 (visible_test.TestCases.test_scenario_3)\nScenario 3: Testing with a 2D array where each row has identical values based on the row index.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 34, in test_scenario_3\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  \n[... truncated 333 chars]"
+      },
+      {
+        "duration_s": 2.78,
+        "exception": "AttributeError",
+        "ok": false,
+        "output": "Row sums:\nRow 0: 3\nRow 1: 6\nRow 2: 9\nRow 3: 12\nRow 4: 15\nRow sums:\nRow 0: 3\nRow 1: 3\nRow 2: 3\nRow 3: 3\nRow 4: 3\nRow sums:\nRow 0: 0\nRow 1: 3\nRow 2: 6\nRow 3: 9\nRow 4: 12\n\nEEE\n======================================================================\nERROR: test_scenario_1 (visible_test.TestCases.test_scenario_1)\nScenario 1: Testing with a 2D array created by adding row and column indices.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 18, in test_scenario_1\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 41, in task_func\n    colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n======================================================================\nERROR: test_scenario_2 (visible_test.TestCases.test_scenario_2)\nScenario 2: Testing with a 2D array where each column has identical values based on the column index.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 26, in test_scenario_2\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 41, in task_func\n    colorbar.set_vmin(np.min(arr))\n    ^^^^^^^^^^^^^^^^^\nAttributeError: 'Colorbar' object has no attribute 'set_vmin'\n\n======================================================================\nERROR: test_scenario_3 (visible_test.TestCases.test_scenario_3)\nScenario 3: Testing with a 2D array where each row has identical values based on the row index.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-loop-mn69kwmy/visible_test.py\", line 34, in test_scenario_3\n    ax = task_func(arr)\n         ^^^^^^^^^^^^^^\n  File \"/tmp/wish-loop-mn69kwmy/solution.py\", line 41, in task_func\n    co\n[... truncated 225 chars]"
+      },
+      {
+        "duration_s": 2.8,
+        "exception": "None",
+        "ok": true,
+        "output": "Row sums:\nRow 0: 3\nRow 1: 6\nRow 2: 9\nRow 3: 12\nRow 4: 15\nRow sums:\nRow 0: 3\nRow 1: 3\nRow 2: 3\nRow 3: 3\nRow 4: 3\nRow sums:\nRow 0: 0\nRow 1: 3\nRow 2: 6\nRow 3: 9\nRow 4: 12\n\n...\n----------------------------------------------------------------------\nRan 3 tests in 0.233s\n\nOK"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 12,
+    "input_tokens": 22385,
+    "output_tokens": 1451,
+    "total_tokens": 23836
+  },
+  "trace_events": [
+    {
+      "event": "detector_prepass",
+      "questions": [
+        {
+          "answer": null,
+          "category": "constraints",
+          "label": "constraints and edge cases",
+          "question": "What constraints and edge cases should the implementation handle (for example empty inputs, duplicates, ordering, or bounds)?",
+          "score": 0.981904
+        },
+        {
+          "answer": null,
+          "category": "signature_types",
+          "label": "signature and types",
+          "question": "What are the exact function signature, parameter types, and return type?",
+          "score": 0.499004
+        },
+        {
+          "answer": null,
+          "category": "error_behaviour",
+          "label": "error behaviour",
+          "question": "What should happen on invalid or unexpected input — which exceptions should be raised, or what should be returned?",
+          "score": 0.278753
+        }
+      ]
+    }
+  ],
+  "turn_cap_hit": false,
+  "turns": 9
+}

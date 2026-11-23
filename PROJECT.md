@@ -12,13 +12,14 @@ clarification questions. The milestone contract is
 [`paper/milestone/main.tex`](paper/milestone/main.tex).
 
 This repository is the clean rebuild of the implementation to that design. R0 (data
-foundation), R1 (ReAct harness + five-label detector), R2 (A100 pilot) and R3 (measured
-paper) are complete. The measured run and its artifacts are in
-[`results/runs/r2-pilot/`](results/runs/r2-pilot/); the full report is
+foundation), R1 (ReAct harness + five-label detector), R2 (first A100 pilot), R2b (corrected
+A100 re-run) and R6 (paper revision) are complete. The corrected measured run and its
+artifacts are in [`results/runs/r2b-pilot/`](results/runs/r2b-pilot/); the full report is
 [`paper/main.pdf`](paper/main.pdf), and the revised measured milestone is
 [`paper/milestone/main.pdf`](paper/milestone/main.pdf) (submitted version preserved under
-`paper/milestone/submitted/`). Earlier work survives only in git history and is not part of
-the rebuild.
+`paper/milestone/submitted/`, R2 revision under `paper/milestone/r2/`). The earlier R2
+measurement remains in [`results/runs/r2-pilot/`](results/runs/r2-pilot/) as history. Earlier
+work survives only in git history and is not part of the rebuild.
 
 ## Milestone design
 
@@ -276,7 +277,7 @@ results/levels/       committed R0 artifacts (manifest, stats, tasks.jsonl)
 results/detector/     committed R1 detector artifacts
 data/                 gitignored downloads, validation cache and derived hidden tests
 paper/milestone/      milestone contract (do not modify)
-PLAN.md               R0-R3 rebuild plan
+PLAN.md               R0-R6 rebuild plan
 ```
 
 ## Budget

@@ -1,0 +1,275 @@
+{
+  "api_error": "",
+  "bucket": "AssertionError",
+  "condition": "B2",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T13:55:30+00:00",
+  "detector_questions": [],
+  "duration_s": 23.548,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 3.389,
+    "exception": "AssertionError",
+    "output_tail": "/content/superagent/.venv/lib/python3.12/site-packages/sklearn/utils/_array_api.py:899: RuntimeWarning: All-NaN slice encountered\n  return xp.asarray(numpy.nanmin(X, axis=axis))\n/content/superagent/.venv/lib/python3.12/site-packages/sklearn/utils/_array_api.py:919: RuntimeWarning: All-NaN slice encountered\n  return xp.asarray(numpy.nanmax(X, axis=axis))\nF..F.\n======================================================================\nFAIL: test_all_none_data (hidden_test.TestCases.test_all_none_data)\nTest with a dictionary where all values are None. Should return an empty DataFrame and a plot object.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-cyveogr3/hidden_test.py\", line 21, in test_all_none_data\n    self.assertTrue(result_df.empty)\nAssertionError: False is not true\n\n======================================================================\nFAIL: test_with_missing_values (hidden_test.TestCases.test_with_missing_values)\nTest data with some missing values. Missing values should be dropped, and scaled data should be returned.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-cyveogr3/hidden_test.py\", line 39, in test_with_missing_values\n    self.assertEqual(result_df.shape, (1, 2))  # Only one row without missing values\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Tuples differ: (3, 2) != (1, 2)\n\nFirst differing element 0:\n3\n1\n\n- (3, 2)\n?  ^\n\n+ (1, 2)\n?  ^\n\n\n----------------------------------------------------------------------\nRan 5 tests in 0.222s\n\nFAILED (failures=2)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import pandas as pd\nimport matplotlib.pyplot as plt\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # Convert dictionary to DataFrame\n    df = pd.DataFrame(data_dict)\n    \n    # Check if the DataFrame is empty\n    if df.empty:\n        return df, plt.gca()\n    \n    # Handle None values by filling them with NaN\n    df = df.where(df.notnull(), None)\n    \n    # Apply MinMaxScaler\n    scaler = MinMaxScaler()\n    scaled_data = scaler.fit_transform(df)\n    \n    # Create a new DataFrame with scaled data\n    scaled_df = pd.DataFrame(scaled_data, columns=df.columns)\n    \n    # Create a plot\n    fig, ax = plt.subplots()\n    scaled_df.plot(kind='bar', ax=ax)\n    ax.set_title(PLOT_TITLE)\n    \n    return scaled_df, ax\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "/content/superagent/.venv/lib/python3.12/site-packages/sklearn/utils/_array_api.py:899: RuntimeWarning: All-NaN slice encountered\n  return xp.asarray(numpy.nanmin(X, axis=axis))\n/content/superagent/.venv/lib/python3.12/site-packages/sklearn/utils/_array_api.py:919: RuntimeWarning: All-NaN slice encountered\n  return xp.asarray(numpy.nanmax(X, axis=axis))\nF..F.\n======================================================================\nFAIL: test_all_none_data (hidden_test.TestCases.test_all_none_data)\nTest with a dictionary where all values are None. Should return an empty DataFrame and a plot object.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-cyveogr3/hidden_test.py\", line 21, in test_all_none_data\n    self.assertTrue(result_df.empty)\nAssertionError: False is not true\n\n======================================================================\nFAIL: test_with_missing_values (hidden_test.TestCases.test_with_missing_values)\nTest data with some missing values. Missing values should be dropped, and scaled data should be returned.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-cyveogr3/hidden_test.py\", line 39, in test_with_missing_values\n    self.assertEqual(result_df.shape, (1, 2))  # Only one row without missing values\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Tuples differ: (3, 2) != (1, 2)\n\nFirst differing element 0:\n3\n1\n\n- (3, 2)\n?  ^\n\n+ (1, 2)\n?  ^\n\n\n----------------------------------------------------------------------\nRan 5 tests in 0.222s\n\nFAILED (failures=2)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # Convert dictionary to DataFrame\n    df = pd.DataFrame(data_dict)\n    \n    # Check if the DataFrame is empty\n    if df.empty:\n        return df, plt.gca()\n    \n    # Handle None values by filling them with NaN\n    df = df.where(df.notnull(), None)\n    \n    # Apply MinMaxScaler\n    scaler = MinMaxScaler()\n    scaled_data = scaler.fit_transform(df)\n    \n    # Create a new DataFrame with scaled data\n    scaled_df = pd.DataFrame(scaled_data, columns=df.columns)\n    \n    # Create a plot\n    fig, ax = plt.subplots()\n    scaled_df.plot(kind='bar', ax=ax)\n    ax.set_title(PLOT_TITLE)\n    \n    return scaled_df, ax\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 454,
+        "output_tokens": 189,
+        "total_tokens": 643
+      }
+    },
+    {
+      "content": "```python\nimport pandas as pd\nimport matplotlib.pyplot as plt\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # Convert the dictionary to a DataFrame\n    df = pd.DataFrame(data_dict)\n    \n    # Check if the DataFrame is empty\n    if df.empty:\n        return df, plt.subplots()[1]  # Return an empty DataFrame and a plot object\n    \n    # Apply MinMaxScaler to scale the data\n    scaler = MinMaxScaler()\n    scaled_data = scaler.fit_transform(df)\n    \n    # Create a new DataFrame with scaled values\n    scaled_df = pd.DataFrame(scaled_data, columns=df.columns)\n    \n    # Create a plot\n    fig, ax = plt.subplots()\n    scaled_df.plot(kind='bar', ax=ax)\n    ax.set_title(PLOT_TITLE)\n    \n    return scaled_df, ax\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 454,
+        "output_tokens": 184,
+        "total_tokens": 638
+      }
+    },
+    {
+      "content": "```python\nimport pandas as pd\n\nimport matplotlib.pyplot as plt\n\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # Convert the dictionary to a DataFrame\n    df = pd.DataFrame(data_dict)\n    \n    # Check if the DataFrame is empty or contains only None values\n    if df.empty or df.isnull().all().all():\n        return pd.DataFrame(), plt.gca()\n    \n    # Apply MinMaxScaler to scale the data\n    scaler = MinMaxScaler()\n    scaled_data = scaler.fit_transform(df)\n    \n    # Create a new DataFrame with scaled values\n    scaled_df = pd.DataFrame(scaled_data, columns=df.columns)\n    \n    # Create a plot\n    fig, ax = plt.subplots()\n    scaled_df.plot(kind='bar', ax=ax)\n    ax.set_title(PLOT_TITLE)\n    \n    return scaled_df, ax\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 454,
+        "output_tokens": 186,
+        "total_tokens": 640
+      }
+    },
+    {
+      "content": "```python\nimport pandas as pd\n\nimport matplotlib.pyplot as plt\n\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # Convert the dictionary to a DataFrame\n    df = pd.DataFrame(data_dict)\n    \n    # Check if the DataFrame is empty\n    if df.empty:\n        return df, plt.gca()\n    \n    # Handle None values by filling them with NaN\n    df = df.fillna(value=pd.NA)\n    \n    # Check if there are no valid numeric values\n    if df.select_dtypes(include='number').empty:\n        return df, plt.gca()\n    \n    # Apply MinMaxScaler\n    scaler = MinMaxScaler()\n    scaled_data = scaler.fit_transform(df.select_dtypes(include='number'))\n    \n    # Create a new DataFrame with scaled values\n    scaled_df = pd.DataFrame(scaled_data, columns=df.select_dtypes(include='number').columns)\n    \n    # Create a plot\n    fig, ax = plt.subplots()\n    scaled_df.plot(ax=ax)\n    ax.set_title(PLOT_TITLE)\n    \n    return scaled_df, ax\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 454,
+        "output_tokens": 231,
+        "total_tokens": 685
+      }
+    },
+    {
+      "content": "```python\nimport pandas as pd\n\nimport matplotlib.pyplot as plt\n\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # Convert the dictionary to a DataFrame\n    df = pd.DataFrame(data_dict)\n    \n    # Check if the DataFrame is empty\n    if df.empty:\n        return df, plt.subplots()[1]  # Return empty DataFrame and a plot object\n    \n    # Handle None values by replacing them with NaN\n    df = df.where(df.notnull(), None)\n    \n    # Scale the data using MinMaxScaler\n    scaler = MinMaxScaler()\n    scaled_data = scaler.fit_transform(df)\n    \n    # Create a new DataFrame with scaled values\n    scaled_df = pd.DataFrame(scaled_data, columns=df.columns)\n    \n    # Create a plot\n    fig, ax = plt.subplots()\n    ax.set_title(PLOT_TITLE)\n    \n    # Plot the scaled data\n    scaled_df.plot(kind='bar', ax=ax)\n    \n    return scaled_df, ax\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 454,
+        "output_tokens": 213,
+        "total_tokens": 667
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 0,
+  "samples": [
+    {
+      "bucket": "AssertionError",
+      "code": "import pandas as pd\nimport matplotlib.pyplot as plt\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # Convert dictionary to DataFrame\n    df = pd.DataFrame(data_dict)\n    \n    # Check if the DataFrame is empty\n    if df.empty:\n        return df, plt.gca()\n    \n    # Handle None values by filling them with NaN\n    df = df.where(df.notnull(), None)\n    \n    # Apply MinMaxScaler\n    scaler = MinMaxScaler()\n    scaled_data = scaler.fit_transform(df)\n    \n    # Create a new DataFrame with scaled data\n    scaled_df = pd.DataFrame(scaled_data, columns=df.columns)\n    \n    # Create a plot\n    fig, ax = plt.subplots()\n    scaled_df.plot(kind='bar', ax=ax)\n    ax.set_title(PLOT_TITLE)\n    \n    return scaled_df, ax\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 3.389,
+        "exception": "AssertionError",
+        "output_tail": "/content/superagent/.venv/lib/python3.12/site-packages/sklearn/utils/_array_api.py:899: RuntimeWarning: All-NaN slice encountered\n  return xp.asarray(numpy.nanmin(X, axis=axis))\n/content/superagent/.venv/lib/python3.12/site-packages/sklearn/utils/_array_api.py:919: RuntimeWarning: All-NaN slice encountered\n  return xp.asarray(numpy.nanmax(X, axis=axis))\nF..F.\n======================================================================\nFAIL: test_all_none_data (hidden_test.TestCases.test_all_none_data)\nTest with a dictionary where all values are None. Should return an empty DataFrame and a plot object.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-cyveogr3/hidden_test.py\", line 21, in test_all_none_data\n    self.assertTrue(result_df.empty)\nAssertionError: False is not true\n\n======================================================================\nFAIL: test_with_missing_values (hidden_test.TestCases.test_with_missing_values)\nTest data with some missing values. Missing values should be dropped, and scaled data should be returned.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-cyveogr3/hidden_test.py\", line 39, in test_with_missing_values\n    self.assertEqual(result_df.shape, (1, 2))  # Only one row without missing values\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Tuples differ: (3, 2) != (1, 2)\n\nFirst differing element 0:\n3\n1\n\n- (3, 2)\n?  ^\n\n+ (1, 2)\n?  ^\n\n\n----------------------------------------------------------------------\nRan 5 tests in 0.222s\n\nFAILED (failures=2)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nScales the values in a given dictionary using MinMaxScaler and visualizes the scaled data.\n\n## Starting file (solution.py)\n\n```python\nimport pandas as pd\n\nimport matplotlib.pyplot as plt\n\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Unit tests for the function.\"\"\"\n\n    def test_empty_data(self):\n        \"\"\"\n        Test with an empty dictionary. Should return an empty DataFrame and a plot object.\n        \"\"\"\n        result_df, result_ax = task_func({})\n        self.assertTrue(result_df.empty)\n        self.assertIsNotNone(result_ax)\n\n    def test_all_none_data(self):\n        \"\"\"\n        Test with a dictionary where all values are None. Should return an empty DataFrame and a plot object.\n        \"\"\"\n        data = {'a': [None, None], 'b': [None, None]}\n        result_df, result_ax = task_func(data)\n        self.assertTrue(result_df.empty)\n        self.assertIsNotNone(result_ax)\n\n    def test_normal_data(self):\n        \"\"\"\n        Test with a normal data dictionary. Should return a non-empty DataFrame and a plot object.\n        \"\"\"\n        data = {'a': [1, 2, 3], 'b': [4, 5, 6]}\n        result_df, result_ax = task_func(data)\n        self.assertEqual(result_ax.get_title(), 'Scaled Values')\n        self.assertFalse(result_df.empty)\n        self.assertEqual(result_df.shape, (3, 2))\n        self.assertIsNotNone(result_ax)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261121,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 454,
+        "output_tokens": 189,
+        "total_tokens": 643
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import pandas as pd\nimport matplotlib.pyplot as plt\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # Convert the dictionary to a DataFrame\n    df = pd.DataFrame(data_dict)\n    \n    # Check if the DataFrame is empty\n    if df.empty:\n        return df, plt.subplots()[1]  # Return an empty DataFrame and a plot object\n    \n    # Apply MinMaxScaler to scale the data\n    scaler = MinMaxScaler()\n    scaled_data = scaler.fit_transform(df)\n    \n    # Create a new DataFrame with scaled values\n    scaled_df = pd.DataFrame(scaled_data, columns=df.columns)\n    \n    # Create a plot\n    fig, ax = plt.subplots()\n    scaled_df.plot(kind='bar', ax=ax)\n    ax.set_title(PLOT_TITLE)\n    \n    return scaled_df, ax\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 3.366,
+        "exception": "AssertionError",
+        "output_tail": "/content/superagent/.venv/lib/python3.12/site-packages/sklearn/utils/_array_api.py:899: RuntimeWarning: All-NaN slice encountered\n  return xp.asarray(numpy.nanmin(X, axis=axis))\n/content/superagent/.venv/lib/python3.12/site-packages/sklearn/utils/_array_api.py:919: RuntimeWarning: All-NaN slice encountered\n  return xp.asarray(numpy.nanmax(X, axis=axis))\nF..F.\n======================================================================\nFAIL: test_all_none_data (hidden_test.TestCases.test_all_none_data)\nTest with a dictionary where all values are None. Should return an empty DataFrame and a plot object.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-84umf2kk/hidden_test.py\", line 21, in test_all_none_data\n    self.assertTrue(result_df.empty)\nAssertionError: False is not true\n\n======================================================================\nFAIL: test_with_missing_values (hidden_test.TestCases.test_with_missing_values)\nTest data with some missing values. Missing values should be dropped, and scaled data should be returned.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-84umf2kk/hidden_test.py\", line 39, in test_with_missing_values\n    self.assertEqual(result_df.shape, (1, 2))  # Only one row without missing values\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Tuples differ: (3, 2) != (1, 2)\n\nFirst differing element 0:\n3\n1\n\n- (3, 2)\n?  ^\n\n+ (1, 2)\n?  ^\n\n\n----------------------------------------------------------------------\nRan 5 tests in 0.226s\n\nFAILED (failures=2)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nScales the values in a given dictionary using MinMaxScaler and visualizes the scaled data.\n\n## Starting file (solution.py)\n\n```python\nimport pandas as pd\n\nimport matplotlib.pyplot as plt\n\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Unit tests for the function.\"\"\"\n\n    def test_empty_data(self):\n        \"\"\"\n        Test with an empty dictionary. Should return an empty DataFrame and a plot object.\n        \"\"\"\n        result_df, result_ax = task_func({})\n        self.assertTrue(result_df.empty)\n        self.assertIsNotNone(result_ax)\n\n    def test_all_none_data(self):\n        \"\"\"\n        Test with a dictionary where all values are None. Should return an empty DataFrame and a plot object.\n        \"\"\"\n        data = {'a': [None, None], 'b': [None, None]}\n        result_df, result_ax = task_func(data)\n        self.assertTrue(result_df.empty)\n        self.assertIsNotNone(result_ax)\n\n    def test_normal_data(self):\n        \"\"\"\n        Test with a normal data dictionary. Should return a non-empty DataFrame and a plot object.\n        \"\"\"\n        data = {'a': [1, 2, 3], 'b': [4, 5, 6]}\n        result_df, result_ax = task_func(data)\n        self.assertEqual(result_ax.get_title(), 'Scaled Values')\n        self.assertFalse(result_df.empty)\n        self.assertEqual(result_df.shape, (3, 2))\n        self.assertIsNotNone(result_ax)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261122,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 454,
+        "output_tokens": 184,
+        "total_tokens": 638
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import pandas as pd\n\nimport matplotlib.pyplot as plt\n\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # Convert the dictionary to a DataFrame\n    df = pd.DataFrame(data_dict)\n    \n    # Check if the DataFrame is empty or contains only None values\n    if df.empty or df.isnull().all().all():\n        return pd.DataFrame(), plt.gca()\n    \n    # Apply MinMaxScaler to scale the data\n    scaler = MinMaxScaler()\n    scaled_data = scaler.fit_transform(df)\n    \n    # Create a new DataFrame with scaled values\n    scaled_df = pd.DataFrame(scaled_data, columns=df.columns)\n    \n    # Create a plot\n    fig, ax = plt.subplots()\n    scaled_df.plot(kind='bar', ax=ax)\n    ax.set_title(PLOT_TITLE)\n    \n    return scaled_df, ax\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 3.412,
+        "exception": "AssertionError",
+        "output_tail": "...F.\n======================================================================\nFAIL: test_with_missing_values (hidden_test.TestCases.test_with_missing_values)\nTest data with some missing values. Missing values should be dropped, and scaled data should be returned.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-syl8zl92/hidden_test.py\", line 39, in test_with_missing_values\n    self.assertEqual(result_df.shape, (1, 2))  # Only one row without missing values\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Tuples differ: (3, 2) != (1, 2)\n\nFirst differing element 0:\n3\n1\n\n- (3, 2)\n?  ^\n\n+ (1, 2)\n?  ^\n\n\n----------------------------------------------------------------------\nRan 5 tests in 0.206s\n\nFAILED (failures=1)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nScales the values in a given dictionary using MinMaxScaler and visualizes the scaled data.\n\n## Starting file (solution.py)\n\n```python\nimport pandas as pd\n\nimport matplotlib.pyplot as plt\n\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Unit tests for the function.\"\"\"\n\n    def test_empty_data(self):\n        \"\"\"\n        Test with an empty dictionary. Should return an empty DataFrame and a plot object.\n        \"\"\"\n        result_df, result_ax = task_func({})\n        self.assertTrue(result_df.empty)\n        self.assertIsNotNone(result_ax)\n\n    def test_all_none_data(self):\n        \"\"\"\n        Test with a dictionary where all values are None. Should return an empty DataFrame and a plot object.\n        \"\"\"\n        data = {'a': [None, None], 'b': [None, None]}\n        result_df, result_ax = task_func(data)\n        self.assertTrue(result_df.empty)\n        self.assertIsNotNone(result_ax)\n\n    def test_normal_data(self):\n        \"\"\"\n        Test with a normal data dictionary. Should return a non-empty DataFrame and a plot object.\n        \"\"\"\n        data = {'a': [1, 2, 3], 'b': [4, 5, 6]}\n        result_df, result_ax = task_func(data)\n        self.assertEqual(result_ax.get_title(), 'Scaled Values')\n        self.assertFalse(result_df.empty)\n        self.assertEqual(result_df.shape, (3, 2))\n        self.assertIsNotNone(result_ax)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 454,
+        "output_tokens": 186,
+        "total_tokens": 640
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import pandas as pd\n\nimport matplotlib.pyplot as plt\n\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # Convert the dictionary to a DataFrame\n    df = pd.DataFrame(data_dict)\n    \n    # Check if the DataFrame is empty\n    if df.empty:\n        return df, plt.gca()\n    \n    # Handle None values by filling them with NaN\n    df = df.fillna(value=pd.NA)\n    \n    # Check if there are no valid numeric values\n    if df.select_dtypes(include='number').empty:\n        return df, plt.gca()\n    \n    # Apply MinMaxScaler\n    scaler = MinMaxScaler()\n    scaled_data = scaler.fit_transform(df.select_dtypes(include='number'))\n    \n    # Create a new DataFrame with scaled values\n    scaled_df = pd.DataFrame(scaled_data, columns=df.select_dtypes(include='number').columns)\n    \n    # Create a plot\n    fig, ax = plt.subplots()\n    scaled_df.plot(ax=ax)\n    ax.set_title(PLOT_TITLE)\n    \n    return scaled_df, ax\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 3.358,
+        "exception": "AssertionError",
+        "output_tail": "F..F.\n======================================================================\nFAIL: test_all_none_data (hidden_test.TestCases.test_all_none_data)\nTest with a dictionary where all values are None. Should return an empty DataFrame and a plot object.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-dpa3n4ng/hidden_test.py\", line 21, in test_all_none_data\n    self.assertTrue(result_df.empty)\nAssertionError: False is not true\n\n======================================================================\nFAIL: test_with_missing_values (hidden_test.TestCases.test_with_missing_values)\nTest data with some missing values. Missing values should be dropped, and scaled data should be returned.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-dpa3n4ng/hidden_test.py\", line 39, in test_with_missing_values\n    self.assertEqual(result_df.shape, (1, 2))  # Only one row without missing values\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Tuples differ: (3, 2) != (1, 2)\n\nFirst differing element 0:\n3\n1\n\n- (3, 2)\n?  ^\n\n+ (1, 2)\n?  ^\n\n\n----------------------------------------------------------------------\nRan 5 tests in 0.204s\n\nFAILED (failures=2)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nScales the values in a given dictionary using MinMaxScaler and visualizes the scaled data.\n\n## Starting file (solution.py)\n\n```python\nimport pandas as pd\n\nimport matplotlib.pyplot as plt\n\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Unit tests for the function.\"\"\"\n\n    def test_empty_data(self):\n        \"\"\"\n        Test with an empty dictionary. Should return an empty DataFrame and a plot object.\n        \"\"\"\n        result_df, result_ax = task_func({})\n        self.assertTrue(result_df.empty)\n        self.assertIsNotNone(result_ax)\n\n    def test_all_none_data(self):\n        \"\"\"\n        Test with a dictionary where all values are None. Should return an empty DataFrame and a plot object.\n        \"\"\"\n        data = {'a': [None, None], 'b': [None, None]}\n        result_df, result_ax = task_func(data)\n        self.assertTrue(result_df.empty)\n        self.assertIsNotNone(result_ax)\n\n    def test_normal_data(self):\n        \"\"\"\n        Test with a normal data dictionary. Should return a non-empty DataFrame and a plot object.\n        \"\"\"\n        data = {'a': [1, 2, 3], 'b': [4, 5, 6]}\n        result_df, result_ax = task_func(data)\n        self.assertEqual(result_ax.get_title(), 'Scaled Values')\n        self.assertFalse(result_df.empty)\n        self.assertEqual(result_df.shape, (3, 2))\n        self.assertIsNotNone(result_ax)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261124,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 454,
+        "output_tokens": 231,
+        "total_tokens": 685
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import pandas as pd\n\nimport matplotlib.pyplot as plt\n\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # Convert the dictionary to a DataFrame\n    df = pd.DataFrame(data_dict)\n    \n    # Check if the DataFrame is empty\n    if df.empty:\n        return df, plt.subplots()[1]  # Return empty DataFrame and a plot object\n    \n    # Handle None values by replacing them with NaN\n    df = df.where(df.notnull(), None)\n    \n    # Scale the data using MinMaxScaler\n    scaler = MinMaxScaler()\n    scaled_data = scaler.fit_transform(df)\n    \n    # Create a new DataFrame with scaled values\n    scaled_df = pd.DataFrame(scaled_data, columns=df.columns)\n    \n    # Create a plot\n    fig, ax = plt.subplots()\n    ax.set_title(PLOT_TITLE)\n    \n    # Plot the scaled data\n    scaled_df.plot(kind='bar', ax=ax)\n    \n    return scaled_df, ax\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 3.356,
+        "exception": "AssertionError",
+        "output_tail": "/content/superagent/.venv/lib/python3.12/site-packages/sklearn/utils/_array_api.py:899: RuntimeWarning: All-NaN slice encountered\n  return xp.asarray(numpy.nanmin(X, axis=axis))\n/content/superagent/.venv/lib/python3.12/site-packages/sklearn/utils/_array_api.py:919: RuntimeWarning: All-NaN slice encountered\n  return xp.asarray(numpy.nanmax(X, axis=axis))\nF..F.\n======================================================================\nFAIL: test_all_none_data (hidden_test.TestCases.test_all_none_data)\nTest with a dictionary where all values are None. Should return an empty DataFrame and a plot object.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-vz46rte1/hidden_test.py\", line 21, in test_all_none_data\n    self.assertTrue(result_df.empty)\nAssertionError: False is not true\n\n======================================================================\nFAIL: test_with_missing_values (hidden_test.TestCases.test_with_missing_values)\nTest data with some missing values. Missing values should be dropped, and scaled data should be returned.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-vz46rte1/hidden_test.py\", line 39, in test_with_missing_values\n    self.assertEqual(result_df.shape, (1, 2))  # Only one row without missing values\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: Tuples differ: (3, 2) != (1, 2)\n\nFirst differing element 0:\n3\n1\n\n- (3, 2)\n?  ^\n\n+ (1, 2)\n?  ^\n\n\n----------------------------------------------------------------------\nRan 5 tests in 0.225s\n\nFAILED (failures=2)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nScales the values in a given dictionary using MinMaxScaler and visualizes the scaled data.\n\n## Starting file (solution.py)\n\n```python\nimport pandas as pd\n\nimport matplotlib.pyplot as plt\n\nfrom sklearn.preprocessing import MinMaxScaler\n\nPLOT_TITLE = 'Scaled Values'\n\ndef task_func(data_dict):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Unit tests for the function.\"\"\"\n\n    def test_empty_data(self):\n        \"\"\"\n        Test with an empty dictionary. Should return an empty DataFrame and a plot object.\n        \"\"\"\n        result_df, result_ax = task_func({})\n        self.assertTrue(result_df.empty)\n        self.assertIsNotNone(result_ax)\n\n    def test_all_none_data(self):\n        \"\"\"\n        Test with a dictionary where all values are None. Should return an empty DataFrame and a plot object.\n        \"\"\"\n        data = {'a': [None, None], 'b': [None, None]}\n        result_df, result_ax = task_func(data)\n        self.assertTrue(result_df.empty)\n        self.assertIsNotNone(result_ax)\n\n    def test_normal_data(self):\n        \"\"\"\n        Test with a normal data dictionary. Should return a non-empty DataFrame and a plot object.\n        \"\"\"\n        data = {'a': [1, 2, 3], 'b': [4, 5, 6]}\n        result_df, result_ax = task_func(data)\n        self.assertEqual(result_ax.get_title(), 'Scaled Values')\n        self.assertFalse(result_df.empty)\n        self.assertEqual(result_df.shape, (3, 2))\n        self.assertIsNotNone(result_ax)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261125,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 454,
+        "output_tokens": 213,
+        "total_tokens": 667
+      }
+    }
+  ],
+  "seed": 20261121,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/1025",
+  "started_at": "2026-11-23T13:55:30+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/1025",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 5,
+    "input_tokens": 2270,
+    "output_tokens": 1003,
+    "total_tokens": 3273
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 5
+}

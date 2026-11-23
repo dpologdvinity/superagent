@@ -1,0 +1,178 @@
+{
+  "api_error": "",
+  "bucket": "None",
+  "condition": "H0",
+  "config_hash": "e36f7ae024bb84c7cf5def208631e6b94783889242c9a1518d4bdea9ff31ba6f",
+  "created_at": "2026-11-23T14:37:30+00:00",
+  "detector_questions": [],
+  "duration_s": 15.548,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "None",
+    "duration_s": 1.469,
+    "exception": "",
+    "output_tail": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.075s\n\nOK",
+    "pass": true,
+    "timed_out": false
+  },
+  "final_solution": "from datetime import datetime\n\nfrom collections import defaultdict\n\nimport matplotlib.pyplot as plt\n\n\ndef task_func(activities):\n    # Check if all activities are datetime objects\n    for activity in activities:\n        if not isinstance(activity, datetime):\n            raise TypeError(\"Activities must be datetime objects.\")\n\n    # Group activities by day of the week\n    day_counts = defaultdict(int)\n    for activity in activities:\n        day_of_week = activity.strftime('%A')  # Get the full day name (e.g., Monday)\n        day_counts[day_of_week] += 1\n\n    # Map day names to their index for plotting\n    days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\n    counts = [day_counts[day] for day in days_of_week]\n\n    # Create the bar chart\n    fig, ax = plt.subplots()\n    ax.bar(days_of_week, counts)\n    ax.set_title('Weekly Activity')\n    ax.set_xlabel('Day of the Week')\n    ax.set_ylabel('Number of Activities')\n\n    return ax",
+  "follow_up_questions": [],
+  "hidden_duration_s": 1.469,
+  "hidden_output_tail": ".....\n----------------------------------------------------------------------\nRan 5 tests in 0.075s\n\nOK",
+  "llm_calls": [
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{\"path\": \"solution.py\", \"content\": \"from datetime import datetime\\n\\nfrom collections import defaultdict\\n\\nimport matplotlib.pyplot as plt\\n\\n\\ndef task_func(activities):\\n    # Check if all activities are datetime objects\\n    for activity in activities:\\n        if not isinstance(activity, datetime):\\n            raise TypeError(\\\"Activities must be datetime objects.\\\")\\n\\n    # Group activities by day of the week\\n    day_counts = defaultdict(int)\\n    for activity in activities:\\n        day_of_week = activity.strftime('%A')  # Get the full day name (e.g., Monday)\\n        day_counts[day_of_week] += 1\\n\\n    # Map day names to their index for plotting\\n    days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\\n    counts = [day_counts[day] for day in days_of_week]\\n\\n    # Create the bar chart\\n    fig, ax = plt.subplots()\\n    ax.bar(days_of_week, counts)\\n    ax.set_title('Weekly Activity')\\n    ax.set_xlabel('Day of the Week')\\n    ax.set_ylabel('Number of Activities')\\n\\n    return ax\"}",
+          "name": "write_file"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 968,
+        "output_tokens": 272,
+        "total_tokens": 1240
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "length",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [
+        {
+          "arguments": "{}",
+          "name": "run_visible_tests"
+        }
+      ],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1266,
+        "output_tokens": 1600,
+        "total_tokens": 2866
+      }
+    },
+    {
+      "content": "",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "generator",
+      "tool_calls": [],
+      "transport": "text",
+      "usage": {
+        "input_tokens": 1299,
+        "output_tokens": 7,
+        "total_tokens": 1306
+      }
+    }
+  ],
+  "messages": [
+    {
+      "content": "You are a coding agent working on one Python task. You cannot browse a repository or read files; the task workspace contains only the files described below. The evaluated file is solution.py, which starts as a stub.\n\nUse write_file to submit code. Use run_visible_tests to run the three visible tests against the current solution.py; use read_error to see the traceback of the last failed run. You cannot ask the stakeholder questions in this condition.\n\nWork in at most 12 assistant turns. When you are done, stop calling tools and reply with a one-line summary. Do not put the solution in the chat; write it with write_file.",
+      "role": "system"
+    },
+    {
+      "content": "## Task\n\n## Wish\n\nCreate a bar chart showing the number of activities performed on each day of the week using the provided list of activities. If the activities are not datetime objects, raise a TypeError.\n\n## Starting file (solution.py)\n\n```python\nfrom datetime import datetime\n\nfrom collections import defaultdict\n\nimport matplotlib.pyplot as plt\n\ndef task_func(activities):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport doctest\n\nclass TestCases(unittest.TestCase):\n\n    def test_case_1(self):\n        activities = [datetime(2023, 10, 23), datetime(2023, 10, 24)]\n        ax = task_func(activities)\n        bars = ax.patches\n        self.assertEqual(ax.get_title(), 'Weekly Activity')\n        self.assertEqual(ax.get_xlabel(), 'Day of the Week')\n        self.assertEqual(ax.get_ylabel(), 'Number of Activities')\n        self.assertEqual(bars[0].get_height(), 1)\n        self.assertEqual(bars[1].get_height(), 1)\n        for i in range(2, 7):\n            self.assertEqual(bars[i].get_height(), 0)\n\n    def test_case_2(self):\n        activities = [datetime(2023, 10, 23), datetime(2023, 10, 24), datetime(2023, 10, 24), datetime(2023, 10, 26)]\n        ax = task_func(activities)\n        bars = ax.patches\n        self.assertEqual(ax.get_title(), 'Weekly Activity')\n        self.assertEqual(ax.get_xlabel(), 'Day of the Week')\n        self.assertEqual(ax.get_ylabel(), 'Number of Activities')\n        self.assertEqual(bars[0].get_height(), 1)\n        self.assertEqual(bars[1].get_height(), 2)\n        self.assertEqual(bars[2].get_height(), 0)\n        self.assertEqual(bars[3].get_height(), 1)\n        for i in range(4, 7):\n            self.assertEqual(bars[i].get_height(), 0)\n\n    def test_case_3(self):\n        activities = [datetime(2023, 10, 29), datetime(2023, 10, 29)]\n        ax = task_func(activities)\n        bars = ax.patches\n        for i in range(0, 6):\n            self.assertEqual(bars[i].get_height(), 0)\n        self.assertEqual(bars[6].get_height(), 2)\n```\n\nImplement `solution.py` from the wish, then run the visible tests.",
+      "role": "user"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\": \"solution.py\", \"content\": \"from datetime import datetime\\n\\nfrom collections import defaultdict\\n\\nimport matplotlib.pyplot as plt\\n\\n\\ndef task_func(activities):\\n    # Check if all activities are datetime objects\\n    for activity in activities:\\n        if not isinstance(activity, datetime):\\n            raise TypeError(\\\"Activities must be datetime objects.\\\")\\n\\n    # Group activities by day of the week\\n    day_counts = defaultdict(int)\\n    for activity in activities:\\n        day_of_week = activity.strftime('%A')  # Get the full day name (e.g., Monday)\\n        day_counts[day_of_week] += 1\\n\\n    # Map day names to their index for plotting\\n    days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\\n    counts = [day_counts[day] for day in days_of_week]\\n\\n    # Create the bar chart\\n    fig, ax = plt.subplots()\\n    ax.bar(days_of_week, counts)\\n    ax.set_title('Weekly Activity')\\n    ax.set_xlabel('Day of the Week')\\n    ax.set_ylabel('Number of Activities')\\n\\n    return ax\"}",
+            "name": "write_file"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Wrote 980 characters to solution.py.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{}",
+            "name": "run_visible_tests"
+          },
+          "id": "text-0",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "Visible tests passed.",
+      "role": "tool",
+      "tool_call_id": "text-0"
+    },
+    {
+      "content": "",
+      "role": "assistant"
+    }
+  ],
+  "pass": true,
+  "questions": 0,
+  "run_id": "r2b-pilot",
+  "sample_index": 1,
+  "seed": 20261122,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/367",
+  "stakeholder_answers": [],
+  "started_at": "2026-11-23T14:37:14+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/367",
+  "tools": {
+    "ask_used": 0,
+    "calls": [
+      {
+        "arguments": {
+          "content": "from datetime import datetime\n\nfrom collections import defaultdict\n\nimport matplotlib.pyplot as plt\n\n\ndef task_func(activities):\n    # Check if all activities are datetime objects\n    for activity in activities:\n        if not isinstance(activity, datetime):\n            raise TypeError(\"Activities must be datetime objects.\")\n\n    # Group activities by day of the week\n    day_counts = defaultdict(int)\n    for activity in activities:\n        day_of_week = activity.strftime('%A')  # Get the full day name (e.g., Monday)\n        day_counts[day_of_week] += 1\n\n    # Map day names to their index for plotting\n    days_of_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']\n    counts = [day_counts[day] for day in days_of_week]\n\n    # Create the bar chart\n    fig, ax = plt.subplots()\n    ax.bar(days_of_week, counts)\n    ax.set_title('Weekly Activity')\n    ax.set_xlabel('Day of the Week')\n    ax.set_ylabel('Number of Activities')\n\n    return ax",
+          "path": "solution.py"
+        },
+        "name": "write_file",
+        "ok": true,
+        "result": "Wrote 980 characters to solution.py."
+      },
+      {
+        "arguments": {},
+        "name": "run_visible_tests",
+        "ok": true,
+        "result": "Visible tests passed."
+      }
+    ],
+    "questions": [],
+    "solution_written": true,
+    "visible_runs": [
+      {
+        "duration_s": 1.44,
+        "exception": "None",
+        "ok": true,
+        "output": "...\n----------------------------------------------------------------------\nRan 3 tests in 0.046s\n\nOK"
+      }
+    ]
+  },
+  "totals": {
+    "cached_calls": 0,
+    "calls": 3,
+    "input_tokens": 3533,
+    "output_tokens": 1879,
+    "total_tokens": 5412
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 3
+}
