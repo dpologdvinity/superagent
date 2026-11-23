@@ -1,12 +1,14 @@
 # Rebuild plan: milestone contract to final report
 
-The milestone contract is [`paper/milestone/main.pdf`](paper/milestone/main.pdf). The rebuild
-runs in four phases. R0 and R1 are complete; R2 is prepared here (notebook + runbook,
-local fake-endpoint verification) and awaits the operator's GPU execution; R3 is not
-started.
+The submitted milestone is
+[`paper/milestone/submitted/main.pdf`](paper/milestone/submitted/main.pdf). The rebuild ran in
+four phases, and all four are complete: R0 (data), R1 (harness + detector), R2 (the operator's
+A100 pilot) and R3 (the measured paper). The revised measured milestone is
+[`paper/milestone/main.pdf`](paper/milestone/main.pdf) and the full report is
+[`paper/main.pdf`](paper/main.pdf).
 
 Budget target: **18 GPU-hours** for the pilot, one 24 GB GPU, and **$0 paid API**. R0 and R1
-use CPU and local network only.
+use CPU and local network only. The measured pilot used 2.509 GPU-hours and $0 paid API.
 
 ## R0: scaffold + data foundation (complete)
 
@@ -100,12 +102,12 @@ implemented as a separate endpoint call but deliberately not run in R1: the dete
 on R0's raw first-sentence L3, and R2 will smooth the 500 train wishes, refit and use the
 smoothed wishes for the pilot. No GPU or paid API is used in R1.
 
-## R2: Colab GPU pilot (prepared, GPU execution pending)
+## R2: Colab GPU pilot (complete, measured)
 
 **Goal.** Run the 100-task development pilot with Qwen3-8B AWQ on vLLM, three samples per
 condition, within about 18 GPU-hours.
 
-**Preparation delivered here.** The operator-facing path is
+**Delivered preparation.** The operator-facing path is
 [`notebooks/colab_a100_vllm.ipynb`](notebooks/colab_a100_vllm.ipynb) and
 [`COLAB.md`](COLAB.md). The notebook clones the pinned repository, materializes the data,
 starts vLLM, probes native and text tool transports, smooths the 500 train + 100 pilot wishes,
@@ -156,10 +158,16 @@ is used.
 
 **Acceptance.** All pilot units complete or are reported missing; the main-table metrics are
 computed from measured traces; the held-out split is untouched; the GPU-hour budget is
-recorded. **Status:** preparation complete and locally verified with a fake endpoint; the
-vLLM/Colab execution is the operator's step and its results are not claimed here.
+recorded. **Status:** complete. The operator ran the prepared notebook on one
+A100-SXM4-80GB (commit `8b355d66`, vLLM 0.34.0, `Qwen/Qwen3-8B-AWQ`, text tool transport):
+2,700/2,700 units, 0 held-out tasks, 2.509 GPU-hours, 21.76M tokens, $0 paid API. The
+committed run is [`results/runs/r2-pilot/`](results/runs/r2-pilot/). Headline result: B1
+58.3% vs H0 47.7% (+10.7 pp, 95% CI [+2.7, +18.7]), while H3 48.7% does not beat H2 49.0%
+or H4 49.3% (both intervals cross zero); H1 38.0%, DISCARD 42.0%, B2 48.3% (pass@5 52.3%),
+B3 31.7%. The paired task-level bootstrap, per-category grouping, failure buckets and
+smoothed detector refit are in the same run directory.
 
-## R3: paper
+## R3: measured paper (complete)
 
 **Goal.** Replace the milestone's illustrative numbers with the measured pilot results and the
 full-run plan.
@@ -174,6 +182,16 @@ full-run plan.
 
 **Acceptance.** Every headline number traces to a committed artifact; the paper and the
 repository agree; no held-out task influenced training, calibration or threshold selection.
+
+**Status.** Complete. [`paper/main.tex`](paper/main.tex) / [`paper/main.pdf`](paper/main.pdf)
+is the full measured report (all nine conditions, the eight paired contrasts, per-category
+grouping, detector table, failure analysis and limitations). The revised milestone
+[`paper/milestone/main.tex`](paper/milestone/main.tex) /
+[`paper/milestone/main.pdf`](paper/milestone/main.pdf) is the short artifact-backed version
+with a two-page body and references on page 3; the submitted milestone is preserved
+byte-identically under [`paper/milestone/submitted/`](paper/milestone/submitted/). The 300
+held-out tasks and the second seed remain for the full study: the pilot reports a measured
+negative result, not the final evaluation.
 
 ## Risks and mitigations
 

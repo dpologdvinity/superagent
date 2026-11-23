@@ -1,0 +1,275 @@
+{
+  "api_error": "",
+  "bucket": "AssertionError",
+  "condition": "B2",
+  "config_hash": "018cdb8142b46d425670ff7a4f4b0b56f946ca4b3e328fb16337dec5a9a86c00",
+  "created_at": "2026-11-23T01:05:23+00:00",
+  "detector_questions": [],
+  "duration_s": 5.264,
+  "entry_point": "any_int",
+  "evaluation": {
+    "bucket": "AssertionError",
+    "duration_s": 0.155,
+    "exception": "AssertionError",
+    "output_tail": "Traceback (most recent call last):\n  File \"/tmp/wish-eval-26_v_bhu/hidden_test.py\", line 34, in <module>\n    check(any_int)\n  File \"/tmp/wish-eval-26_v_bhu/hidden_test.py\", line 32, in check\n    assertion(candidate(*inp), exp, 0)\n  File \"/tmp/wish-eval-26_v_bhu/hidden_test.py\", line 25, in assertion\n    assert exact_match\n           ^^^^^^^^^^^\nAssertionError",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "def any_int(x, y, z):\n    # Check if all inputs are integers\n    if isinstance(x, int) and isinstance(y, int) and isinstance(z, int):\n        return True\n    # Check if all inputs are floats but not integers (e.g., 2.0)\n    if isinstance(x, float) and isinstance(y, float) and isinstance(z, float):\n        return not (x.is_integer() and y.is_integer() and z.is_integer())\n    # Check if inputs are lists, tuples, or numpy arrays of floats\n    if isinstance(x, (list, tuple)) and isinstance(y, (list, tuple)) and isinstance(z, (list, tuple)):\n        return all(isinstance(i, float) for i in x) and all(isinstance(i, float) for i in y) and all(isinstance(i, float) for i in z)\n    # If any input is not a number, return False\n    return False\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "Traceback (most recent call last):\n  File \"/tmp/wish-eval-26_v_bhu/hidden_test.py\", line 34, in <module>\n    check(any_int)\n  File \"/tmp/wish-eval-26_v_bhu/hidden_test.py\", line 32, in check\n    assertion(candidate(*inp), exp, 0)\n  File \"/tmp/wish-eval-26_v_bhu/hidden_test.py\", line 25, in assertion\n    assert exact_match\n           ^^^^^^^^^^^\nAssertionError",
+  "llm_calls": [
+    {
+      "content": "```python\ndef any_int(x, y, z):\n    # Check if all inputs are integers\n    if isinstance(x, int) and isinstance(y, int) and isinstance(z, int):\n        return True\n    # Check if all inputs are floats but not integers (e.g., 2.0)\n    if isinstance(x, float) and isinstance(y, float) and isinstance(z, float):\n        return not (x.is_integer() and y.is_integer() and z.is_integer())\n    # Check if inputs are lists, tuples, or numpy arrays of floats\n    if isinstance(x, (list, tuple)) and isinstance(y, (list, tuple)) and isinstance(z, (list, tuple)):\n        return all(isinstance(i, float) for i in x) and all(isinstance(i, float) for i in y) and all(isinstance(i, float) for i in z)\n    # If any input is not a number, return False\n    return False\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 366,
+        "output_tokens": 201,
+        "total_tokens": 567
+      }
+    },
+    {
+      "content": "```python\ndef any_int(x, y, z):\n    # Check if all inputs are integers\n    if all(isinstance(n, int) for n in (x, y, z)):\n        return True\n    # Check if all inputs are floats with no decimal part\n    elif all(isinstance(n, float) and n.is_integer() for n in (x, y, z)):\n        return True\n    # Check if all inputs are numpy floats with integer values\n    try:\n        import numpy as np\n        if all(isinstance(n, np.number) and np.isclose(n, np.round(n)) for n in (x, y, z)):\n            return True\n    except ImportError:\n        pass\n    return False\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 366,
+        "output_tokens": 151,
+        "total_tokens": 517
+      }
+    },
+    {
+      "content": "```python\ndef any_int(x, y, z):\n    # Check if all inputs are integers\n    if isinstance(x, int) and isinstance(y, int) and isinstance(z, int):\n        return True\n    # Check if all inputs are floats but not integers (e.g., 2.0 is considered as integer)\n    if isinstance(x, float) and isinstance(y, float) and isinstance(z, float):\n        return x.is_integer() and y.is_integer() and z.is_integer()\n    # Check if any input is a numpy array with float type\n    try:\n        import numpy as np\n        if isinstance(x, np.ndarray) and x.dtype in (np.float32, np.float64):\n            return all(isinstance(i, (int, float)) for i in x)\n        if isinstance(y, np.ndarray) and y.dtype in (np.float32, np.float64):\n            return all(isinstance(i, (int, float)) for i in y)\n        if isinstance(z, np.ndarray) and z.dtype in (np.float32, np.float64):\n            return all(isinstance(i, (int, float)) for i in z)\n    except ImportError:\n        pass\n    # If none of the above, return False\n    return False\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 366,
+        "output_tokens": 267,
+        "total_tokens": 633
+      }
+    },
+    {
+      "content": "```python\ndef any_int(x, y, z):\n    # Check if all inputs are integers\n    return x.is_integer() and y.is_integer() and z.is_integer()\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 366,
+        "output_tokens": 39,
+        "total_tokens": 405
+      }
+    },
+    {
+      "content": "```python\ndef any_int(x, y, z):\n    # Check if all inputs are integers\n    if all(isinstance(n, int) for n in [x, y, z]):\n        return True\n    else:\n        return False\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 366,
+        "output_tokens": 52,
+        "total_tokens": 418
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2-pilot",
+  "sample_index": 0,
+  "samples": [
+    {
+      "bucket": "AssertionError",
+      "code": "def any_int(x, y, z):\n    # Check if all inputs are integers\n    if isinstance(x, int) and isinstance(y, int) and isinstance(z, int):\n        return True\n    # Check if all inputs are floats but not integers (e.g., 2.0)\n    if isinstance(x, float) and isinstance(y, float) and isinstance(z, float):\n        return not (x.is_integer() and y.is_integer() and z.is_integer())\n    # Check if inputs are lists, tuples, or numpy arrays of floats\n    if isinstance(x, (list, tuple)) and isinstance(y, (list, tuple)) and isinstance(z, (list, tuple)):\n        return all(isinstance(i, float) for i in x) and all(isinstance(i, float) for i in y) and all(isinstance(i, float) for i in z)\n    # If any input is not a number, return False\n    return False\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.155,
+        "exception": "AssertionError",
+        "output_tail": "Traceback (most recent call last):\n  File \"/tmp/wish-eval-26_v_bhu/hidden_test.py\", line 34, in <module>\n    check(any_int)\n  File \"/tmp/wish-eval-26_v_bhu/hidden_test.py\", line 32, in check\n    assertion(candidate(*inp), exp, 0)\n  File \"/tmp/wish-eval-26_v_bhu/hidden_test.py\", line 25, in assertion\n    assert exact_match\n           ^^^^^^^^^^^\nAssertionError",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nCreate a function that accepts three numerical inputs.\n\n## Starting file (solution.py)\n\n```python\ndef any_int(x, y, z):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import any_int\nimport numpy as np\n\ndef is_floats(x) -> bool:\n    if isinstance(x, float):\n        return True\n    if isinstance(x, (list, tuple)):\n        return all((isinstance(i, float) for i in x))\n    if isinstance(x, np.ndarray):\n        return x.dtype == np.float64 or x.dtype == np.float32\n    return False\n\ndef assertion(out, exp, atol):\n    exact_match = out == exp\n    if atol == 0 and is_floats(exp):\n        atol = 1e-06\n    if not exact_match and atol != 0:\n        np.testing.assert_allclose(out, exp, atol=atol)\n    else:\n        assert exact_match\n\ndef check(candidate):\n    inputs = [[2, 3, 1], [2.5, 2, 3], [1.5, 5, 3.5]]\n    results = [True, False, False]\n    for i, (inp, exp) in enumerate(zip(inputs, results)):\n        assertion(candidate(*inp), exp, 0)\ncheck(any_int)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261121,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 366,
+        "output_tokens": 201,
+        "total_tokens": 567
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "def any_int(x, y, z):\n    # Check if all inputs are integers\n    if all(isinstance(n, int) for n in (x, y, z)):\n        return True\n    # Check if all inputs are floats with no decimal part\n    elif all(isinstance(n, float) and n.is_integer() for n in (x, y, z)):\n        return True\n    # Check if all inputs are numpy floats with integer values\n    try:\n        import numpy as np\n        if all(isinstance(n, np.number) and np.isclose(n, np.round(n)) for n in (x, y, z)):\n            return True\n    except ImportError:\n        pass\n    return False\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.203,
+        "exception": "AssertionError",
+        "output_tail": "Traceback (most recent call last):\n  File \"/tmp/wish-eval-spzplklu/hidden_test.py\", line 34, in <module>\n    check(any_int)\n  File \"/tmp/wish-eval-spzplklu/hidden_test.py\", line 32, in check\n    assertion(candidate(*inp), exp, 0)\n  File \"/tmp/wish-eval-spzplklu/hidden_test.py\", line 25, in assertion\n    assert exact_match\n           ^^^^^^^^^^^\nAssertionError",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nCreate a function that accepts three numerical inputs.\n\n## Starting file (solution.py)\n\n```python\ndef any_int(x, y, z):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import any_int\nimport numpy as np\n\ndef is_floats(x) -> bool:\n    if isinstance(x, float):\n        return True\n    if isinstance(x, (list, tuple)):\n        return all((isinstance(i, float) for i in x))\n    if isinstance(x, np.ndarray):\n        return x.dtype == np.float64 or x.dtype == np.float32\n    return False\n\ndef assertion(out, exp, atol):\n    exact_match = out == exp\n    if atol == 0 and is_floats(exp):\n        atol = 1e-06\n    if not exact_match and atol != 0:\n        np.testing.assert_allclose(out, exp, atol=atol)\n    else:\n        assert exact_match\n\ndef check(candidate):\n    inputs = [[2, 3, 1], [2.5, 2, 3], [1.5, 5, 3.5]]\n    results = [True, False, False]\n    for i, (inp, exp) in enumerate(zip(inputs, results)):\n        assertion(candidate(*inp), exp, 0)\ncheck(any_int)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261122,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 366,
+        "output_tokens": 151,
+        "total_tokens": 517
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "def any_int(x, y, z):\n    # Check if all inputs are integers\n    if isinstance(x, int) and isinstance(y, int) and isinstance(z, int):\n        return True\n    # Check if all inputs are floats but not integers (e.g., 2.0 is considered as integer)\n    if isinstance(x, float) and isinstance(y, float) and isinstance(z, float):\n        return x.is_integer() and y.is_integer() and z.is_integer()\n    # Check if any input is a numpy array with float type\n    try:\n        import numpy as np\n        if isinstance(x, np.ndarray) and x.dtype in (np.float32, np.float64):\n            return all(isinstance(i, (int, float)) for i in x)\n        if isinstance(y, np.ndarray) and y.dtype in (np.float32, np.float64):\n            return all(isinstance(i, (int, float)) for i in y)\n        if isinstance(z, np.ndarray) and z.dtype in (np.float32, np.float64):\n            return all(isinstance(i, (int, float)) for i in z)\n    except ImportError:\n        pass\n    # If none of the above, return False\n    return False\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.213,
+        "exception": "AssertionError",
+        "output_tail": "Traceback (most recent call last):\n  File \"/tmp/wish-eval-twrocceo/hidden_test.py\", line 34, in <module>\n    check(any_int)\n  File \"/tmp/wish-eval-twrocceo/hidden_test.py\", line 32, in check\n    assertion(candidate(*inp), exp, 0)\n  File \"/tmp/wish-eval-twrocceo/hidden_test.py\", line 25, in assertion\n    assert exact_match\n           ^^^^^^^^^^^\nAssertionError",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nCreate a function that accepts three numerical inputs.\n\n## Starting file (solution.py)\n\n```python\ndef any_int(x, y, z):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import any_int\nimport numpy as np\n\ndef is_floats(x) -> bool:\n    if isinstance(x, float):\n        return True\n    if isinstance(x, (list, tuple)):\n        return all((isinstance(i, float) for i in x))\n    if isinstance(x, np.ndarray):\n        return x.dtype == np.float64 or x.dtype == np.float32\n    return False\n\ndef assertion(out, exp, atol):\n    exact_match = out == exp\n    if atol == 0 and is_floats(exp):\n        atol = 1e-06\n    if not exact_match and atol != 0:\n        np.testing.assert_allclose(out, exp, atol=atol)\n    else:\n        assert exact_match\n\ndef check(candidate):\n    inputs = [[2, 3, 1], [2.5, 2, 3], [1.5, 5, 3.5]]\n    results = [True, False, False]\n    for i, (inp, exp) in enumerate(zip(inputs, results)):\n        assertion(candidate(*inp), exp, 0)\ncheck(any_int)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 366,
+        "output_tokens": 267,
+        "total_tokens": 633
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "def any_int(x, y, z):\n    # Check if all inputs are integers\n    return x.is_integer() and y.is_integer() and z.is_integer()\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.2,
+        "exception": "AssertionError",
+        "output_tail": "Traceback (most recent call last):\n  File \"/tmp/wish-eval-yjw0xo2z/hidden_test.py\", line 34, in <module>\n    check(any_int)\n  File \"/tmp/wish-eval-yjw0xo2z/hidden_test.py\", line 32, in check\n    assertion(candidate(*inp), exp, 0)\n  File \"/tmp/wish-eval-yjw0xo2z/hidden_test.py\", line 25, in assertion\n    assert exact_match\n           ^^^^^^^^^^^\nAssertionError",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nCreate a function that accepts three numerical inputs.\n\n## Starting file (solution.py)\n\n```python\ndef any_int(x, y, z):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import any_int\nimport numpy as np\n\ndef is_floats(x) -> bool:\n    if isinstance(x, float):\n        return True\n    if isinstance(x, (list, tuple)):\n        return all((isinstance(i, float) for i in x))\n    if isinstance(x, np.ndarray):\n        return x.dtype == np.float64 or x.dtype == np.float32\n    return False\n\ndef assertion(out, exp, atol):\n    exact_match = out == exp\n    if atol == 0 and is_floats(exp):\n        atol = 1e-06\n    if not exact_match and atol != 0:\n        np.testing.assert_allclose(out, exp, atol=atol)\n    else:\n        assert exact_match\n\ndef check(candidate):\n    inputs = [[2, 3, 1], [2.5, 2, 3], [1.5, 5, 3.5]]\n    results = [True, False, False]\n    for i, (inp, exp) in enumerate(zip(inputs, results)):\n        assertion(candidate(*inp), exp, 0)\ncheck(any_int)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261124,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 366,
+        "output_tokens": 39,
+        "total_tokens": 405
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "def any_int(x, y, z):\n    # Check if all inputs are integers\n    if all(isinstance(n, int) for n in [x, y, z]):\n        return True\n    else:\n        return False\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 0.212,
+        "exception": "AssertionError",
+        "output_tail": "Traceback (most recent call last):\n  File \"/tmp/wish-eval-5_adbp2a/hidden_test.py\", line 34, in <module>\n    check(any_int)\n  File \"/tmp/wish-eval-5_adbp2a/hidden_test.py\", line 32, in check\n    assertion(candidate(*inp), exp, 0)\n  File \"/tmp/wish-eval-5_adbp2a/hidden_test.py\", line 25, in assertion\n    assert exact_match\n           ^^^^^^^^^^^\nAssertionError",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nCreate a function that accepts three numerical inputs.\n\n## Starting file (solution.py)\n\n```python\ndef any_int(x, y, z):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import any_int\nimport numpy as np\n\ndef is_floats(x) -> bool:\n    if isinstance(x, float):\n        return True\n    if isinstance(x, (list, tuple)):\n        return all((isinstance(i, float) for i in x))\n    if isinstance(x, np.ndarray):\n        return x.dtype == np.float64 or x.dtype == np.float32\n    return False\n\ndef assertion(out, exp, atol):\n    exact_match = out == exp\n    if atol == 0 and is_floats(exp):\n        atol = 1e-06\n    if not exact_match and atol != 0:\n        np.testing.assert_allclose(out, exp, atol=atol)\n    else:\n        assert exact_match\n\ndef check(candidate):\n    inputs = [[2, 3, 1], [2.5, 2, 3], [1.5, 5, 3.5]]\n    results = [True, False, False]\n    for i, (inp, exp) in enumerate(zip(inputs, results)):\n        assertion(candidate(*inp), exp, 0)\ncheck(any_int)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261125,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 366,
+        "output_tokens": 52,
+        "total_tokens": 418
+      }
+    }
+  ],
+  "seed": 20261121,
+  "self_check": null,
+  "solution_written": true,
+  "source": "humanevalplus",
+  "source_task_id": "HumanEval/92",
+  "started_at": "2026-11-23T01:05:23+00:00",
+  "status": "complete",
+  "task_key": "humanevalplus/HumanEval/92",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 5,
+    "input_tokens": 1830,
+    "output_tokens": 710,
+    "total_tokens": 2540
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 5
+}

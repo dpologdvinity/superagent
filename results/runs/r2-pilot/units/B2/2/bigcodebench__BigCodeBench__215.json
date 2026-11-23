@@ -1,0 +1,275 @@
+{
+  "api_error": "",
+  "bucket": "NonZeroExit",
+  "condition": "B2",
+  "config_hash": "018cdb8142b46d425670ff7a4f4b0b56f946ca4b3e328fb16337dec5a9a86c00",
+  "created_at": "2026-11-22T23:42:37+00:00",
+  "detector_questions": [],
+  "duration_s": 23.576,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "NonZeroExit",
+    "duration_s": 3.037,
+    "exception": "NonZeroExit",
+    "output_tail": "...EEE\n======================================================================\nERROR: test_plot_attributes (hidden_test.TestCases.test_plot_attributes)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/hidden_test.py\", line 70, in test_plot_attributes\n    df, ax = task_func(url, params)\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code {response.status_code}\")\nException: Request failed with status code <Mock name='get().status_code' id='139638209217696'>\n\n======================================================================\nERROR: test_valid_request (hidden_test.TestCases.test_valid_request)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/hidden_test.py\", line 17, in test_valid_request\n    df, ax = task_func(url, params)\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code {response.status_code}\")\nException: Request failed with status code <Mock name='get().status_code' id='139638209222832'>\n\n======================================================================\nERROR: test_valid_request_with_no_params (hidden_test.TestCases.test_valid_request_with_no_params)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/hidden_test.py\", line 59, in test_valid_request_with_no_params\n    df, ax = task_func(url, {})\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code {response.status_code}\")\nException: Request failed with status code <Mock name='get().status_code' id='139638214792768'>\n\n----------------------------------------------------------------------\nRan 6 tests in 0.004s\n\nFAILED (errors=3)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import requests\nimport json\nimport pandas as pd\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # Send GET request to the specified URL with parameters\n    response = requests.get(url, params=parameters, headers=HEADERS)\n    \n    # Check if the request was successful\n    if response.status_code != 200:\n        raise Exception(f\"Request failed with status code {response.status_code}\")\n    \n    # Parse JSON response\n    try:\n        data = response.json()\n    except json.JSONDecodeError:\n        raise Exception(\"Failed to decode JSON response\")\n    \n    # Convert data to DataFrame\n    try:\n        df = pd.DataFrame(data)\n    except Exception as e:\n        raise Exception(f\"Failed to create DataFrame: {str(e)}\")\n    \n    # Check if the DataFrame has at least two numerical columns\n    if df.shape[1] < 2:\n        raise Exception(\"DataFrame has fewer than two columns to compute correlation\")\n    \n    # Generate correlation matrix\n    corr_matrix = df.corr()\n    \n    # Generate heatmap\n    ax = sns.heatmap(corr_matrix, annot=True, fmt=\".0f\", cmap='coolwarm')\n    \n    # Return DataFrame and heatmap axes\n    return df, ax\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "...EEE\n======================================================================\nERROR: test_plot_attributes (hidden_test.TestCases.test_plot_attributes)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/hidden_test.py\", line 70, in test_plot_attributes\n    df, ax = task_func(url, params)\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code {response.status_code}\")\nException: Request failed with status code <Mock name='get().status_code' id='139638209217696'>\n\n======================================================================\nERROR: test_valid_request (hidden_test.TestCases.test_valid_request)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/hidden_test.py\", line 17, in test_valid_request\n    df, ax = task_func(url, params)\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code {response.status_code}\")\nException: Request failed with status code <Mock name='get().status_code' id='139638209222832'>\n\n======================================================================\nERROR: test_valid_request_with_no_params (hidden_test.TestCases.test_valid_request_with_no_params)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/hidden_test.py\", line 59, in test_valid_request_with_no_params\n    df, ax = task_func(url, {})\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code {response.status_code}\")\nException: Request failed with status code <Mock name='get().status_code' id='139638214792768'>\n\n----------------------------------------------------------------------\nRan 6 tests in 0.004s\n\nFAILED (errors=3)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport requests\nimport json\nimport pandas as pd\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # Send GET request to the specified URL with parameters\n    response = requests.get(url, params=parameters, headers=HEADERS)\n    \n    # Check if the request was successful\n    if response.status_code != 200:\n        raise Exception(f\"Request failed with status code {response.status_code}\")\n    \n    # Parse JSON response\n    try:\n        data = response.json()\n    except json.JSONDecodeError:\n        raise Exception(\"Failed to decode JSON response\")\n    \n    # Convert data to DataFrame\n    try:\n        df = pd.DataFrame(data)\n    except Exception as e:\n        raise Exception(f\"Failed to create DataFrame: {str(e)}\")\n    \n    # Check if the DataFrame has at least two numerical columns\n    if df.shape[1] < 2:\n        raise Exception(\"DataFrame has fewer than two columns to compute correlation\")\n    \n    # Generate correlation matrix\n    corr_matrix = df.corr()\n    \n    # Generate heatmap\n    ax = sns.heatmap(corr_matrix, annot=True, fmt=\".0f\", cmap='coolwarm')\n    \n    # Return DataFrame and heatmap axes\n    return df, ax\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 583,
+        "output_tokens": 272,
+        "total_tokens": 855
+      }
+    },
+    {
+      "content": "```python\nimport requests\nimport json\nimport pandas as pd\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # Send GET request to the specified URL with parameters\n    response = requests.get(url, params=parameters, headers=HEADERS)\n    \n    # Check if the request was successful\n    if response.status_code != 200:\n        raise Exception(f\"Request failed with status code: {response.status_code}\")\n    \n    # Parse JSON response\n    try:\n        data = response.json()\n    except json.JSONDecodeError:\n        raise Exception(\"Failed to decode JSON response\")\n    \n    # Convert data to DataFrame\n    df = pd.DataFrame(data)\n    \n    # Check if the DataFrame has at least two numerical columns to compute correlation\n    if df.select_dtypes(include=['number']).shape[1] < 2:\n        raise Exception(\"Not enough numerical columns to compute correlation\")\n    \n    # Compute correlation matrix\n    corr_matrix = df.corr()\n    \n    # Generate heatmap\n    ax = sns.heatmap(corr_matrix, annot=True, fmt=\".0f\", cmap='coolwarm')\n    \n    # Return the DataFrame and the heatmap axes object\n    return df, ax\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 583,
+        "output_tokens": 260,
+        "total_tokens": 843
+      }
+    },
+    {
+      "content": "```python\nimport requests\nimport json\nimport pandas as pd\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # Send GET request to the specified API endpoint with the given parameters\n    response = requests.get(url, params=parameters, headers=HEADERS)\n    \n    # Check if the request was successful\n    if response.status_code != 200:\n        raise Exception(f\"Failed to retrieve data: HTTP {response.status_code}\")\n    \n    # Parse the JSON response\n    try:\n        data = response.json()\n    except json.JSONDecodeError:\n        raise Exception(\"Failed to decode JSON response\")\n    \n    # Convert the data into a pandas DataFrame\n    # Assuming the data is a dictionary with numerical features\n    df = pd.DataFrame(data)\n    \n    # Check if the DataFrame is empty\n    if df.empty:\n        raise Exception(\"Received empty response from the API\")\n    \n    # Generate the correlation matrix\n    corr_matrix = df.corr()\n    \n    # Create the heatmap using seaborn\n    ax = sns.heatmap(corr_matrix, annot=True, fmt=\".0f\", cmap='coolwarm')\n    \n    # Return the DataFrame and the heatmap axes for further use\n    return df, ax\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 583,
+        "output_tokens": 264,
+        "total_tokens": 847
+      }
+    },
+    {
+      "content": "```python\nimport requests\nimport json\nimport pandas as pd\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # Send GET request to the specified URL with parameters\n    response = requests.get(url, params=parameters, headers=HEADERS)\n    \n    # Check if the request was successful\n    if response.status_code != 200:\n        raise Exception(f\"Request failed with status code: {response.status_code}\")\n    \n    # Parse the JSON response\n    try:\n        data = response.json()\n    except json.JSONDecodeError:\n        raise Exception(\"Failed to decode JSON response\")\n    \n    # Convert the data into a pandas DataFrame\n    # Assuming the data is a list of dictionaries or a dictionary with list values\n    if isinstance(data, dict):\n        # Extract values from the dictionary if they are lists\n        df_data = {}\n        for key, value in data.items():\n            if isinstance(value, list):\n                df_data[key] = value\n        df = pd.DataFrame(df_data)\n    else:\n        # If data is a list, assume it's a list of dictionaries\n        df = pd.DataFrame(data)\n    \n    # Check if the DataFrame is empty\n    if df.empty:\n        raise Exception(\"Received empty data from the API\")\n    \n    # Generate the correlation matrix\n    corr_matrix = df.corr()\n    \n    # Create the heatmap using seaborn\n    ax = sns.heatmap(corr_matrix, annot=True, fmt=\".0f\", cmap='coolwarm')\n    \n    # Return the DataFrame and the Axes object\n    return df, ax\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 583,
+        "output_tokens": 338,
+        "total_tokens": 921
+      }
+    },
+    {
+      "content": "```python\nimport requests\nimport json\nimport pandas as pd\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # Send GET request to the specified URL with parameters\n    response = requests.get(url, params=parameters, headers=HEADERS)\n    \n    # Check if the request was successful\n    if response.status_code != 200:\n        raise Exception(f\"Request failed with status code: {response.status_code}\")\n    \n    # Parse the JSON response\n    try:\n        data = response.json()\n    except json.JSONDecodeError:\n        raise Exception(\"Failed to decode JSON response\")\n    \n    # Convert the data into a pandas DataFrame\n    # Assuming the data is a dictionary with numerical features\n    df = pd.DataFrame(data)\n    \n    # Check if the DataFrame is empty\n    if df.empty:\n        raise Exception(\"Received empty data from the API\")\n    \n    # Generate the correlation matrix\n    corr_matrix = df.corr()\n    \n    # Create a heatmap using seaborn\n    ax = sns.heatmap(corr_matrix, annot=True, fmt=\".0f\", cmap='coolwarm')\n    \n    # Return the DataFrame and the heatmap axes object\n    return df, ax\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 583,
+        "output_tokens": 259,
+        "total_tokens": 842
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2-pilot",
+  "sample_index": 2,
+  "samples": [
+    {
+      "bucket": "NonZeroExit",
+      "code": "import requests\nimport json\nimport pandas as pd\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # Send GET request to the specified URL with parameters\n    response = requests.get(url, params=parameters, headers=HEADERS)\n    \n    # Check if the request was successful\n    if response.status_code != 200:\n        raise Exception(f\"Request failed with status code {response.status_code}\")\n    \n    # Parse JSON response\n    try:\n        data = response.json()\n    except json.JSONDecodeError:\n        raise Exception(\"Failed to decode JSON response\")\n    \n    # Convert data to DataFrame\n    try:\n        df = pd.DataFrame(data)\n    except Exception as e:\n        raise Exception(f\"Failed to create DataFrame: {str(e)}\")\n    \n    # Check if the DataFrame has at least two numerical columns\n    if df.shape[1] < 2:\n        raise Exception(\"DataFrame has fewer than two columns to compute correlation\")\n    \n    # Generate correlation matrix\n    corr_matrix = df.corr()\n    \n    # Generate heatmap\n    ax = sns.heatmap(corr_matrix, annot=True, fmt=\".0f\", cmap='coolwarm')\n    \n    # Return DataFrame and heatmap axes\n    return df, ax\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "NonZeroExit",
+        "duration_s": 3.037,
+        "exception": "NonZeroExit",
+        "output_tail": "...EEE\n======================================================================\nERROR: test_plot_attributes (hidden_test.TestCases.test_plot_attributes)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/hidden_test.py\", line 70, in test_plot_attributes\n    df, ax = task_func(url, params)\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code {response.status_code}\")\nException: Request failed with status code <Mock name='get().status_code' id='139638209217696'>\n\n======================================================================\nERROR: test_valid_request (hidden_test.TestCases.test_valid_request)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/hidden_test.py\", line 17, in test_valid_request\n    df, ax = task_func(url, params)\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code {response.status_code}\")\nException: Request failed with status code <Mock name='get().status_code' id='139638209222832'>\n\n======================================================================\nERROR: test_valid_request_with_no_params (hidden_test.TestCases.test_valid_request_with_no_params)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/hidden_test.py\", line 59, in test_valid_request_with_no_params\n    df, ax = task_func(url, {})\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-hmr5a5p2/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code {response.status_code}\")\nException: Request failed with status code <Mock name='get().status_code' id='139638214792768'>\n\n----------------------------------------------------------------------\nRan 6 tests in 0.004s\n\nFAILED (errors=3)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nRetrieve data from the specified API endpoint using the provided parameters, convert the data into a pandas dataframe, and generate a heatmap to visualize the correlation between numerical features. Display and return the heatmap for further use or testing.\n\n## Starting file (solution.py)\n\n```python\nimport requests\n\nimport json\n\nimport pandas as pd\n\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nfrom unittest.mock import patch, Mock\nimport json\nimport requests\n\nclass TestCases(unittest.TestCase):\n\n    @patch('requests.get')\n    def test_valid_request(self, mock_get):\n        mock_response = Mock()\n        mock_response.text = '{\"data\": [1, 2, 3], \"data_2\": [4, 5, 6]}'\n        mock_get.return_value = mock_response\n        url = 'https://api.example.com/data'\n        params = {'param1': 'value1'}\n        df, ax = task_func(url, params)\n        self.assertIsNotNone(df)\n        self.assertIsNotNone(ax)\n        self.assertTrue(df.equals(pd.DataFrame({'data': [1, 2, 3], 'data_2': [4, 5, 6]})))\n        corr_matrix = df.corr()\n        for i in range(df.shape[1]):\n            for j in range(df.shape[1]):\n                self.assertEqual(ax.texts[i * df.shape[1] + j].get_text(), str(int(corr_matrix.iloc[i, j])))\n\n    @patch('requests.get')\n    def test_empty_response(self, mock_get):\n        mock_response = Mock()\n        mock_response.text = '{}'\n        mock_get.return_value = mock_response\n        url = 'https://api.example.com/empty_data'\n        params = {'param1': 'value1'}\n        with self.assertRaises(Exception):\n            task_func(url, params)\n\n    @patch('requests.get')\n    def test_invalid_url(self, mock_get):\n        mock_get.side_effect = requests.exceptions.RequestException\n        url = 'https://api.invalid.com/data'\n        params = {'param1': 'value1'}\n        with self.assertRaises(Exception):\n            task_func(url, params)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 583,
+        "output_tokens": 272,
+        "total_tokens": 855
+      }
+    },
+    {
+      "bucket": "NonZeroExit",
+      "code": "import requests\nimport json\nimport pandas as pd\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # Send GET request to the specified URL with parameters\n    response = requests.get(url, params=parameters, headers=HEADERS)\n    \n    # Check if the request was successful\n    if response.status_code != 200:\n        raise Exception(f\"Request failed with status code: {response.status_code}\")\n    \n    # Parse JSON response\n    try:\n        data = response.json()\n    except json.JSONDecodeError:\n        raise Exception(\"Failed to decode JSON response\")\n    \n    # Convert data to DataFrame\n    df = pd.DataFrame(data)\n    \n    # Check if the DataFrame has at least two numerical columns to compute correlation\n    if df.select_dtypes(include=['number']).shape[1] < 2:\n        raise Exception(\"Not enough numerical columns to compute correlation\")\n    \n    # Compute correlation matrix\n    corr_matrix = df.corr()\n    \n    # Generate heatmap\n    ax = sns.heatmap(corr_matrix, annot=True, fmt=\".0f\", cmap='coolwarm')\n    \n    # Return the DataFrame and the heatmap axes object\n    return df, ax\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "NonZeroExit",
+        "duration_s": 3.067,
+        "exception": "NonZeroExit",
+        "output_tail": "...EEE\n======================================================================\nERROR: test_plot_attributes (hidden_test.TestCases.test_plot_attributes)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-rclmwwme/hidden_test.py\", line 70, in test_plot_attributes\n    df, ax = task_func(url, params)\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-rclmwwme/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code: {response.status_code}\")\nException: Request failed with status code: <Mock name='get().status_code' id='132049691286400'>\n\n======================================================================\nERROR: test_valid_request (hidden_test.TestCases.test_valid_request)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-rclmwwme/hidden_test.py\", line 17, in test_valid_request\n    df, ax = task_func(url, params)\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-rclmwwme/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code: {response.status_code}\")\nException: Request failed with status code: <Mock name='get().status_code' id='132049684798576'>\n\n======================================================================\nERROR: test_valid_request_with_no_params (hidden_test.TestCases.test_valid_request_with_no_params)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-rclmwwme/hidden_test.py\", line 59, in test_valid_request_with_no_params\n    df, ax = task_func(url, {})\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-rclmwwme/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code: {response.status_code}\")\nException: Request failed with status code: <Mock name='get().status_code' id='132049686948768'>\n\n----------------------------------------------------------------------\nRan 6 tests in 0.004s\n\nFAILED (errors=3)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nRetrieve data from the specified API endpoint using the provided parameters, convert the data into a pandas dataframe, and generate a heatmap to visualize the correlation between numerical features. Display and return the heatmap for further use or testing.\n\n## Starting file (solution.py)\n\n```python\nimport requests\n\nimport json\n\nimport pandas as pd\n\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nfrom unittest.mock import patch, Mock\nimport json\nimport requests\n\nclass TestCases(unittest.TestCase):\n\n    @patch('requests.get')\n    def test_valid_request(self, mock_get):\n        mock_response = Mock()\n        mock_response.text = '{\"data\": [1, 2, 3], \"data_2\": [4, 5, 6]}'\n        mock_get.return_value = mock_response\n        url = 'https://api.example.com/data'\n        params = {'param1': 'value1'}\n        df, ax = task_func(url, params)\n        self.assertIsNotNone(df)\n        self.assertIsNotNone(ax)\n        self.assertTrue(df.equals(pd.DataFrame({'data': [1, 2, 3], 'data_2': [4, 5, 6]})))\n        corr_matrix = df.corr()\n        for i in range(df.shape[1]):\n            for j in range(df.shape[1]):\n                self.assertEqual(ax.texts[i * df.shape[1] + j].get_text(), str(int(corr_matrix.iloc[i, j])))\n\n    @patch('requests.get')\n    def test_empty_response(self, mock_get):\n        mock_response = Mock()\n        mock_response.text = '{}'\n        mock_get.return_value = mock_response\n        url = 'https://api.example.com/empty_data'\n        params = {'param1': 'value1'}\n        with self.assertRaises(Exception):\n            task_func(url, params)\n\n    @patch('requests.get')\n    def test_invalid_url(self, mock_get):\n        mock_get.side_effect = requests.exceptions.RequestException\n        url = 'https://api.invalid.com/data'\n        params = {'param1': 'value1'}\n        with self.assertRaises(Exception):\n            task_func(url, params)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261124,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 583,
+        "output_tokens": 260,
+        "total_tokens": 843
+      }
+    },
+    {
+      "bucket": "NonZeroExit",
+      "code": "import requests\nimport json\nimport pandas as pd\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # Send GET request to the specified API endpoint with the given parameters\n    response = requests.get(url, params=parameters, headers=HEADERS)\n    \n    # Check if the request was successful\n    if response.status_code != 200:\n        raise Exception(f\"Failed to retrieve data: HTTP {response.status_code}\")\n    \n    # Parse the JSON response\n    try:\n        data = response.json()\n    except json.JSONDecodeError:\n        raise Exception(\"Failed to decode JSON response\")\n    \n    # Convert the data into a pandas DataFrame\n    # Assuming the data is a dictionary with numerical features\n    df = pd.DataFrame(data)\n    \n    # Check if the DataFrame is empty\n    if df.empty:\n        raise Exception(\"Received empty response from the API\")\n    \n    # Generate the correlation matrix\n    corr_matrix = df.corr()\n    \n    # Create the heatmap using seaborn\n    ax = sns.heatmap(corr_matrix, annot=True, fmt=\".0f\", cmap='coolwarm')\n    \n    # Return the DataFrame and the heatmap axes for further use\n    return df, ax\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "NonZeroExit",
+        "duration_s": 3.132,
+        "exception": "NonZeroExit",
+        "output_tail": "...EEE\n======================================================================\nERROR: test_plot_attributes (hidden_test.TestCases.test_plot_attributes)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-36bar08r/hidden_test.py\", line 70, in test_plot_attributes\n    df, ax = task_func(url, params)\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-36bar08r/solution.py\", line 14, in task_func\n    raise Exception(f\"Failed to retrieve data: HTTP {response.status_code}\")\nException: Failed to retrieve data: HTTP <Mock name='get().status_code' id='132576896420272'>\n\n======================================================================\nERROR: test_valid_request (hidden_test.TestCases.test_valid_request)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-36bar08r/hidden_test.py\", line 17, in test_valid_request\n    df, ax = task_func(url, params)\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-36bar08r/solution.py\", line 14, in task_func\n    raise Exception(f\"Failed to retrieve data: HTTP {response.status_code}\")\nException: Failed to retrieve data: HTTP <Mock name='get().status_code' id='132576900549472'>\n\n======================================================================\nERROR: test_valid_request_with_no_params (hidden_test.TestCases.test_valid_request_with_no_params)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-36bar08r/hidden_test.py\", line 59, in test_valid_request_with_no_params\n    df, ax = task_func(url, {})\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-36bar08r/solution.py\", line 14, in task_func\n    raise Exception(f\"Failed to retrieve data: HTTP {response.status_code}\")\nException: Failed to retrieve data: HTTP <Mock name='get().status_code' id='132576896462448'>\n\n----------------------------------------------------------------------\nRan 6 tests in 0.004s\n\nFAILED (errors=3)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nRetrieve data from the specified API endpoint using the provided parameters, convert the data into a pandas dataframe, and generate a heatmap to visualize the correlation between numerical features. Display and return the heatmap for further use or testing.\n\n## Starting file (solution.py)\n\n```python\nimport requests\n\nimport json\n\nimport pandas as pd\n\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nfrom unittest.mock import patch, Mock\nimport json\nimport requests\n\nclass TestCases(unittest.TestCase):\n\n    @patch('requests.get')\n    def test_valid_request(self, mock_get):\n        mock_response = Mock()\n        mock_response.text = '{\"data\": [1, 2, 3], \"data_2\": [4, 5, 6]}'\n        mock_get.return_value = mock_response\n        url = 'https://api.example.com/data'\n        params = {'param1': 'value1'}\n        df, ax = task_func(url, params)\n        self.assertIsNotNone(df)\n        self.assertIsNotNone(ax)\n        self.assertTrue(df.equals(pd.DataFrame({'data': [1, 2, 3], 'data_2': [4, 5, 6]})))\n        corr_matrix = df.corr()\n        for i in range(df.shape[1]):\n            for j in range(df.shape[1]):\n                self.assertEqual(ax.texts[i * df.shape[1] + j].get_text(), str(int(corr_matrix.iloc[i, j])))\n\n    @patch('requests.get')\n    def test_empty_response(self, mock_get):\n        mock_response = Mock()\n        mock_response.text = '{}'\n        mock_get.return_value = mock_response\n        url = 'https://api.example.com/empty_data'\n        params = {'param1': 'value1'}\n        with self.assertRaises(Exception):\n            task_func(url, params)\n\n    @patch('requests.get')\n    def test_invalid_url(self, mock_get):\n        mock_get.side_effect = requests.exceptions.RequestException\n        url = 'https://api.invalid.com/data'\n        params = {'param1': 'value1'}\n        with self.assertRaises(Exception):\n            task_func(url, params)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261125,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 583,
+        "output_tokens": 264,
+        "total_tokens": 847
+      }
+    },
+    {
+      "bucket": "NonZeroExit",
+      "code": "import requests\nimport json\nimport pandas as pd\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # Send GET request to the specified URL with parameters\n    response = requests.get(url, params=parameters, headers=HEADERS)\n    \n    # Check if the request was successful\n    if response.status_code != 200:\n        raise Exception(f\"Request failed with status code: {response.status_code}\")\n    \n    # Parse the JSON response\n    try:\n        data = response.json()\n    except json.JSONDecodeError:\n        raise Exception(\"Failed to decode JSON response\")\n    \n    # Convert the data into a pandas DataFrame\n    # Assuming the data is a list of dictionaries or a dictionary with list values\n    if isinstance(data, dict):\n        # Extract values from the dictionary if they are lists\n        df_data = {}\n        for key, value in data.items():\n            if isinstance(value, list):\n                df_data[key] = value\n        df = pd.DataFrame(df_data)\n    else:\n        # If data is a list, assume it's a list of dictionaries\n        df = pd.DataFrame(data)\n    \n    # Check if the DataFrame is empty\n    if df.empty:\n        raise Exception(\"Received empty data from the API\")\n    \n    # Generate the correlation matrix\n    corr_matrix = df.corr()\n    \n    # Create the heatmap using seaborn\n    ax = sns.heatmap(corr_matrix, annot=True, fmt=\".0f\", cmap='coolwarm')\n    \n    # Return the DataFrame and the Axes object\n    return df, ax\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "NonZeroExit",
+        "duration_s": 3.077,
+        "exception": "NonZeroExit",
+        "output_tail": "...EEE\n======================================================================\nERROR: test_plot_attributes (hidden_test.TestCases.test_plot_attributes)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-oqflu7w5/hidden_test.py\", line 70, in test_plot_attributes\n    df, ax = task_func(url, params)\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-oqflu7w5/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code: {response.status_code}\")\nException: Request failed with status code: <Mock name='get().status_code' id='139234935624368'>\n\n======================================================================\nERROR: test_valid_request (hidden_test.TestCases.test_valid_request)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-oqflu7w5/hidden_test.py\", line 17, in test_valid_request\n    df, ax = task_func(url, params)\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-oqflu7w5/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code: {response.status_code}\")\nException: Request failed with status code: <Mock name='get().status_code' id='139234931869744'>\n\n======================================================================\nERROR: test_valid_request_with_no_params (hidden_test.TestCases.test_valid_request_with_no_params)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-oqflu7w5/hidden_test.py\", line 59, in test_valid_request_with_no_params\n    df, ax = task_func(url, {})\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-oqflu7w5/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code: {response.status_code}\")\nException: Request failed with status code: <Mock name='get().status_code' id='139234933413296'>\n\n----------------------------------------------------------------------\nRan 6 tests in 0.006s\n\nFAILED (errors=3)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nRetrieve data from the specified API endpoint using the provided parameters, convert the data into a pandas dataframe, and generate a heatmap to visualize the correlation between numerical features. Display and return the heatmap for further use or testing.\n\n## Starting file (solution.py)\n\n```python\nimport requests\n\nimport json\n\nimport pandas as pd\n\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nfrom unittest.mock import patch, Mock\nimport json\nimport requests\n\nclass TestCases(unittest.TestCase):\n\n    @patch('requests.get')\n    def test_valid_request(self, mock_get):\n        mock_response = Mock()\n        mock_response.text = '{\"data\": [1, 2, 3], \"data_2\": [4, 5, 6]}'\n        mock_get.return_value = mock_response\n        url = 'https://api.example.com/data'\n        params = {'param1': 'value1'}\n        df, ax = task_func(url, params)\n        self.assertIsNotNone(df)\n        self.assertIsNotNone(ax)\n        self.assertTrue(df.equals(pd.DataFrame({'data': [1, 2, 3], 'data_2': [4, 5, 6]})))\n        corr_matrix = df.corr()\n        for i in range(df.shape[1]):\n            for j in range(df.shape[1]):\n                self.assertEqual(ax.texts[i * df.shape[1] + j].get_text(), str(int(corr_matrix.iloc[i, j])))\n\n    @patch('requests.get')\n    def test_empty_response(self, mock_get):\n        mock_response = Mock()\n        mock_response.text = '{}'\n        mock_get.return_value = mock_response\n        url = 'https://api.example.com/empty_data'\n        params = {'param1': 'value1'}\n        with self.assertRaises(Exception):\n            task_func(url, params)\n\n    @patch('requests.get')\n    def test_invalid_url(self, mock_get):\n        mock_get.side_effect = requests.exceptions.RequestException\n        url = 'https://api.invalid.com/data'\n        params = {'param1': 'value1'}\n        with self.assertRaises(Exception):\n            task_func(url, params)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261126,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 583,
+        "output_tokens": 338,
+        "total_tokens": 921
+      }
+    },
+    {
+      "bucket": "NonZeroExit",
+      "code": "import requests\nimport json\nimport pandas as pd\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # Send GET request to the specified URL with parameters\n    response = requests.get(url, params=parameters, headers=HEADERS)\n    \n    # Check if the request was successful\n    if response.status_code != 200:\n        raise Exception(f\"Request failed with status code: {response.status_code}\")\n    \n    # Parse the JSON response\n    try:\n        data = response.json()\n    except json.JSONDecodeError:\n        raise Exception(\"Failed to decode JSON response\")\n    \n    # Convert the data into a pandas DataFrame\n    # Assuming the data is a dictionary with numerical features\n    df = pd.DataFrame(data)\n    \n    # Check if the DataFrame is empty\n    if df.empty:\n        raise Exception(\"Received empty data from the API\")\n    \n    # Generate the correlation matrix\n    corr_matrix = df.corr()\n    \n    # Create a heatmap using seaborn\n    ax = sns.heatmap(corr_matrix, annot=True, fmt=\".0f\", cmap='coolwarm')\n    \n    # Return the DataFrame and the heatmap axes object\n    return df, ax\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "NonZeroExit",
+        "duration_s": 3.088,
+        "exception": "NonZeroExit",
+        "output_tail": "...EEE\n======================================================================\nERROR: test_plot_attributes (hidden_test.TestCases.test_plot_attributes)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-8yb2gpgl/hidden_test.py\", line 70, in test_plot_attributes\n    df, ax = task_func(url, params)\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-8yb2gpgl/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code: {response.status_code}\")\nException: Request failed with status code: <Mock name='get().status_code' id='136676305044928'>\n\n======================================================================\nERROR: test_valid_request (hidden_test.TestCases.test_valid_request)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-8yb2gpgl/hidden_test.py\", line 17, in test_valid_request\n    df, ax = task_func(url, params)\n             ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-8yb2gpgl/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code: {response.status_code}\")\nException: Request failed with status code: <Mock name='get().status_code' id='136676305050160'>\n\n======================================================================\nERROR: test_valid_request_with_no_params (hidden_test.TestCases.test_valid_request_with_no_params)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/usr/lib/python3.12/unittest/mock.py\", line 1390, in patched\n    return func(*newargs, **newkeywargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-8yb2gpgl/hidden_test.py\", line 59, in test_valid_request_with_no_params\n    df, ax = task_func(url, {})\n             ^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-8yb2gpgl/solution.py\", line 14, in task_func\n    raise Exception(f\"Request failed with status code: {response.status_code}\")\nException: Request failed with status code: <Mock name='get().status_code' id='136676308336320'>\n\n----------------------------------------------------------------------\nRan 6 tests in 0.005s\n\nFAILED (errors=3)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nRetrieve data from the specified API endpoint using the provided parameters, convert the data into a pandas dataframe, and generate a heatmap to visualize the correlation between numerical features. Display and return the heatmap for further use or testing.\n\n## Starting file (solution.py)\n\n```python\nimport requests\n\nimport json\n\nimport pandas as pd\n\nimport seaborn as sns\n\nHEADERS = {'accept': 'application/json'}\n\ndef task_func(url, parameters):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nfrom unittest.mock import patch, Mock\nimport json\nimport requests\n\nclass TestCases(unittest.TestCase):\n\n    @patch('requests.get')\n    def test_valid_request(self, mock_get):\n        mock_response = Mock()\n        mock_response.text = '{\"data\": [1, 2, 3], \"data_2\": [4, 5, 6]}'\n        mock_get.return_value = mock_response\n        url = 'https://api.example.com/data'\n        params = {'param1': 'value1'}\n        df, ax = task_func(url, params)\n        self.assertIsNotNone(df)\n        self.assertIsNotNone(ax)\n        self.assertTrue(df.equals(pd.DataFrame({'data': [1, 2, 3], 'data_2': [4, 5, 6]})))\n        corr_matrix = df.corr()\n        for i in range(df.shape[1]):\n            for j in range(df.shape[1]):\n                self.assertEqual(ax.texts[i * df.shape[1] + j].get_text(), str(int(corr_matrix.iloc[i, j])))\n\n    @patch('requests.get')\n    def test_empty_response(self, mock_get):\n        mock_response = Mock()\n        mock_response.text = '{}'\n        mock_get.return_value = mock_response\n        url = 'https://api.example.com/empty_data'\n        params = {'param1': 'value1'}\n        with self.assertRaises(Exception):\n            task_func(url, params)\n\n    @patch('requests.get')\n    def test_invalid_url(self, mock_get):\n        mock_get.side_effect = requests.exceptions.RequestException\n        url = 'https://api.invalid.com/data'\n        params = {'param1': 'value1'}\n        with self.assertRaises(Exception):\n            task_func(url, params)\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261127,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 583,
+        "output_tokens": 259,
+        "total_tokens": 842
+      }
+    }
+  ],
+  "seed": 20261123,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/215",
+  "started_at": "2026-11-22T23:42:37+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/215",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 5,
+    "input_tokens": 2915,
+    "output_tokens": 1393,
+    "total_tokens": 4308
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 5
+}

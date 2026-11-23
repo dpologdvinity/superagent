@@ -1,0 +1,275 @@
+{
+  "api_error": "",
+  "bucket": "KeyError",
+  "condition": "B2",
+  "config_hash": "018cdb8142b46d425670ff7a4f4b0b56f946ca4b3e328fb16337dec5a9a86c00",
+  "created_at": "2026-11-23T00:55:32+00:00",
+  "detector_questions": [],
+  "duration_s": 25.78,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "KeyError",
+    "duration_s": 3.889,
+    "exception": "KeyError",
+    "output_tail": "nltk_data...\n[nltk_data]   Package punkt_tab is already up-to-date!\nE[nltk_data] Downloading package punkt to /tmp/wish-eval-\n[nltk_data]     bnrs5_zu/nltk_data...\n[nltk_data]   Package punkt is already up-to-date!\n[nltk_data] Downloading package punkt_tab to /tmp/wish-eval-\n[nltk_data]     bnrs5_zu/nltk_data...\n[nltk_data]   Package punkt_tab is already up-to-date!\n/tmp/wish-eval-bnrs5_zu/solution.py:18: UserWarning: This pattern is interpreted as a regular expression, and has match groups. To actually get the groups, use str.extract.\n  filtered_titles = df[df['Title'].str.contains(r'(like|what)', case=False, na=False)]\n.[nltk_data] Downloading package punkt to /tmp/wish-eval-\n[nltk_data]     bnrs5_zu/nltk_data...\n[nltk_data]   Package punkt is already up-to-date!\n[nltk_data] Downloading package punkt_tab to /tmp/wish-eval-\n[nltk_data]     bnrs5_zu/nltk_data...\n[nltk_data]   Package punkt_tab is already up-to-date!\n/tmp/wish-eval-bnrs5_zu/solution.py:18: UserWarning: This pattern is interpreted as a regular expression, and has match groups. To actually get the groups, use str.extract.\n  filtered_titles = df[df['Title'].str.contains(r'(like|what)', case=False, na=False)]\n.\n======================================================================\nERROR: test_invalid_columns (hidden_test.TestCases.test_invalid_columns)\nTest the function with a DataFrame lacking required columns.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/base.py\", line 3816, in get_loc\n    return self._engine.get_loc(casted_key)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"pandas/_libs/index.pyx\", line 172, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/index.pyx\", line 201, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 7726, in pandas._libs.hashtable.PyObjectHashTable.get_item\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 7734, in pandas._libs.hashtable.PyObjectHashTable.get_item\nKeyError: 'Title'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-bnrs5_zu/hidden_test.py\", line 76, in test_invalid_columns\n    task_func(df_invalid)\n  File \"/tmp/wish-eval-bnrs5_zu/solution.py\", line 18, in task_func\n    filtered_titles = df[df['Title'].str.contains(r'(like|what)', case=False, na=False)]\n                         ~~^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/base.py\", line 3823, in get_loc\n    raise KeyError(key) from err\nKeyError: 'Title'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.327s\n\nFAILED (errors=1)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import re\n\nimport nltk\n\nfrom string import punctuation\n\ndef task_func(df):\n    # Download necessary NLTK resources\n    nltk.download('punkt')\n    \n    # Initialize a dictionary to store word frequencies\n    word_freq = {}\n    \n    # Regular expression to match words, ignoring punctuation\n    word_pattern = re.compile(r'\\b\\w+\\b')\n    \n    # Filter rows where the title contains 'like' or 'what' (case-insensitive)\n    filtered_titles = df[df['Title'].str.contains(r'(like|what)', case=False, na=False)]\n    \n    # Process content of filtered articles\n    for index, row in filtered_titles.iterrows():\n        content = row['Content']\n        # Tokenize the content into words\n        words = word_pattern.findall(content)\n        # Count frequencies of each word\n        for word in words:\n            word_freq[word] = word_freq.get(word, 0) + 1\n    \n    return word_freq\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": "nltk_data...\n[nltk_data]   Package punkt_tab is already up-to-date!\nE[nltk_data] Downloading package punkt to /tmp/wish-eval-\n[nltk_data]     bnrs5_zu/nltk_data...\n[nltk_data]   Package punkt is already up-to-date!\n[nltk_data] Downloading package punkt_tab to /tmp/wish-eval-\n[nltk_data]     bnrs5_zu/nltk_data...\n[nltk_data]   Package punkt_tab is already up-to-date!\n/tmp/wish-eval-bnrs5_zu/solution.py:18: UserWarning: This pattern is interpreted as a regular expression, and has match groups. To actually get the groups, use str.extract.\n  filtered_titles = df[df['Title'].str.contains(r'(like|what)', case=False, na=False)]\n.[nltk_data] Downloading package punkt to /tmp/wish-eval-\n[nltk_data]     bnrs5_zu/nltk_data...\n[nltk_data]   Package punkt is already up-to-date!\n[nltk_data] Downloading package punkt_tab to /tmp/wish-eval-\n[nltk_data]     bnrs5_zu/nltk_data...\n[nltk_data]   Package punkt_tab is already up-to-date!\n/tmp/wish-eval-bnrs5_zu/solution.py:18: UserWarning: This pattern is interpreted as a regular expression, and has match groups. To actually get the groups, use str.extract.\n  filtered_titles = df[df['Title'].str.contains(r'(like|what)', case=False, na=False)]\n.\n======================================================================\nERROR: test_invalid_columns (hidden_test.TestCases.test_invalid_columns)\nTest the function with a DataFrame lacking required columns.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/base.py\", line 3816, in get_loc\n    return self._engine.get_loc(casted_key)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"pandas/_libs/index.pyx\", line 172, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/index.pyx\", line 201, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 7726, in pandas._libs.hashtable.PyObjectHashTable.get_item\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 7734, in pandas._libs.hashtable.PyObjectHashTable.get_item\nKeyError: 'Title'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-bnrs5_zu/hidden_test.py\", line 76, in test_invalid_columns\n    task_func(df_invalid)\n  File \"/tmp/wish-eval-bnrs5_zu/solution.py\", line 18, in task_func\n    filtered_titles = df[df['Title'].str.contains(r'(like|what)', case=False, na=False)]\n                         ~~^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/base.py\", line 3823, in get_loc\n    raise KeyError(key) from err\nKeyError: 'Title'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.327s\n\nFAILED (errors=1)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport re\n\nimport nltk\n\nfrom string import punctuation\n\ndef task_func(df):\n    # Download necessary NLTK resources\n    nltk.download('punkt')\n    \n    # Initialize a dictionary to store word frequencies\n    word_freq = {}\n    \n    # Regular expression to match words, ignoring punctuation\n    word_pattern = re.compile(r'\\b\\w+\\b')\n    \n    # Filter rows where the title contains 'like' or 'what' (case-insensitive)\n    filtered_titles = df[df['Title'].str.contains(r'(like|what)', case=False, na=False)]\n    \n    # Process content of filtered articles\n    for index, row in filtered_titles.iterrows():\n        content = row['Content']\n        # Tokenize the content into words\n        words = word_pattern.findall(content)\n        # Count frequencies of each word\n        for word in words:\n            word_freq[word] = word_freq.get(word, 0) + 1\n    \n    return word_freq\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 636,
+        "output_tokens": 202,
+        "total_tokens": 838
+      }
+    },
+    {
+      "content": "```python\nimport re\nimport nltk\nfrom string import punctuation\n\nnltk.download('punkt')\n\ndef task_func(df):\n    # Filter rows where title contains 'like' or 'what' (case-insensitive)\n    filtered_df = df[df['Title'].str.contains(r'like|what', case=False, na=False)]\n    \n    # Initialize a dictionary to hold word frequencies\n    word_freq = {}\n    \n    # Process each article's content\n    for index, row in filtered_df.iterrows():\n        title = row['Title']\n        content = row['Content']\n        \n        # Tokenize the content into words\n        words = nltk.word_tokenize(content)\n        \n        # Convert to lowercase and remove punctuation\n        cleaned_words = [word.lower().strip(punctuation) for word in words if word.strip(punctuation)]\n        \n        # Update word frequency dictionary\n        for word in cleaned_words:\n            if word in word_freq:\n                word_freq[word] += 1\n            else:\n                word_freq[word] = 1\n    \n    return word_freq\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 636,
+        "output_tokens": 217,
+        "total_tokens": 853
+      }
+    },
+    {
+      "content": "```python\nimport re\n\nimport nltk\n\nfrom string import punctuation\n\ndef task_func(df):\n    # Download necessary NLTK resources\n    nltk.download('punkt')\n    \n    # Initialize a dictionary to store word frequencies\n    word_freq = {}\n    \n    # Regular expression pattern to match words, ignoring punctuation\n    word_pattern = re.compile(r'\\b\\w+\\b')\n    \n    # Filter rows where the title contains 'like' or 'what' (case-insensitive)\n    filtered_df = df[df['Title'].str.contains(r'like|what', case=False, na=False)]\n    \n    # If there are no matching rows, return an empty dictionary\n    if filtered_df.empty:\n        return word_freq\n    \n    # Process each row in the filtered DataFrame\n    for index, row in filtered_df.iterrows():\n        title = row['Title']\n        content = row['Content']\n        \n        # Tokenize the content into words\n        words = word_pattern.findall(content.lower())\n        \n        # Update word frequencies\n        for word in words:\n            if word in word_freq:\n                word_freq[word] += 1\n            else:\n                word_freq[word] = 1\n    \n    return word_freq\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 636,
+        "output_tokens": 248,
+        "total_tokens": 884
+      }
+    },
+    {
+      "content": "```python\nimport re\n\nimport nltk\n\nfrom string import punctuation\n\ndef task_func(df):\n    # Download necessary NLTK resources\n    nltk.download('punkt')\n    \n    # Initialize a dictionary to store word frequencies\n    word_freq = {}\n    \n    # Regular expression pattern to match words (excluding punctuation)\n    word_pattern = re.compile(r'\\b\\w+\\b')\n    \n    # Iterate over each row in the DataFrame\n    for index, row in df.iterrows():\n        title = row['Title']\n        content = row['Content']\n        \n        # Check if the title contains 'like' or 'what' (case-insensitive)\n        if re.search(r'\\blike\\b|\\bwhat\\b', title, re.IGNORECASE):\n            # Tokenize content into words\n            words = word_pattern.findall(content)\n            \n            # Count frequency of each word\n            for word in words:\n                word_freq[word.lower()] = word_freq.get(word.lower(), 0) + 1\n    \n    return word_freq\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 636,
+        "output_tokens": 209,
+        "total_tokens": 845
+      }
+    },
+    {
+      "content": "```python\nimport re\n\nimport nltk\n\nfrom string import punctuation\n\ndef task_func(df):\n    # Download necessary NLTK resources\n    nltk.download('punkt')\n    \n    # Initialize a dictionary to store word frequencies\n    word_freq = {}\n    \n    # Regular expression to match words, ignoring punctuation\n    word_pattern = re.compile(r'\\b\\w+\\b')\n    \n    # Filter rows where the title contains 'like' or 'what' (case-insensitive)\n    filtered_df = df[df['Title'].str.contains(r'like|what', case=False, na=False)]\n    \n    # Process each row in the filtered DataFrame\n    for index, row in filtered_df.iterrows():\n        title = row['Title']\n        content = row['Content']\n        \n        # Tokenize the content into words\n        words = word_pattern.findall(content.lower())\n        \n        # Update the word frequency dictionary\n        for word in words:\n            if word in word_freq:\n                word_freq[word] += 1\n            else:\n                word_freq[word] = 1\n    \n    return word_freq\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 636,
+        "output_tokens": 224,
+        "total_tokens": 860
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2-pilot",
+  "sample_index": 1,
+  "samples": [
+    {
+      "bucket": "KeyError",
+      "code": "import re\n\nimport nltk\n\nfrom string import punctuation\n\ndef task_func(df):\n    # Download necessary NLTK resources\n    nltk.download('punkt')\n    \n    # Initialize a dictionary to store word frequencies\n    word_freq = {}\n    \n    # Regular expression to match words, ignoring punctuation\n    word_pattern = re.compile(r'\\b\\w+\\b')\n    \n    # Filter rows where the title contains 'like' or 'what' (case-insensitive)\n    filtered_titles = df[df['Title'].str.contains(r'(like|what)', case=False, na=False)]\n    \n    # Process content of filtered articles\n    for index, row in filtered_titles.iterrows():\n        content = row['Content']\n        # Tokenize the content into words\n        words = word_pattern.findall(content)\n        # Count frequencies of each word\n        for word in words:\n            word_freq[word] = word_freq.get(word, 0) + 1\n    \n    return word_freq\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "KeyError",
+        "duration_s": 3.889,
+        "exception": "KeyError",
+        "output_tail": "nltk_data...\n[nltk_data]   Package punkt_tab is already up-to-date!\nE[nltk_data] Downloading package punkt to /tmp/wish-eval-\n[nltk_data]     bnrs5_zu/nltk_data...\n[nltk_data]   Package punkt is already up-to-date!\n[nltk_data] Downloading package punkt_tab to /tmp/wish-eval-\n[nltk_data]     bnrs5_zu/nltk_data...\n[nltk_data]   Package punkt_tab is already up-to-date!\n/tmp/wish-eval-bnrs5_zu/solution.py:18: UserWarning: This pattern is interpreted as a regular expression, and has match groups. To actually get the groups, use str.extract.\n  filtered_titles = df[df['Title'].str.contains(r'(like|what)', case=False, na=False)]\n.[nltk_data] Downloading package punkt to /tmp/wish-eval-\n[nltk_data]     bnrs5_zu/nltk_data...\n[nltk_data]   Package punkt is already up-to-date!\n[nltk_data] Downloading package punkt_tab to /tmp/wish-eval-\n[nltk_data]     bnrs5_zu/nltk_data...\n[nltk_data]   Package punkt_tab is already up-to-date!\n/tmp/wish-eval-bnrs5_zu/solution.py:18: UserWarning: This pattern is interpreted as a regular expression, and has match groups. To actually get the groups, use str.extract.\n  filtered_titles = df[df['Title'].str.contains(r'(like|what)', case=False, na=False)]\n.\n======================================================================\nERROR: test_invalid_columns (hidden_test.TestCases.test_invalid_columns)\nTest the function with a DataFrame lacking required columns.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/base.py\", line 3816, in get_loc\n    return self._engine.get_loc(casted_key)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"pandas/_libs/index.pyx\", line 172, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/index.pyx\", line 201, in pandas._libs.index.IndexEngine.get_loc\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 7726, in pandas._libs.hashtable.PyObjectHashTable.get_item\n  File \"pandas/_libs/hashtable_class_helper.pxi\", line 7734, in pandas._libs.hashtable.PyObjectHashTable.get_item\nKeyError: 'Title'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-bnrs5_zu/hidden_test.py\", line 76, in test_invalid_columns\n    task_func(df_invalid)\n  File \"/tmp/wish-eval-bnrs5_zu/solution.py\", line 18, in task_func\n    filtered_titles = df[df['Title'].str.contains(r'(like|what)', case=False, na=False)]\n                         ~~^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/base.py\", line 3823, in get_loc\n    raise KeyError(key) from err\nKeyError: 'Title'\n\n----------------------------------------------------------------------\nRan 5 tests in 0.327s\n\nFAILED (errors=1)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nExtract articles with titles containing the keywords \"like\" or \"what\" regardless of case from a DataFrame and analyze the frequency of each word in their content, excluding punctuation.\n\n## Starting file (solution.py)\n\n```python\nimport re\n\nimport nltk\n\nfrom string import punctuation\n\ndef task_func(df):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\nimport nltk\nnltk.download('punkt')\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        \"\"\"Prepare environment and variables for tests.\"\"\"\n        self.data = {'Title': ['What is Data Science?', 'The Future of Data Science', 'How to learn Python', 'Why is Python like that?'], 'Content': ['Data Science is about data analysis. Like what you see?', 'Data Science has a bright future.', 'Learning Python is essential for data science.', 'Python is popular among developers. What do you think?']}\n        self.df = pd.DataFrame(self.data)\n\n    def test_word_frequencies(self):\n        \"\"\"Test if the function correctly computes word frequencies from articles containing 'like' or 'what'.\"\"\"\n        expected_freq = {'Data': 1, 'Science': 1, 'is': 2, 'about': 1, 'data': 1, 'analysis': 1, 'Like': 1, 'what': 1, 'you': 2, 'see': 1, 'Python': 1, 'popular': 1, 'among': 1, 'developers': 1, 'What': 1, 'do': 1, 'think': 1}\n        result = task_func(self.df)\n        self.assertEqual(result, expected_freq, 'The word frequencies do not match the expected output.')\n\n    def test_no_matching_articles(self):\n        \"\"\"Test the function with a DataFrame that has no titles containing 'like' or 'what'.\"\"\"\n        data = {'Title': ['Understanding AI', 'Introduction to Machine Learning'], 'Content': ['AI is a broad field.', 'Machine learning is a subset of AI.']}\n        df_no_matches = pd.DataFrame(data)\n        result = task_func(df_no_matches)\n        self.assertEqual(result, {}, 'Expected no word frequencies for DataFrame without matching titles.')\n\n    def test_empty_dataframe(self):\n        \"\"\"Test the function with an empty DataFrame.\"\"\"\n        df_empty = pd.DataFrame(columns=['Title', 'Content'])\n        result = task_func(df_empty)\n        self.assertEqual(result, {}, 'Expected no word frequencies for an empty DataFrame.')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261122,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 636,
+        "output_tokens": 202,
+        "total_tokens": 838
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import re\nimport nltk\nfrom string import punctuation\n\nnltk.download('punkt')\n\ndef task_func(df):\n    # Filter rows where title contains 'like' or 'what' (case-insensitive)\n    filtered_df = df[df['Title'].str.contains(r'like|what', case=False, na=False)]\n    \n    # Initialize a dictionary to hold word frequencies\n    word_freq = {}\n    \n    # Process each article's content\n    for index, row in filtered_df.iterrows():\n        title = row['Title']\n        content = row['Content']\n        \n        # Tokenize the content into words\n        words = nltk.word_tokenize(content)\n        \n        # Convert to lowercase and remove punctuation\n        cleaned_words = [word.lower().strip(punctuation) for word in words if word.strip(punctuation)]\n        \n        # Update word frequency dictionary\n        for word in cleaned_words:\n            if word in word_freq:\n                word_freq[word] += 1\n            else:\n                word_freq[word] = 1\n    \n    return word_freq\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 3.696,
+        "exception": "AssertionError",
+        "output_tail": "ror: 'Title'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-e7zg_bx0/hidden_test.py\", line 76, in test_invalid_columns\n    task_func(df_invalid)\n  File \"/tmp/wish-eval-e7zg_bx0/solution.py\", line 9, in task_func\n    filtered_df = df[df['Title'].str.contains(r'like|what', case=False, na=False)]\n                     ~~^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/base.py\", line 3823, in get_loc\n    raise KeyError(key) from err\nKeyError: 'Title'\n\n======================================================================\nFAIL: test_case_sensitive_handling (hidden_test.TestCases.test_case_sensitive_handling)\nTest the function's handling of case sensitivity in finding keywords.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-e7zg_bx0/hidden_test.py\", line 71, in test_case_sensitive_handling\n    self.assertEqual(result, expected_freq, \"Case sensitivity handling is faulty.\")\nAssertionError: {'technological': 1, 'growth': 1, 'is': 1, [85 chars]': 1} != {'Technological': 1, 'growth': 1, 'is': 1, [85 chars]': 1}\n+ {'Technological': 1,\n+  'These': 1,\n- {'advancements': 1,\n? ^\n\n+  'advancements': 1,\n? ^\n\n   'are': 1,\n   'exponential': 1,\n   'growth': 1,\n   'is': 1,\n   'like': 1,\n   'no': 1,\n-  'other': 1,\n?            ^\n\n+  'other': 1}\n?            ^\n\n-  'technological': 1,\n-  'these': 1} : Case sensitivity handling is faulty.\n\n======================================================================\nFAIL: test_word_frequencies (hidden_test.TestCases.test_word_frequencies)\nTest if the function correctly computes word frequencies from articles containing 'like' or 'what'.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-e7zg_bx0/hidden_test.py\", line 34, in test_word_frequencies\n    self.assertEqual(result, expected_freq, \"The word frequencies do not match the expected output.\")\nAssertionError: {'data': 2, 'science': 1, 'is': 2, 'about':[132 chars]': 1} != {'Data': 1, 'Science': 1, 'is': 2, 'about':[154 chars]': 1}\n+ {'Data': 1,\n+  'Like': 1,\n+  'Python': 1,\n+  'Science': 1,\n+  'What': 1,\n- {'about': 1,\n? ^\n\n+  'about': 1,\n? ^\n\n   'among': 1,\n   'analysis': 1,\n-  'data': 2,\n?          ^\n\n+  'data': 1,\n?          ^\n\n   'developers': 1,\n   'do': 1,\n   'is': 2,\n-  'like': 1,\n   'popular': 1,\n-  'python': 1,\n-  'science': 1,\n   'see': 1,\n   'think': 1,\n-  'what': 2,\n?          ^\n\n+  'what': 1,\n?          ^\n\n   'you': 2} : The word frequencies do not match the expected output.\n\n----------------------------------------------------------------------\nRan 5 tests in 0.130s\n\nFAILED (failures=2, errors=1)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nExtract articles with titles containing the keywords \"like\" or \"what\" regardless of case from a DataFrame and analyze the frequency of each word in their content, excluding punctuation.\n\n## Starting file (solution.py)\n\n```python\nimport re\n\nimport nltk\n\nfrom string import punctuation\n\ndef task_func(df):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\nimport nltk\nnltk.download('punkt')\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        \"\"\"Prepare environment and variables for tests.\"\"\"\n        self.data = {'Title': ['What is Data Science?', 'The Future of Data Science', 'How to learn Python', 'Why is Python like that?'], 'Content': ['Data Science is about data analysis. Like what you see?', 'Data Science has a bright future.', 'Learning Python is essential for data science.', 'Python is popular among developers. What do you think?']}\n        self.df = pd.DataFrame(self.data)\n\n    def test_word_frequencies(self):\n        \"\"\"Test if the function correctly computes word frequencies from articles containing 'like' or 'what'.\"\"\"\n        expected_freq = {'Data': 1, 'Science': 1, 'is': 2, 'about': 1, 'data': 1, 'analysis': 1, 'Like': 1, 'what': 1, 'you': 2, 'see': 1, 'Python': 1, 'popular': 1, 'among': 1, 'developers': 1, 'What': 1, 'do': 1, 'think': 1}\n        result = task_func(self.df)\n        self.assertEqual(result, expected_freq, 'The word frequencies do not match the expected output.')\n\n    def test_no_matching_articles(self):\n        \"\"\"Test the function with a DataFrame that has no titles containing 'like' or 'what'.\"\"\"\n        data = {'Title': ['Understanding AI', 'Introduction to Machine Learning'], 'Content': ['AI is a broad field.', 'Machine learning is a subset of AI.']}\n        df_no_matches = pd.DataFrame(data)\n        result = task_func(df_no_matches)\n        self.assertEqual(result, {}, 'Expected no word frequencies for DataFrame without matching titles.')\n\n    def test_empty_dataframe(self):\n        \"\"\"Test the function with an empty DataFrame.\"\"\"\n        df_empty = pd.DataFrame(columns=['Title', 'Content'])\n        result = task_func(df_empty)\n        self.assertEqual(result, {}, 'Expected no word frequencies for an empty DataFrame.')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 636,
+        "output_tokens": 217,
+        "total_tokens": 853
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import re\n\nimport nltk\n\nfrom string import punctuation\n\ndef task_func(df):\n    # Download necessary NLTK resources\n    nltk.download('punkt')\n    \n    # Initialize a dictionary to store word frequencies\n    word_freq = {}\n    \n    # Regular expression pattern to match words, ignoring punctuation\n    word_pattern = re.compile(r'\\b\\w+\\b')\n    \n    # Filter rows where the title contains 'like' or 'what' (case-insensitive)\n    filtered_df = df[df['Title'].str.contains(r'like|what', case=False, na=False)]\n    \n    # If there are no matching rows, return an empty dictionary\n    if filtered_df.empty:\n        return word_freq\n    \n    # Process each row in the filtered DataFrame\n    for index, row in filtered_df.iterrows():\n        title = row['Title']\n        content = row['Content']\n        \n        # Tokenize the content into words\n        words = word_pattern.findall(content.lower())\n        \n        # Update word frequencies\n        for word in words:\n            if word in word_freq:\n                word_freq[word] += 1\n            else:\n                word_freq[word] = 1\n    \n    return word_freq\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 3.88,
+        "exception": "AssertionError",
+        "output_tail": "or: 'Title'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yzyj8s2k/hidden_test.py\", line 76, in test_invalid_columns\n    task_func(df_invalid)\n  File \"/tmp/wish-eval-yzyj8s2k/solution.py\", line 18, in task_func\n    filtered_df = df[df['Title'].str.contains(r'like|what', case=False, na=False)]\n                     ~~^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/base.py\", line 3823, in get_loc\n    raise KeyError(key) from err\nKeyError: 'Title'\n\n======================================================================\nFAIL: test_case_sensitive_handling (hidden_test.TestCases.test_case_sensitive_handling)\nTest the function's handling of case sensitivity in finding keywords.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yzyj8s2k/hidden_test.py\", line 71, in test_case_sensitive_handling\n    self.assertEqual(result, expected_freq, \"Case sensitivity handling is faulty.\")\nAssertionError: {'technological': 1, 'growth': 1, 'is': 1, [85 chars]': 1} != {'Technological': 1, 'growth': 1, 'is': 1, [85 chars]': 1}\n+ {'Technological': 1,\n+  'These': 1,\n- {'advancements': 1,\n? ^\n\n+  'advancements': 1,\n? ^\n\n   'are': 1,\n   'exponential': 1,\n   'growth': 1,\n   'is': 1,\n   'like': 1,\n   'no': 1,\n-  'other': 1,\n?            ^\n\n+  'other': 1}\n?            ^\n\n-  'technological': 1,\n-  'these': 1} : Case sensitivity handling is faulty.\n\n======================================================================\nFAIL: test_word_frequencies (hidden_test.TestCases.test_word_frequencies)\nTest if the function correctly computes word frequencies from articles containing 'like' or 'what'.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-yzyj8s2k/hidden_test.py\", line 34, in test_word_frequencies\n    self.assertEqual(result, expected_freq, \"The word frequencies do not match the expected output.\")\nAssertionError: {'data': 2, 'science': 1, 'is': 2, 'about':[132 chars]': 1} != {'Data': 1, 'Science': 1, 'is': 2, 'about':[154 chars]': 1}\n+ {'Data': 1,\n+  'Like': 1,\n+  'Python': 1,\n+  'Science': 1,\n+  'What': 1,\n- {'about': 1,\n? ^\n\n+  'about': 1,\n? ^\n\n   'among': 1,\n   'analysis': 1,\n-  'data': 2,\n?          ^\n\n+  'data': 1,\n?          ^\n\n   'developers': 1,\n   'do': 1,\n   'is': 2,\n-  'like': 1,\n   'popular': 1,\n-  'python': 1,\n-  'science': 1,\n   'see': 1,\n   'think': 1,\n-  'what': 2,\n?          ^\n\n+  'what': 1,\n?          ^\n\n   'you': 2} : The word frequencies do not match the expected output.\n\n----------------------------------------------------------------------\nRan 5 tests in 0.314s\n\nFAILED (failures=2, errors=1)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nExtract articles with titles containing the keywords \"like\" or \"what\" regardless of case from a DataFrame and analyze the frequency of each word in their content, excluding punctuation.\n\n## Starting file (solution.py)\n\n```python\nimport re\n\nimport nltk\n\nfrom string import punctuation\n\ndef task_func(df):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\nimport nltk\nnltk.download('punkt')\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        \"\"\"Prepare environment and variables for tests.\"\"\"\n        self.data = {'Title': ['What is Data Science?', 'The Future of Data Science', 'How to learn Python', 'Why is Python like that?'], 'Content': ['Data Science is about data analysis. Like what you see?', 'Data Science has a bright future.', 'Learning Python is essential for data science.', 'Python is popular among developers. What do you think?']}\n        self.df = pd.DataFrame(self.data)\n\n    def test_word_frequencies(self):\n        \"\"\"Test if the function correctly computes word frequencies from articles containing 'like' or 'what'.\"\"\"\n        expected_freq = {'Data': 1, 'Science': 1, 'is': 2, 'about': 1, 'data': 1, 'analysis': 1, 'Like': 1, 'what': 1, 'you': 2, 'see': 1, 'Python': 1, 'popular': 1, 'among': 1, 'developers': 1, 'What': 1, 'do': 1, 'think': 1}\n        result = task_func(self.df)\n        self.assertEqual(result, expected_freq, 'The word frequencies do not match the expected output.')\n\n    def test_no_matching_articles(self):\n        \"\"\"Test the function with a DataFrame that has no titles containing 'like' or 'what'.\"\"\"\n        data = {'Title': ['Understanding AI', 'Introduction to Machine Learning'], 'Content': ['AI is a broad field.', 'Machine learning is a subset of AI.']}\n        df_no_matches = pd.DataFrame(data)\n        result = task_func(df_no_matches)\n        self.assertEqual(result, {}, 'Expected no word frequencies for DataFrame without matching titles.')\n\n    def test_empty_dataframe(self):\n        \"\"\"Test the function with an empty DataFrame.\"\"\"\n        df_empty = pd.DataFrame(columns=['Title', 'Content'])\n        result = task_func(df_empty)\n        self.assertEqual(result, {}, 'Expected no word frequencies for an empty DataFrame.')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261124,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 636,
+        "output_tokens": 248,
+        "total_tokens": 884
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import re\n\nimport nltk\n\nfrom string import punctuation\n\ndef task_func(df):\n    # Download necessary NLTK resources\n    nltk.download('punkt')\n    \n    # Initialize a dictionary to store word frequencies\n    word_freq = {}\n    \n    # Regular expression pattern to match words (excluding punctuation)\n    word_pattern = re.compile(r'\\b\\w+\\b')\n    \n    # Iterate over each row in the DataFrame\n    for index, row in df.iterrows():\n        title = row['Title']\n        content = row['Content']\n        \n        # Check if the title contains 'like' or 'what' (case-insensitive)\n        if re.search(r'\\blike\\b|\\bwhat\\b', title, re.IGNORECASE):\n            # Tokenize content into words\n            words = word_pattern.findall(content)\n            \n            # Count frequency of each word\n            for word in words:\n                word_freq[word.lower()] = word_freq.get(word.lower(), 0) + 1\n    \n    return word_freq\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 3.772,
+        "exception": "AssertionError",
+        "output_tail": "nt call last):\n  File \"/tmp/wish-eval-5l2h9nm0/hidden_test.py\", line 76, in test_invalid_columns\n    task_func(df_invalid)\n  File \"/tmp/wish-eval-5l2h9nm0/solution.py\", line 19, in task_func\n    title = row['Title']\n            ~~~^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/series.py\", line 1102, in __getitem__\n    return self._get_value(key)\n           ^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/series.py\", line 1189, in _get_value\n    loc = self.index.get_loc(label)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/base.py\", line 3823, in get_loc\n    raise KeyError(key) from err\nKeyError: 'Title'\n\n======================================================================\nFAIL: test_case_sensitive_handling (hidden_test.TestCases.test_case_sensitive_handling)\nTest the function's handling of case sensitivity in finding keywords.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-5l2h9nm0/hidden_test.py\", line 71, in test_case_sensitive_handling\n    self.assertEqual(result, expected_freq, \"Case sensitivity handling is faulty.\")\nAssertionError: {'technological': 1, 'growth': 1, 'is': 1, [85 chars]': 1} != {'Technological': 1, 'growth': 1, 'is': 1, [85 chars]': 1}\n+ {'Technological': 1,\n+  'These': 1,\n- {'advancements': 1,\n? ^\n\n+  'advancements': 1,\n? ^\n\n   'are': 1,\n   'exponential': 1,\n   'growth': 1,\n   'is': 1,\n   'like': 1,\n   'no': 1,\n-  'other': 1,\n?            ^\n\n+  'other': 1}\n?            ^\n\n-  'technological': 1,\n-  'these': 1} : Case sensitivity handling is faulty.\n\n======================================================================\nFAIL: test_word_frequencies (hidden_test.TestCases.test_word_frequencies)\nTest if the function correctly computes word frequencies from articles containing 'like' or 'what'.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-5l2h9nm0/hidden_test.py\", line 34, in test_word_frequencies\n    self.assertEqual(result, expected_freq, \"The word frequencies do not match the expected output.\")\nAssertionError: {'data': 2, 'science': 1, 'is': 2, 'about':[132 chars]': 1} != {'Data': 1, 'Science': 1, 'is': 2, 'about':[154 chars]': 1}\n+ {'Data': 1,\n+  'Like': 1,\n+  'Python': 1,\n+  'Science': 1,\n+  'What': 1,\n- {'about': 1,\n? ^\n\n+  'about': 1,\n? ^\n\n   'among': 1,\n   'analysis': 1,\n-  'data': 2,\n?          ^\n\n+  'data': 1,\n?          ^\n\n   'developers': 1,\n   'do': 1,\n   'is': 2,\n-  'like': 1,\n   'popular': 1,\n-  'python': 1,\n-  'science': 1,\n   'see': 1,\n   'think': 1,\n-  'what': 2,\n?          ^\n\n+  'what': 1,\n?          ^\n\n   'you': 2} : The word frequencies do not match the expected output.\n\n----------------------------------------------------------------------\nRan 5 tests in 0.312s\n\nFAILED (failures=2, errors=1)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nExtract articles with titles containing the keywords \"like\" or \"what\" regardless of case from a DataFrame and analyze the frequency of each word in their content, excluding punctuation.\n\n## Starting file (solution.py)\n\n```python\nimport re\n\nimport nltk\n\nfrom string import punctuation\n\ndef task_func(df):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\nimport nltk\nnltk.download('punkt')\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        \"\"\"Prepare environment and variables for tests.\"\"\"\n        self.data = {'Title': ['What is Data Science?', 'The Future of Data Science', 'How to learn Python', 'Why is Python like that?'], 'Content': ['Data Science is about data analysis. Like what you see?', 'Data Science has a bright future.', 'Learning Python is essential for data science.', 'Python is popular among developers. What do you think?']}\n        self.df = pd.DataFrame(self.data)\n\n    def test_word_frequencies(self):\n        \"\"\"Test if the function correctly computes word frequencies from articles containing 'like' or 'what'.\"\"\"\n        expected_freq = {'Data': 1, 'Science': 1, 'is': 2, 'about': 1, 'data': 1, 'analysis': 1, 'Like': 1, 'what': 1, 'you': 2, 'see': 1, 'Python': 1, 'popular': 1, 'among': 1, 'developers': 1, 'What': 1, 'do': 1, 'think': 1}\n        result = task_func(self.df)\n        self.assertEqual(result, expected_freq, 'The word frequencies do not match the expected output.')\n\n    def test_no_matching_articles(self):\n        \"\"\"Test the function with a DataFrame that has no titles containing 'like' or 'what'.\"\"\"\n        data = {'Title': ['Understanding AI', 'Introduction to Machine Learning'], 'Content': ['AI is a broad field.', 'Machine learning is a subset of AI.']}\n        df_no_matches = pd.DataFrame(data)\n        result = task_func(df_no_matches)\n        self.assertEqual(result, {}, 'Expected no word frequencies for DataFrame without matching titles.')\n\n    def test_empty_dataframe(self):\n        \"\"\"Test the function with an empty DataFrame.\"\"\"\n        df_empty = pd.DataFrame(columns=['Title', 'Content'])\n        result = task_func(df_empty)\n        self.assertEqual(result, {}, 'Expected no word frequencies for an empty DataFrame.')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261125,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 636,
+        "output_tokens": 209,
+        "total_tokens": 845
+      }
+    },
+    {
+      "bucket": "AssertionError",
+      "code": "import re\n\nimport nltk\n\nfrom string import punctuation\n\ndef task_func(df):\n    # Download necessary NLTK resources\n    nltk.download('punkt')\n    \n    # Initialize a dictionary to store word frequencies\n    word_freq = {}\n    \n    # Regular expression to match words, ignoring punctuation\n    word_pattern = re.compile(r'\\b\\w+\\b')\n    \n    # Filter rows where the title contains 'like' or 'what' (case-insensitive)\n    filtered_df = df[df['Title'].str.contains(r'like|what', case=False, na=False)]\n    \n    # Process each row in the filtered DataFrame\n    for index, row in filtered_df.iterrows():\n        title = row['Title']\n        content = row['Content']\n        \n        # Tokenize the content into words\n        words = word_pattern.findall(content.lower())\n        \n        # Update the word frequency dictionary\n        for word in words:\n            if word in word_freq:\n                word_freq[word] += 1\n            else:\n                word_freq[word] = 1\n    \n    return word_freq\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "AssertionError",
+        "duration_s": 3.845,
+        "exception": "AssertionError",
+        "output_tail": "or: 'Title'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-cq5mbuqt/hidden_test.py\", line 76, in test_invalid_columns\n    task_func(df_invalid)\n  File \"/tmp/wish-eval-cq5mbuqt/solution.py\", line 18, in task_func\n    filtered_df = df[df['Title'].str.contains(r'like|what', case=False, na=False)]\n                     ~~^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/frame.py\", line 4330, in __getitem__\n    indexer = self.columns.get_loc(key)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/pandas/core/indexes/base.py\", line 3823, in get_loc\n    raise KeyError(key) from err\nKeyError: 'Title'\n\n======================================================================\nFAIL: test_case_sensitive_handling (hidden_test.TestCases.test_case_sensitive_handling)\nTest the function's handling of case sensitivity in finding keywords.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-cq5mbuqt/hidden_test.py\", line 71, in test_case_sensitive_handling\n    self.assertEqual(result, expected_freq, \"Case sensitivity handling is faulty.\")\nAssertionError: {'technological': 1, 'growth': 1, 'is': 1, [85 chars]': 1} != {'Technological': 1, 'growth': 1, 'is': 1, [85 chars]': 1}\n+ {'Technological': 1,\n+  'These': 1,\n- {'advancements': 1,\n? ^\n\n+  'advancements': 1,\n? ^\n\n   'are': 1,\n   'exponential': 1,\n   'growth': 1,\n   'is': 1,\n   'like': 1,\n   'no': 1,\n-  'other': 1,\n?            ^\n\n+  'other': 1}\n?            ^\n\n-  'technological': 1,\n-  'these': 1} : Case sensitivity handling is faulty.\n\n======================================================================\nFAIL: test_word_frequencies (hidden_test.TestCases.test_word_frequencies)\nTest if the function correctly computes word frequencies from articles containing 'like' or 'what'.\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-cq5mbuqt/hidden_test.py\", line 34, in test_word_frequencies\n    self.assertEqual(result, expected_freq, \"The word frequencies do not match the expected output.\")\nAssertionError: {'data': 2, 'science': 1, 'is': 2, 'about':[132 chars]': 1} != {'Data': 1, 'Science': 1, 'is': 2, 'about':[154 chars]': 1}\n+ {'Data': 1,\n+  'Like': 1,\n+  'Python': 1,\n+  'Science': 1,\n+  'What': 1,\n- {'about': 1,\n? ^\n\n+  'about': 1,\n? ^\n\n   'among': 1,\n   'analysis': 1,\n-  'data': 2,\n?          ^\n\n+  'data': 1,\n?          ^\n\n   'developers': 1,\n   'do': 1,\n   'is': 2,\n-  'like': 1,\n   'popular': 1,\n-  'python': 1,\n-  'science': 1,\n   'see': 1,\n   'think': 1,\n-  'what': 2,\n?          ^\n\n+  'what': 1,\n?          ^\n\n   'you': 2} : The word frequencies do not match the expected output.\n\n----------------------------------------------------------------------\nRan 5 tests in 0.323s\n\nFAILED (failures=2, errors=1)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nExtract articles with titles containing the keywords \"like\" or \"what\" regardless of case from a DataFrame and analyze the frequency of each word in their content, excluding punctuation.\n\n## Starting file (solution.py)\n\n```python\nimport re\n\nimport nltk\n\nfrom string import punctuation\n\ndef task_func(df):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\nimport pandas as pd\nimport nltk\nnltk.download('punkt')\n\nclass TestCases(unittest.TestCase):\n\n    def setUp(self):\n        \"\"\"Prepare environment and variables for tests.\"\"\"\n        self.data = {'Title': ['What is Data Science?', 'The Future of Data Science', 'How to learn Python', 'Why is Python like that?'], 'Content': ['Data Science is about data analysis. Like what you see?', 'Data Science has a bright future.', 'Learning Python is essential for data science.', 'Python is popular among developers. What do you think?']}\n        self.df = pd.DataFrame(self.data)\n\n    def test_word_frequencies(self):\n        \"\"\"Test if the function correctly computes word frequencies from articles containing 'like' or 'what'.\"\"\"\n        expected_freq = {'Data': 1, 'Science': 1, 'is': 2, 'about': 1, 'data': 1, 'analysis': 1, 'Like': 1, 'what': 1, 'you': 2, 'see': 1, 'Python': 1, 'popular': 1, 'among': 1, 'developers': 1, 'What': 1, 'do': 1, 'think': 1}\n        result = task_func(self.df)\n        self.assertEqual(result, expected_freq, 'The word frequencies do not match the expected output.')\n\n    def test_no_matching_articles(self):\n        \"\"\"Test the function with a DataFrame that has no titles containing 'like' or 'what'.\"\"\"\n        data = {'Title': ['Understanding AI', 'Introduction to Machine Learning'], 'Content': ['AI is a broad field.', 'Machine learning is a subset of AI.']}\n        df_no_matches = pd.DataFrame(data)\n        result = task_func(df_no_matches)\n        self.assertEqual(result, {}, 'Expected no word frequencies for DataFrame without matching titles.')\n\n    def test_empty_dataframe(self):\n        \"\"\"Test the function with an empty DataFrame.\"\"\"\n        df_empty = pd.DataFrame(columns=['Title', 'Content'])\n        result = task_func(df_empty)\n        self.assertEqual(result, {}, 'Expected no word frequencies for an empty DataFrame.')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261126,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 636,
+        "output_tokens": 224,
+        "total_tokens": 860
+      }
+    }
+  ],
+  "seed": 20261122,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/177",
+  "started_at": "2026-11-23T00:55:32+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/177",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 5,
+    "input_tokens": 3180,
+    "output_tokens": 1100,
+    "total_tokens": 4280
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 5
+}

@@ -1,0 +1,432 @@
+\documentclass{article}
+
+\PassOptionsToPackage{numbers}{natbib}
+\usepackage[final]{neurips_2019}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+\title{What Does a Wish Leave Out?\\[0.4em]
+{\large A Measured Study of Requirement Recovery in Wish-Driven Code Agents}}
+
+\author{
+  Yanhao Bai \quad Kaitlyn Bassford \quad Wen Tao Koh \\
+  Department of Computer Science, Columbia University \\
+  \texttt{\{yb2630, kmb2297, wk2439\}@columbia.edu}
+}
+
+\raggedbottom
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+A wish-driven coding agent receives an intent and builds an artifact. When the wish leaves a
+requirement implicit, the program can run, pass the tests the user remembered to mention, and
+still violate what the user meant. We mechanically degrade benchmark specifications into
+wishes by deleting five requirement fields, train a small \emph{silence detector} to predict
+which categories a wish leaves implicit, and use those predictions to target clarification
+questions. This report measures the design on a 100-task development pilot: nine conditions,
+three samples per task, 2{,}700 units, one A100-SXM4-80GB session, 2.509 GPU-hours and
+\$0 paid API. The specification gap is real: the full-specification ceiling B1 passes 58.3\%
+against 47.7\% for the plain wish loop H0 (+10.7 percentage points, 95\% paired task-level
+bootstrap CI [+2.7, +18.7]). But targeted clarification H3 does not beat generic questions
+H2 (48.7\% vs 49.0\%, $-0.3$ pp [$-6.3$, $+5.0$]) or sibling-function context H4 (49.3\%,
+$-0.7$ pp [$-7.3$, $+6.3$]). Acceptance tests first hurt (H1 38.0\%), withholding H3's
+answers drops below H3 (DISCARD 42.0\%), extra samples do not close the gap (B2 48.3\%
+pass@1, 52.3\% over five samples), and a one-call baseline is weak (B3 31.7\%). The detector
+is useful but uneven (macro-F1 0.772; AUROC 0.931 constraints, 0.739 error behaviour), and a
+good ranking did not translate into recovered requirements. We report this negative result
+plainly and state what the full 300-task, multi-seed study must test.
+\end{abstract}
+
+\section{Introduction}
+
+Wish-driven programming is attractive because the user states an outcome and the agent fills in
+the rest. The same property makes failure quiet: an implementation can satisfy every stated
+requirement and still miss a constraint, an error behaviour or a typing detail that the user
+had in mind. Requirement elicitation is therefore part of the agent's job, not an optional
+politeness. The milestone design asked whether a small detector over the specification fields
+can make that elicitation targeted: if the detector knows which category a wish omits, the
+agent can ask about that category instead of spending a fixed question budget on generic
+prompts.
+
+This report is the measured version of that design. The contribution is evidence, not a new
+method. We integrate the operator's R2 GPU run, recompute every headline number from the
+committed unit traces, and report what happened. The answer is deliberately mixed. The
+specification gap is real and large enough to matter: deleting the specification costs
+10.7 points. Targeted clarification does \emph{not} recover it: H3 is statistically
+indistinguishable from generic clarification H2 and from sibling-function context H4, and its
+point estimate is below both. Writing acceptance tests first is worse than the plain loop,
+discarding the answers is worse than asking, extra samples do not substitute for information,
+and the one-call baseline is far below the loop. The detector ranks constraints well, but
+better ranking did not produce recovery on this pilot.
+
+The rest of the report gives the design (Section~\ref{sec:approach}), the measured run and its
+results (Section~\ref{sec:experiments}), the limitations that bound the conclusion
+(Section~\ref{sec:limitations}), and the artifact map that makes each number traceable
+(Section~\ref{sec:reproduce}).
+
+\section{Related work}
+\label{sec:related}
+
+ClarifyGPT shows that intention clarification improves LLM code generation
+\citep{mu2023clarifygpt}; our H2/H3 conditions are a controlled version of that idea, with the
+clarification target chosen by a detector rather than by the model's own uncertainty. EvalPlus
+supplies the rigorous hidden-test protocol we use for HumanEval+ and MBPP+
+\citep{liu2023evalplus}, and BigCodeBench supplies the library-call stress case
+\citep{zhuo2025bigcodebench}. Contemporary harnesses revise their own state online
+\citep{xiao2026reharness}; we hold harness state fixed so that only the conditioning varies.
+The planned H5 is offline harness evolution: RRSI regularizes recursive self-improvement
+\citep{xia2026rrsi}, Harness$^2$ evolves harnesses without ground-truth verifiers
+\citep{xu2026harness2}, and HarnessPro uses LLM-generated executable tests
+\citep{pan2026harnesspro}. Those works bound what a future evolved harness could add; this
+report is about a prompt-conditioned detector, not an evolved harness.
+
+\section{Approach}
+\label{sec:approach}
+
+\subsection{Task, data and levels}
+
+The agent receives a one-sentence wish and a Python file containing a function stub, and must
+produce an implementation that passes a hidden unit-test suite. A unit is one function with a
+shared stub, three visible tests and one hidden suite. We use HumanEval+ and MBPP+
+\citep{liu2023evalplus}, which pair a docstring with one function, and BigCodeBench
+\citep{zhuo2025bigcodebench}, which composes several library calls and is the stress case.
+The committed pool is 1{,}100 tasks (157 HumanEval+, 377 MBPP+, 566 BigCodeBench), split
+500 detector-train / 200 evolution / 300 held-out, plus a disjoint 100-task development
+pilot. The 300 held-out tasks were never used for training, calibration, threshold selection
+or the pilot.
+
+Every specification is parsed mechanically into five fields: intent, signature and types,
+examples, constraints and edge cases, and error behaviour. Levels are built by deleting
+fields. L0 is the full specification; L1 drops examples and type detail; L2 additionally
+drops constraints and error behaviour; L3 keeps only intent. A field is never invented, and
+an empty field stays empty. The hidden suite is byte-identical across levels, so an L0--L3
+difference is information loss rather than test variation. The labels for the detector are
+field presence in L0: a positive means the category has content the wish omits. Single-field
+drops L2$_c$ would attribute recovery to a category, but the nine-condition pilot does not run
+them, so the per-category analysis below groups tasks by the L0 field their wish omits rather
+than by an L2$_c$ contrast.
+
+L3 is smoothed by the generator before the pilot: 500 train and 100 pilot wishes were rewritten
+into natural one-paragraph wishes with the same endpoint, and 18 of 600 fell back to the raw
+intent. The detector is refit on the 500 smoothed train wishes. This keeps the wish natural
+without changing the mechanical deletion protocol.
+
+\subsection{Harness and conditions}
+
+The agent is a ReAct loop with exactly four tools: write the file, run the visible tests, read
+the traceback of the last failed visible run, and ask the stakeholder one question. The loop
+allows at most twelve assistant turns, has no repository browsing and no shell, and starts
+from a fresh workspace per task. The stakeholder is a temperature-0 model that sees only the
+L0 specification and answers ``That is not specified.'' when the answer is absent. This
+follows the ClarifyGPT protocol of answering only from the specification
+\citep{mu2023clarifygpt}.
+
+All conditions share the tasks, tools, visible tests and turn cap. B1 gives the full L0
+specification with no dialogue and serves as the ceiling. H0 is the plain wish loop. H1 may
+write acceptance tests first, but only from the visible tests; it receives no new information.
+H2 asks generic stakeholder questions through the tool within a five-question budget. H3 asks
+the detector-selected 2--3 questions up front, compiles the answers into a \emph{Requirements}
+block that conditions the code prompt, and then runs one self-check-and-repair call. H4 adds
+five sibling functions with doctests to the workspace. B2 draws five direct samples instead
+of asking. B3 calls the endpoint once with only the wish and stub; with no separate frontier
+endpoint configured, it uses the same Qwen3-8B at temperature 0.7. DISCARD asks H3's questions
+but withholds the answers, separating asking from knowing. H5, offline harness evolution,
+remains a plan item and is not in this pilot.
+
+\subsection{Detector and question policy}
+
+The detector is the frozen \texttt{Qwen/Qwen3-Embedding-0.6B} encoder (1024-dimensional, CPU)
+plus a five-label linear head trained with binary cross-entropy and an L2 penalty. The
+committed implementation uses 600 full-batch AdamW steps at learning rate 0.01 with L2 0.3;
+inner folds select the penalty and fit Platt calibration. The deployed threshold is 0.5 for
+the reported detection metrics, while the H3 policy uses a separately calibrated threshold of
+0.197 over calibrated presence times utility. Training uses only the 500 train tasks; the 200
+evolution, 300 held-out and 100 pilot tasks are excluded from fitting, calibration, threshold
+selection and model selection.
+
+The H3 policy assigns utilities (intent 0, examples 0.2, signature and types 0.5, constraints
+1.0, error behaviour 1.0), ranks categories by calibrated presence times utility, and clamps
+each task to two or three questions. Intent is never asked because it is already the wish.
+On the deployed-style out-of-fold scores the policy asks 2.47 questions per task on average
+(265 tasks get two, 235 get three); informative-pair precision is 0.866, recall 0.573 and
+utility recall 0.869. The pilot's H3 units average 2.52 questions.
+
+\subsection{Metrics and paired bootstrap}
+
+Pass@1 is the first sample of a unit; for B2 it is the first of the five internal direct
+samples, and B2's pass rate is the fraction of units where any of the five passes. Recovery is
+the fraction of the L0--L3 gap closed:
+\[
+  \mathrm{recovery}(c) = \frac{\mathrm{pass@1}(c) - \mathrm{pass@1}(H0)}
+                                {\mathrm{pass@1}(B1) - \mathrm{pass@1}(H0)}.
+\]
+Per-category recovery groups tasks by the L0 category that the wish omits.
+
+Contrasts are paired at the task level. Each task contributes one mean over its three samples
+per condition; we resample the 100 tasks with replacement 2{,}000 times (seed
+\texttt{20261121}), take the mean of the task-level differences in each resample, and report
+the 2.5th and 97.5th percentiles. The same resample matrix is reused for every contrast. This
+interval describes uncertainty about the average difference over tasks; it does not capture
+variation across model seeds or sessions.
+
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Measured run}
+
+The operator ran one A100-SXM4-80GB Colab session serving
+\texttt{Qwen/Qwen3-8B-AWQ} on vLLM 0.34.0 at temperature 0.7 and top-$p$ 0.95. The vLLM build
+did not expose native tool calls (the endpoint rejected the native probe), so every unit used
+the JSON text protocol. All 2{,}700 units completed on the 100 development tasks with no
+held-out task. The run used 21{,}756{,}260 tokens (20{,}367{,}165 input, 1{,}389{,}095 output),
+2.509 GPU-hours on two config-stable shards, and \$0 paid API. The pilot's source mix is 14
+HumanEval+, 34 MBPP+ and 52 BigCodeBench tasks. Failures are bucketed by the exception the
+runner records, which says why a unit failed rather than only that it did.
+
+\subsection{Main results}
+
+Table~\ref{tab:conditions} gives all nine conditions. The specification gap is the largest
+effect: B1 passes 58.3\% and H0 47.7\%, a 10.7-point difference whose interval excludes zero.
+Nothing else separates from H0. H2, H3 and H4 land at 49.0\%, 48.7\% and 49.3\%; their
+recoveries are 12.5\%, 9.4\% and 15.6\%, and all three paired contrasts against H0 cross zero.
+Targeted clarification is not better than generic clarification: H3--H2 is $-0.3$ pp
+[$-6.3$, $+5.0$], and H3--H4 is $-0.7$ pp [$-7.3$, $+6.3$]. H3 asks fewer questions than H2
+(2.52 vs 2.75) and takes fewer turns (5.35 vs 6.66), so the targeting does make the dialogue
+shorter; it does not make the code more correct. H1 is 9.7 points below H0 and has recovery
+$-0.907$: writing acceptance tests first, without new information, is worse than doing nothing
+extra. DISCARD is 6.7 points below H3 and its interval just excludes zero, so knowing the
+answers matters more than asking the questions. B2's five samples raise its pass rate to
+52.3\%, but its first-sample pass@1 is 48.3\% and B2--H0 is $+0.7$ pp [$-5.7$, $+6.7$]: extra
+samples are not a substitute for specification. B3 is a weak one-call baseline at 31.7\%.
+
+\begin{table}[!ht]
+  \centering
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \begin{tabular}{@{}llrrrrrr@{}}
+    \toprule
+    Condition & Description & pass@1 & pass rate & recovery & questions & turns & $n$ \\
+    \midrule
+    B1 & full L0 specification, no dialogue & 0.583 & 0.583 & 1.000 & 0.00 & 4.86 & 300 \\
+    H0 & plain wish loop & 0.477 & 0.477 & 0.000 & 0.00 & 4.88 & 300 \\
+    H1 & acceptance tests first & 0.380 & 0.380 & $-0.907$ & 0.00 & 5.35 & 300 \\
+    H2 & generic clarification & 0.490 & 0.490 & 0.125 & 2.75 & 6.66 & 300 \\
+    H3 & detector-targeted clarification & 0.487 & 0.487 & 0.094 & 2.52 & 5.35 & 300 \\
+    H4 & sibling functions with doctests & 0.493 & 0.493 & 0.156 & 0.00 & 5.42 & 300 \\
+    B2 & five direct samples instead of questions & 0.483 & 0.523 & 0.062 & 0.00 & 5.00 & 300 \\
+    B3 & one-call baseline, wish and stub only & 0.317 & 0.317 & $-1.501$ & 0.00 & 1.00 & 300 \\
+    DISCARD & H3's questions, answers withheld & 0.420 & 0.420 & $-0.532$ & 2.52 & 4.79 & 300 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Measured 100-task pilot, three samples per condition and task, $n=300$ units per
+  condition. Recovery is the fraction of the B1--H0 gap closed; B2's pass rate uses all five
+  internal samples. Source: \protect\path{results/runs/r2-pilot/report.md}.}
+  \label{tab:conditions}
+\end{table}
+
+\begin{table}[!ht]
+  \centering
+  \small
+  \begin{tabular}{@{}lrr@{}}
+    \toprule
+    Contrast & difference (pp) & 95\% CI (pp) \\
+    \midrule
+    B1 $-$ H0 & $+10.7$ & [$+2.7$, $+19.0$] \\
+    H2 $-$ H0 & $+1.3$ & [$-4.7$, $+7.3$] \\
+    H3 $-$ H0 & $+1.0$ & [$-5.7$, $+7.7$] \\
+    H4 $-$ H0 & $+1.7$ & [$-4.7$, $+8.0$] \\
+    H3 $-$ H2 & $-0.3$ & [$-6.3$, $+5.0$] \\
+    H3 $-$ H4 & $-0.7$ & [$-7.3$, $+6.3$] \\
+    DISCARD $-$ H3 & $-6.7$ & [$-13.3$, $-0.3$] \\
+    B2 $-$ H0 & $+0.7$ & [$-5.7$, $+6.7$] \\
+    \bottomrule
+  \end{tabular}
+  \caption{Paired task-level bootstrap, 2{,}000 resamples, seed \texttt{20261121}, mean over
+  each task's three samples. Only B1--H0 and DISCARD--H3 exclude zero. Source:
+  \protect\path{results/runs/r2-pilot/bootstrap.json}.}
+  \label{tab:bootstrap}
+\end{table}
+
+\subsection{Per-category analysis}
+
+Table~\ref{tab:categories} groups tasks by an L0 field their wish omits. The pilot does not run
+the separate L2$_c$ single-field-drop conditions, so this grouping is attribution by task
+subset, not a controlled one-field deletion. H3 recovery is positive only for signature and
+types (0.094, all 100 tasks) and negative for examples ($-0.074$, 97 tasks), constraints
+($-0.094$, 64 tasks) and error behaviour ($-0.499$, 13 tasks). The error-behaviour subset is
+small: 13 tasks, 39 units, 9 passes in H3. Of its 30 failed H3 units, 17 end in
+\texttt{AssertionError}, 6 in \texttt{ValueError} and 6 in \texttt{NameError}, which is
+consistent with the agent asking about invalid input and still not implementing the
+validation. Constraints show the same pattern at larger \#n: B1 56.8\%, H0 40.1\%, H3 38.5\%.
+The detector ranks constraints well (AUROC 0.931), yet the targeted condition is below the
+plain loop on the constraint subset. This is the central negative result: ranking a missing
+category is not the same as eliciting a usable answer or turning it into code.
+
+\begin{table}[!ht]
+  \centering
+  \small
+  \begin{tabular}{@{}lrrrrrr@{}}
+    \toprule
+    Category & tasks & B1 & H0 & H2 & H3 & H4 \\
+    \midrule
+    signature and types & 100 & 0.583 & 0.477 & 0.490 & 0.487 & 0.493 \\
+    examples & 97 & 0.581 & 0.488 & 0.488 & 0.481 & 0.498 \\
+    constraints & 64 & 0.568 & 0.401 & 0.422 & 0.385 & 0.396 \\
+    error behaviour & 13 & 0.538 & 0.333 & 0.308 & 0.231 & 0.436 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Pass rates on the subset of pilot tasks whose L0 carries each category (so the wish
+  omits it). The nine-condition pilot does not run separate L2$_c$ conditions. Source:
+  \protect\path{results/runs/r2-pilot/summary.json}, \texttt{by\_category}.}
+  \label{tab:categories}
+\end{table}
+
+\subsection{Detector results}
+
+Table~\ref{tab:detector} gives five-fold out-of-fold detection on the 500 smoothed train
+wishes. The encoder reaches macro-F1 0.772 (0.621 over the three varying labels), AUROC 0.803
+on examples, 0.931 on constraints and 0.739 on error behaviour. TF-IDF is slightly stronger on
+the aggregate (macro-F1 0.777) and on examples/constraints (0.746/0.944), while the encoder is
+slightly stronger on error behaviour (0.739 vs 0.699); calibration is comparable (Brier 0.045
+vs 0.044, ECE 0.015 vs 0.009). The encoder's practical advantage is that it scores a raw wish
+without a task-specific lexical model, not that it wins every metric.
+
+Error behaviour remains the weak label: 63 positives in the train split, average precision
+0.276, and F1 at the deployed 0.5 threshold is 0.000 because calibrated probabilities stay near
+the 12.6\% base rate. AUROC and average precision are the informative ranking metrics for that
+label. The H3 policy selects constraints on 79.8\% of tasks and error behaviour on 19.6\%;
+intent is never selected. The detector is therefore a usable ranker, but its weakest label is
+also the one with the smallest per-category evidence in the pilot, and the aggregate gain over
+a lexical baseline is small.
+
+\begin{table}[!ht]
+  \centering
+  \small
+  \begin{tabular}{@{}lcccccc@{}}
+    \toprule
+    Method & macro-F1 & macro-F1 (varying) & AUROC ex. & AUROC cons. & AUROC err. & Brier \\
+    \midrule
+    Prior & 0.753 & 0.588 & 0.358 & 0.426 & 0.409 & 0.074 \\
+    TF-IDF & 0.777 & 0.629 & 0.746 & 0.944 & 0.699 & 0.044 \\
+    Encoder & 0.772 & 0.621 & 0.803 & 0.931 & 0.739 & 0.045 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Five-fold out-of-fold detection on the 500 smoothed train tasks. ``Varying'' averages
+  examples, constraints and error behaviour; intent and signature/types are positive on every
+  task, so their AUROC is undefined. Source:
+  \protect\path{results/runs/r2-pilot/detector-smoothed/metrics.json}.}
+  \label{tab:detector}
+\end{table}
+
+\subsection{Failure analysis and interpretation}
+
+Across all 2{,}700 units there are 1{,}251 passes and 1{,}449 failures. The failure buckets are
+dominated by \texttt{AssertionError} (934, 64.5\%), followed by \texttt{NoSolution} (170,
+11.7\%), \texttt{ValueError} (137, 9.5\%) and \texttt{TypeError} (71, 4.9\%). The runner's
+\texttt{NoSolution} bucket is an empty or unusable final solution; the assertion bucket is a
+wrong implementation that ran. This distribution is what a hidden-suite pilot should look like:
+most failures are semantic, not infrastructure. Only 6 units time out and 1 ends in
+\texttt{ImportError}.
+
+The negative result should not be read as ``clarification does not help''. H2 and H4 are both
+above H0 by 1--2 points, and DISCARD is clearly below H3, so the dialogue channel is doing
+something. The narrower claim is that the detector-targeted channel does not beat generic
+questioning on this pilot, and that neither closes much of the specification gap. Three
+mechanisms are plausible. First, the H3 answers are compiled into a Requirements block and a
+single repair call, while H2 can keep asking and iterating for up to five questions and 6.66
+turns; the generic condition spends more interaction to extract similar information. Second,
+the categories the detector ranks best (constraints) may be the ones the model can already
+partly infer from the stub and visible tests, so the marginal value of an answer is low.
+Third, the weakest category (error behaviour) has only 13 tasks in the pilot, so the subset
+that most needs targeted clarification is the least powered. The full study should separate
+these mechanisms with L2$_c$ conditions and a larger error-behaviour sample.
+
+\section{Limitations}
+\label{sec:limitations}
+
+\textbf{Pilot size and power.} The pilot uses the 100-task development split, not the 300
+held-out tasks. It has one seed base and three samples per condition; the intervals describe
+task-level uncertainty only, not model-seed or session variance. A 10-point gap is detectable,
+but a 1--2-point difference among H2, H3 and H4 is not, and the per-category error-behaviour
+subset (13 tasks) is exploratory.
+
+\textbf{One session and transport.} All units come from one A100-SXM4-80GB session with vLLM
+0.34.0 and the JSON text protocol because native tool calls were unavailable on that build.
+Results may differ under native tool calling, a different vLLM build or a different GPU.
+
+\textbf{Compute and budget.} The run used 2.509 GPU-hours, far below the planned approximately
+18 GPU-hours for the full study. It used \$0 paid API. The pilot is therefore a measured
+development run, not the final evaluation.
+
+\textbf{Benchmark composition.} BigCodeBench supplies 52 of the 100 tasks. HumanEval+ (14) and
+MBPP+ (34) are small and may not represent the library-call stress case. The pool is 1{,}100
+kept tasks because of the fixed split and validation exclusions; the held-out 300 remain
+unrun.
+
+\textbf{Detector and levels.} The detector is a frozen encoder with a linear probe, not a
+fine-tuned model; its aggregate edge over TF-IDF is small, and its error-behaviour F1 at 0.5 is
+zero. L3 is smoothed by the generator with 18 of 600 fallbacks. The pilot does not run the
+L2$_c$ single-field-drop conditions, so per-category attribution is by task subset. H5 is not
+implemented.
+
+\textbf{Recovery denominator.} Recovery uses B1 and H0 measured on the same 100 tasks, so the
+denominator is itself noisy. We report paired task-level intervals for contrasts and treat
+recovery as a descriptive normalization, not a precise effect size.
+
+\section{Conclusion and future work}
+
+The measured pilot supports one strong claim and one negative one. The specification gap is
+real: removing the full specification costs 10.7 points, and that interval excludes zero.
+Targeted clarification does not close it: a detector that ranks missing categories well enough
+to target constraints produced no measurable advantage over generic questions or sibling-code
+context, while acceptance tests first hurt, withholding answers hurt more, extra samples did
+not substitute, and the one-call baseline was weak.
+
+The full study should run the 300 held-out tasks with more seeds, add the L2$_c$ single-field
+conditions to attribute recovery to categories, enlarge the error-behaviour sample, and test
+H5. It should also report the same paired task-level intervals so that a null result remains
+distinguishable from an underpowered one. If the negative result persists, the implication is
+that requirement recovery is not only a detection problem: the bottleneck is turning an answer
+into code, which is a harness problem rather than a question-selection problem.
+
+\section{Reproducibility and artifact map}
+\label{sec:reproduce}
+
+All empirical numbers in this report come from the committed R2 run under
+\path{results/runs/r2-pilot/}:
+
+\begin{itemize}
+  \item \path{summary.json}, \path{report.md} and \path{results.jsonl}: 2{,}700 unit
+        records, condition aggregates, recovery, per-category grouping and failure buckets;
+  \item \path{bootstrap.json} and \path{bootstrap.md}: the paired task-level contrasts in
+        Table~\ref{tab:bootstrap}, produced by \path{src/wishrec/harness/bootstrap.py};
+  \item \path{manifest.json}, \path{environment.json}, \path{endpoint.json} and
+        \path{gpu_time.json}: provenance, environment, transport probe and shard timing;
+  \item \path{detector-smoothed/}: the smoothed five-label refit and its metrics;
+  \item \path{smoothing/}: the 600 smoothed wishes and their manifest;
+  \item \path{units/}: the per-unit traces; \path{dry-run/}: the 45-unit plumbing check;
+  \item \path{COLAB_RUN.md} and \path{colab_a100_vllm.ipynb}: the operator's runbook and
+        executed notebook.
+\end{itemize}
+
+The 300 held-out tasks do not appear in any pilot unit, and no held-out task content is
+committed. Data counts and split sizes come from \path{results/levels/stats.json}; the
+detector source recipe is recorded in \path{results/runs/r2-pilot/detector-smoothed/metrics.json}.
+The paper is compiled with pdf\LaTeX{} and BibTeX from \path{paper/main.tex}.
+
+\bibliographystyle{unsrt}
+\bibliography{references}
+
+\end{document}

@@ -1,0 +1,275 @@
+{
+  "api_error": "",
+  "bucket": "LookupError",
+  "condition": "B2",
+  "config_hash": "018cdb8142b46d425670ff7a4f4b0b56f946ca4b3e328fb16337dec5a9a86c00",
+  "created_at": "2026-11-23T00:56:55+00:00",
+  "detector_questions": [],
+  "duration_s": 24.539,
+  "entry_point": "task_func",
+  "evaluation": {
+    "bucket": "LookupError",
+    "duration_s": 4.332,
+    "exception": "LookupError",
+    "output_tail": " For more information see: https://www.nltk.org/data.html\n\n  Attempted to load 'tokenizers/punkt_tab/english/'\n\n  Searched in:\n    - '/tmp/wish-eval-d0oqjrpz/nltk_data'\n    - '/content/superagent/.venv/nltk_data'\n    - '/content/superagent/.venv/share/nltk_data'\n    - '/content/superagent/.venv/lib/nltk_data'\n    - '/usr/share/nltk_data'\n    - '/usr/local/share/nltk_data'\n    - '/usr/lib/nltk_data'\n    - '/usr/local/lib/nltk_data'\n**********************************************************************\n\n\n======================================================================\nERROR: test_case_5 (hidden_test.TestCases.test_case_5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-d0oqjrpz/hidden_test.py\", line 57, in test_case_5\n    plot = task_func(text)\n           ^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-d0oqjrpz/solution.py\", line 10, in task_func\n    words = nltk.word_tokenize(text)\n            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 166, in word_tokenize\n    sentences = [text] if preserve_line else sent_tokenize(text, language)\n                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 143, in sent_tokenize\n    tokenizer = _get_punkt_tokenizer(language)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 105, in _get_punkt_tokenizer\n    return PunktTokenizer(language)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/punkt.py\", line 1812, in __init__\n    self.load_lang(lang)\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/punkt.py\", line 1821, in load_lang\n    lang_dir = find(f\"tokenizers/punkt_tab/{lang}/\")\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/data.py\", line 1636, in find\n    raise exc\nLookupError: \n**********************************************************************\n  Resource 'punkt_tab' not found.\n  Please use the NLTK Downloader to obtain the resource:\n\n  >>> import nltk\n  >>> nltk.download('punkt_tab')\n\n  For more information see: https://www.nltk.org/data.html\n\n  Attempted to load 'tokenizers/punkt_tab/english/'\n\n  Searched in:\n    - '/tmp/wish-eval-d0oqjrpz/nltk_data'\n    - '/content/superagent/.venv/nltk_data'\n    - '/content/superagent/.venv/share/nltk_data'\n    - '/content/superagent/.venv/lib/nltk_data'\n    - '/usr/share/nltk_data'\n    - '/usr/local/share/nltk_data'\n    - '/usr/lib/nltk_data'\n    - '/usr/local/lib/nltk_data'\n**********************************************************************\n\n\n----------------------------------------------------------------------\nRan 5 tests in 0.010s\n\nFAILED (errors=5)",
+    "pass": false,
+    "timed_out": false
+  },
+  "final_solution": "import nltk\nfrom string import punctuation\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # Split the text into words\n    words = nltk.word_tokenize(text)\n    \n    # Filter words that start with '$' and are not solely punctuation\n    relevant_words = []\n    for word in words:\n        if word.startswith('$') and not all(char in PUNCTUATION for char in word):\n            relevant_words.append(word)\n    \n    # Count frequency of each relevant word\n    from collections import Counter\n    word_counts = Counter(relevant_words)\n    \n    # If no relevant words, return None\n    if not word_counts:\n        return None\n    \n    # Prepare data for plotting\n    categories = list(word_counts.keys())\n    values = list(word_counts.values())\n    \n    # Create the bar chart\n    fig, ax = plt.subplots()\n    sns.barplot(x=values, y=categories, ax=ax)\n    \n    # Set title and labels\n    ax.set_title('Frequency of Words Starting with \"$\"')\n    ax.set_xlabel('Frequency')\n    ax.set_ylabel('Words')\n    \n    # Return the Axes object\n    return ax\n",
+  "follow_up_questions": [],
+  "hidden_output_tail": " For more information see: https://www.nltk.org/data.html\n\n  Attempted to load 'tokenizers/punkt_tab/english/'\n\n  Searched in:\n    - '/tmp/wish-eval-d0oqjrpz/nltk_data'\n    - '/content/superagent/.venv/nltk_data'\n    - '/content/superagent/.venv/share/nltk_data'\n    - '/content/superagent/.venv/lib/nltk_data'\n    - '/usr/share/nltk_data'\n    - '/usr/local/share/nltk_data'\n    - '/usr/lib/nltk_data'\n    - '/usr/local/lib/nltk_data'\n**********************************************************************\n\n\n======================================================================\nERROR: test_case_5 (hidden_test.TestCases.test_case_5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-d0oqjrpz/hidden_test.py\", line 57, in test_case_5\n    plot = task_func(text)\n           ^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-d0oqjrpz/solution.py\", line 10, in task_func\n    words = nltk.word_tokenize(text)\n            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 166, in word_tokenize\n    sentences = [text] if preserve_line else sent_tokenize(text, language)\n                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 143, in sent_tokenize\n    tokenizer = _get_punkt_tokenizer(language)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 105, in _get_punkt_tokenizer\n    return PunktTokenizer(language)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/punkt.py\", line 1812, in __init__\n    self.load_lang(lang)\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/punkt.py\", line 1821, in load_lang\n    lang_dir = find(f\"tokenizers/punkt_tab/{lang}/\")\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/data.py\", line 1636, in find\n    raise exc\nLookupError: \n**********************************************************************\n  Resource 'punkt_tab' not found.\n  Please use the NLTK Downloader to obtain the resource:\n\n  >>> import nltk\n  >>> nltk.download('punkt_tab')\n\n  For more information see: https://www.nltk.org/data.html\n\n  Attempted to load 'tokenizers/punkt_tab/english/'\n\n  Searched in:\n    - '/tmp/wish-eval-d0oqjrpz/nltk_data'\n    - '/content/superagent/.venv/nltk_data'\n    - '/content/superagent/.venv/share/nltk_data'\n    - '/content/superagent/.venv/lib/nltk_data'\n    - '/usr/share/nltk_data'\n    - '/usr/local/share/nltk_data'\n    - '/usr/lib/nltk_data'\n    - '/usr/local/lib/nltk_data'\n**********************************************************************\n\n\n----------------------------------------------------------------------\nRan 5 tests in 0.010s\n\nFAILED (errors=5)",
+  "llm_calls": [
+    {
+      "content": "```python\nimport nltk\nfrom string import punctuation\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # Split the text into words\n    words = nltk.word_tokenize(text)\n    \n    # Filter words that start with '$' and are not solely punctuation\n    relevant_words = []\n    for word in words:\n        if word.startswith('$') and not all(char in PUNCTUATION for char in word):\n            relevant_words.append(word)\n    \n    # Count frequency of each relevant word\n    from collections import Counter\n    word_counts = Counter(relevant_words)\n    \n    # If no relevant words, return None\n    if not word_counts:\n        return None\n    \n    # Prepare data for plotting\n    categories = list(word_counts.keys())\n    values = list(word_counts.values())\n    \n    # Create the bar chart\n    fig, ax = plt.subplots()\n    sns.barplot(x=values, y=categories, ax=ax)\n    \n    # Set title and labels\n    ax.set_title('Frequency of Words Starting with \"$\"')\n    ax.set_xlabel('Frequency')\n    ax.set_ylabel('Words')\n    \n    # Return the Axes object\n    return ax\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 564,
+        "output_tokens": 254,
+        "total_tokens": 818
+      }
+    },
+    {
+      "content": "```python\nimport nltk\nfrom string import punctuation\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # Tokenize the text\n    tokens = nltk.word_tokenize(text)\n    \n    # Filter words starting with '$' and not consisting solely of punctuation\n    relevant_words = []\n    for token in tokens:\n        if token.startswith('$') and not all(char in PUNCTUATION for char in token):\n            relevant_words.append(token)\n    \n    # Count frequencies\n    from collections import Counter\n    freq = Counter(relevant_words)\n    \n    # If no relevant words, return None\n    if not freq:\n        return None\n    \n    # Prepare data for plotting\n    categories = list(freq.keys())\n    values = list(freq.values())\n    \n    # Create the bar chart\n    fig, ax = plt.subplots()\n    sns.barplot(x=values, y=categories, ax=ax)\n    \n    # Set title and labels\n    ax.set_title('Frequency of Words Starting with \"$\"')\n    ax.set_xlabel('Frequency')\n    ax.set_ylabel('Words')\n    \n    # Return the Axes object\n    return ax\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 564,
+        "output_tokens": 245,
+        "total_tokens": 809
+      }
+    },
+    {
+      "content": "```python\nimport nltk\nfrom string import punctuation\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # Tokenize the text\n    tokens = nltk.word_tokenize(text)\n    \n    # Filter words starting with '$' and not consisting solely of punctuation\n    $words = []\n    for token in tokens:\n        if token.startswith('$') and not all(char in PUNCTUATION for char in token):\n            $words.append(token)\n    \n    # Count frequency of each $word\n    from collections import Counter\n    freq = Counter($words)\n    \n    # If no $words, return None\n    if not freq:\n        return None\n    \n    # Prepare data for plotting\n    categories = list(freq.keys())\n    values = list(freq.values())\n    \n    # Create the bar chart\n    fig, ax = plt.subplots()\n    sns.barplot(x=values, y=categories, ax=ax)\n    \n    # Set plot title and labels\n    ax.set_title('Frequency of $ Words')\n    ax.set_xlabel('Frequency')\n    ax.set_ylabel('Words')\n    \n    # Return the Axes object\n    return ax\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 564,
+        "output_tokens": 246,
+        "total_tokens": 810
+      }
+    },
+    {
+      "content": "```python\nimport nltk\nfrom string import punctuation\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # Tokenize the text\n    tokens = nltk.word_tokenize(text)\n    \n    # Filter words starting with '$' and not consisting solely of punctuation\n    valid_words = []\n    for token in tokens:\n        if token.startswith('$') and not all(char in PUNCTUATION for char in token):\n            valid_words.append(token)\n    \n    # Count frequency of each valid word\n    from collections import Counter\n    word_counts = Counter(valid_words)\n    \n    # If no valid words, return None\n    if not word_counts:\n        return None\n    \n    # Prepare data for plotting\n    categories = list(word_counts.keys())\n    values = list(word_counts.values())\n    \n    # Create bar chart\n    fig, ax = plt.subplots()\n    sns.barplot(x=values, y=categories, ax=ax)\n    \n    # Customize plot\n    ax.set_title('Frequency of Words Starting with \"$\"')\n    ax.set_xlabel('Frequency')\n    ax.set_ylabel('Words')\n    \n    # Return the Axes object\n    return ax\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 564,
+        "output_tokens": 249,
+        "total_tokens": 813
+      }
+    },
+    {
+      "content": "```python\nimport nltk\nfrom string import punctuation\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # Tokenize the text\n    tokens = nltk.word_tokenize(text)\n    \n    # Filter words starting with '$' and not consisting solely of punctuation\n    valid_words = []\n    for token in tokens:\n        if token.startswith('$') and not all(char in PUNCTUATION for char in token):\n            valid_words.append(token)\n    \n    # Count frequencies\n    from collections import Counter\n    freq = Counter(valid_words)\n    \n    # If no valid words, return None\n    if not freq:\n        return None\n    \n    # Prepare data for plotting\n    categories = list(freq.keys())\n    values = list(freq.values())\n    \n    # Create the bar chart\n    fig, ax = plt.subplots()\n    sns.barplot(x=values, y=categories, ax=ax)\n    \n    # Set title and labels\n    ax.set_title('Frequency of $-starting Words')\n    ax.set_xlabel('Frequency')\n    ax.set_ylabel('Words')\n    \n    # Return the Axes object\n    return ax\n```",
+      "finish_reason": "stop",
+      "model": "Qwen/Qwen3-8B-AWQ",
+      "purpose": "b2_sample",
+      "tool_calls": [],
+      "transport": "native",
+      "usage": {
+        "input_tokens": 564,
+        "output_tokens": 243,
+        "total_tokens": 807
+      }
+    }
+  ],
+  "messages": [],
+  "pass": false,
+  "pass_at_1": false,
+  "questions": 0,
+  "run_id": "r2-pilot",
+  "sample_index": 0,
+  "samples": [
+    {
+      "bucket": "LookupError",
+      "code": "import nltk\nfrom string import punctuation\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # Split the text into words\n    words = nltk.word_tokenize(text)\n    \n    # Filter words that start with '$' and are not solely punctuation\n    relevant_words = []\n    for word in words:\n        if word.startswith('$') and not all(char in PUNCTUATION for char in word):\n            relevant_words.append(word)\n    \n    # Count frequency of each relevant word\n    from collections import Counter\n    word_counts = Counter(relevant_words)\n    \n    # If no relevant words, return None\n    if not word_counts:\n        return None\n    \n    # Prepare data for plotting\n    categories = list(word_counts.keys())\n    values = list(word_counts.values())\n    \n    # Create the bar chart\n    fig, ax = plt.subplots()\n    sns.barplot(x=values, y=categories, ax=ax)\n    \n    # Set title and labels\n    ax.set_title('Frequency of Words Starting with \"$\"')\n    ax.set_xlabel('Frequency')\n    ax.set_ylabel('Words')\n    \n    # Return the Axes object\n    return ax\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "LookupError",
+        "duration_s": 4.332,
+        "exception": "LookupError",
+        "output_tail": " For more information see: https://www.nltk.org/data.html\n\n  Attempted to load 'tokenizers/punkt_tab/english/'\n\n  Searched in:\n    - '/tmp/wish-eval-d0oqjrpz/nltk_data'\n    - '/content/superagent/.venv/nltk_data'\n    - '/content/superagent/.venv/share/nltk_data'\n    - '/content/superagent/.venv/lib/nltk_data'\n    - '/usr/share/nltk_data'\n    - '/usr/local/share/nltk_data'\n    - '/usr/lib/nltk_data'\n    - '/usr/local/lib/nltk_data'\n**********************************************************************\n\n\n======================================================================\nERROR: test_case_5 (hidden_test.TestCases.test_case_5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-d0oqjrpz/hidden_test.py\", line 57, in test_case_5\n    plot = task_func(text)\n           ^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-d0oqjrpz/solution.py\", line 10, in task_func\n    words = nltk.word_tokenize(text)\n            ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 166, in word_tokenize\n    sentences = [text] if preserve_line else sent_tokenize(text, language)\n                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 143, in sent_tokenize\n    tokenizer = _get_punkt_tokenizer(language)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 105, in _get_punkt_tokenizer\n    return PunktTokenizer(language)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/punkt.py\", line 1812, in __init__\n    self.load_lang(lang)\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/punkt.py\", line 1821, in load_lang\n    lang_dir = find(f\"tokenizers/punkt_tab/{lang}/\")\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/data.py\", line 1636, in find\n    raise exc\nLookupError: \n**********************************************************************\n  Resource 'punkt_tab' not found.\n  Please use the NLTK Downloader to obtain the resource:\n\n  >>> import nltk\n  >>> nltk.download('punkt_tab')\n\n  For more information see: https://www.nltk.org/data.html\n\n  Attempted to load 'tokenizers/punkt_tab/english/'\n\n  Searched in:\n    - '/tmp/wish-eval-d0oqjrpz/nltk_data'\n    - '/content/superagent/.venv/nltk_data'\n    - '/content/superagent/.venv/share/nltk_data'\n    - '/content/superagent/.venv/lib/nltk_data'\n    - '/usr/share/nltk_data'\n    - '/usr/local/share/nltk_data'\n    - '/usr/lib/nltk_data'\n    - '/usr/local/lib/nltk_data'\n**********************************************************************\n\n\n----------------------------------------------------------------------\nRan 5 tests in 0.010s\n\nFAILED (errors=5)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nCreate a bar chart showing the frequency of words in a text that start with the \"$\" character, excluding those that consist solely of punctuation. If no such words exist, the plot should be None.\n\n## Starting file (solution.py)\n\n```python\nimport nltk\n\nfrom string import punctuation\n\nimport seaborn as sns\n\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n\n    @staticmethod\n    def is_bar(ax, expected_values, expected_categories):\n        extracted_values = [bar.get_height() for bar in ax.patches]\n        extracted_categories = [tick.get_text() for tick in ax.get_xticklabels()]\n        for actual_value, expected_value in zip(extracted_values, expected_values):\n            assert actual_value == expected_value, f\"Expected value '{expected_value}', but got '{actual_value}'\"\n        for actual_category, expected_category in zip(extracted_categories, expected_categories):\n            assert actual_category == expected_category, f\"Expected category '{expected_category}', but got '{actual_category}'\"\n\n    def test_case_1(self):\n        text = 'This is the $first $first sentence.'\n        plot = task_func(text)\n        self.assertIsInstance(plot, plt.Axes, 'Return type should be a plot (Axes).')\n        self.is_bar(plot, expected_categories=['$first'], expected_values=[2.0])\n\n    def test_case_2(self):\n        text = 'This $is $is $is the $second $sentence $sentence'\n        plot = task_func(text)\n        self.assertIsInstance(plot, plt.Axes, 'Return type should be a plot (Axes).')\n        self.is_bar(plot, expected_categories=['$is', '$second', '$sentence'], expected_values=[3.0, 1.0, 2.0])\n\n    def test_case_3(self):\n        text = 'This is the third sentence.'\n        plot = task_func(text)\n        self.assertIsNone(plot, 'The plot should be None since there are no $ words.')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261121,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 564,
+        "output_tokens": 254,
+        "total_tokens": 818
+      }
+    },
+    {
+      "bucket": "LookupError",
+      "code": "import nltk\nfrom string import punctuation\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # Tokenize the text\n    tokens = nltk.word_tokenize(text)\n    \n    # Filter words starting with '$' and not consisting solely of punctuation\n    relevant_words = []\n    for token in tokens:\n        if token.startswith('$') and not all(char in PUNCTUATION for char in token):\n            relevant_words.append(token)\n    \n    # Count frequencies\n    from collections import Counter\n    freq = Counter(relevant_words)\n    \n    # If no relevant words, return None\n    if not freq:\n        return None\n    \n    # Prepare data for plotting\n    categories = list(freq.keys())\n    values = list(freq.values())\n    \n    # Create the bar chart\n    fig, ax = plt.subplots()\n    sns.barplot(x=values, y=categories, ax=ax)\n    \n    # Set title and labels\n    ax.set_title('Frequency of Words Starting with \"$\"')\n    ax.set_xlabel('Frequency')\n    ax.set_ylabel('Words')\n    \n    # Return the Axes object\n    return ax\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "LookupError",
+        "duration_s": 4.281,
+        "exception": "LookupError",
+        "output_tail": "or more information see: https://www.nltk.org/data.html\n\n  Attempted to load 'tokenizers/punkt_tab/english/'\n\n  Searched in:\n    - '/tmp/wish-eval-4wibcznj/nltk_data'\n    - '/content/superagent/.venv/nltk_data'\n    - '/content/superagent/.venv/share/nltk_data'\n    - '/content/superagent/.venv/lib/nltk_data'\n    - '/usr/share/nltk_data'\n    - '/usr/local/share/nltk_data'\n    - '/usr/lib/nltk_data'\n    - '/usr/local/lib/nltk_data'\n**********************************************************************\n\n\n======================================================================\nERROR: test_case_5 (hidden_test.TestCases.test_case_5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-4wibcznj/hidden_test.py\", line 57, in test_case_5\n    plot = task_func(text)\n           ^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-4wibcznj/solution.py\", line 10, in task_func\n    tokens = nltk.word_tokenize(text)\n             ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 166, in word_tokenize\n    sentences = [text] if preserve_line else sent_tokenize(text, language)\n                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 143, in sent_tokenize\n    tokenizer = _get_punkt_tokenizer(language)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 105, in _get_punkt_tokenizer\n    return PunktTokenizer(language)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/punkt.py\", line 1812, in __init__\n    self.load_lang(lang)\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/punkt.py\", line 1821, in load_lang\n    lang_dir = find(f\"tokenizers/punkt_tab/{lang}/\")\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/data.py\", line 1636, in find\n    raise exc\nLookupError: \n**********************************************************************\n  Resource 'punkt_tab' not found.\n  Please use the NLTK Downloader to obtain the resource:\n\n  >>> import nltk\n  >>> nltk.download('punkt_tab')\n\n  For more information see: https://www.nltk.org/data.html\n\n  Attempted to load 'tokenizers/punkt_tab/english/'\n\n  Searched in:\n    - '/tmp/wish-eval-4wibcznj/nltk_data'\n    - '/content/superagent/.venv/nltk_data'\n    - '/content/superagent/.venv/share/nltk_data'\n    - '/content/superagent/.venv/lib/nltk_data'\n    - '/usr/share/nltk_data'\n    - '/usr/local/share/nltk_data'\n    - '/usr/lib/nltk_data'\n    - '/usr/local/lib/nltk_data'\n**********************************************************************\n\n\n----------------------------------------------------------------------\nRan 5 tests in 0.012s\n\nFAILED (errors=5)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nCreate a bar chart showing the frequency of words in a text that start with the \"$\" character, excluding those that consist solely of punctuation. If no such words exist, the plot should be None.\n\n## Starting file (solution.py)\n\n```python\nimport nltk\n\nfrom string import punctuation\n\nimport seaborn as sns\n\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n\n    @staticmethod\n    def is_bar(ax, expected_values, expected_categories):\n        extracted_values = [bar.get_height() for bar in ax.patches]\n        extracted_categories = [tick.get_text() for tick in ax.get_xticklabels()]\n        for actual_value, expected_value in zip(extracted_values, expected_values):\n            assert actual_value == expected_value, f\"Expected value '{expected_value}', but got '{actual_value}'\"\n        for actual_category, expected_category in zip(extracted_categories, expected_categories):\n            assert actual_category == expected_category, f\"Expected category '{expected_category}', but got '{actual_category}'\"\n\n    def test_case_1(self):\n        text = 'This is the $first $first sentence.'\n        plot = task_func(text)\n        self.assertIsInstance(plot, plt.Axes, 'Return type should be a plot (Axes).')\n        self.is_bar(plot, expected_categories=['$first'], expected_values=[2.0])\n\n    def test_case_2(self):\n        text = 'This $is $is $is the $second $sentence $sentence'\n        plot = task_func(text)\n        self.assertIsInstance(plot, plt.Axes, 'Return type should be a plot (Axes).')\n        self.is_bar(plot, expected_categories=['$is', '$second', '$sentence'], expected_values=[3.0, 1.0, 2.0])\n\n    def test_case_3(self):\n        text = 'This is the third sentence.'\n        plot = task_func(text)\n        self.assertIsNone(plot, 'The plot should be None since there are no $ words.')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261122,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 564,
+        "output_tokens": 245,
+        "total_tokens": 809
+      }
+    },
+    {
+      "bucket": "SyntaxError",
+      "code": "import nltk\nfrom string import punctuation\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # Tokenize the text\n    tokens = nltk.word_tokenize(text)\n    \n    # Filter words starting with '$' and not consisting solely of punctuation\n    $words = []\n    for token in tokens:\n        if token.startswith('$') and not all(char in PUNCTUATION for char in token):\n            $words.append(token)\n    \n    # Count frequency of each $word\n    from collections import Counter\n    freq = Counter($words)\n    \n    # If no $words, return None\n    if not freq:\n        return None\n    \n    # Prepare data for plotting\n    categories = list(freq.keys())\n    values = list(freq.values())\n    \n    # Create the bar chart\n    fig, ax = plt.subplots()\n    sns.barplot(x=values, y=categories, ax=ax)\n    \n    # Set plot title and labels\n    ax.set_title('Frequency of $ Words')\n    ax.set_xlabel('Frequency')\n    ax.set_ylabel('Words')\n    \n    # Return the Axes object\n    return ax\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "SyntaxError",
+        "duration_s": 0.059,
+        "exception": "SyntaxError",
+        "output_tail": "Traceback (most recent call last):\n  File \"<frozen runpy>\", line 198, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/usr/lib/python3.12/unittest/__main__.py\", line 18, in <module>\n    main(module=None)\n  File \"/usr/lib/python3.12/unittest/main.py\", line 104, in __init__\n    self.parseArgs(argv)\n  File \"/usr/lib/python3.12/unittest/main.py\", line 153, in parseArgs\n    self.createTests()\n  File \"/usr/lib/python3.12/unittest/main.py\", line 164, in createTests\n    self.test = self.testLoader.loadTestsFromNames(self.testNames,\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/loader.py\", line 207, in loadTestsFromNames\n    suites = [self.loadTestsFromName(name, module) for name in names]\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/lib/python3.12/unittest/loader.py\", line 137, in loadTestsFromName\n    module = __import__(module_name)\n             ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-_is514lt/hidden_test.py\", line 1, in <module>\n    from solution import task_func\n  File \"/tmp/wish-eval-_is514lt/solution.py\", line 13\n    $words = []\n    ^\nSyntaxError: invalid syntax",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nCreate a bar chart showing the frequency of words in a text that start with the \"$\" character, excluding those that consist solely of punctuation. If no such words exist, the plot should be None.\n\n## Starting file (solution.py)\n\n```python\nimport nltk\n\nfrom string import punctuation\n\nimport seaborn as sns\n\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n\n    @staticmethod\n    def is_bar(ax, expected_values, expected_categories):\n        extracted_values = [bar.get_height() for bar in ax.patches]\n        extracted_categories = [tick.get_text() for tick in ax.get_xticklabels()]\n        for actual_value, expected_value in zip(extracted_values, expected_values):\n            assert actual_value == expected_value, f\"Expected value '{expected_value}', but got '{actual_value}'\"\n        for actual_category, expected_category in zip(extracted_categories, expected_categories):\n            assert actual_category == expected_category, f\"Expected category '{expected_category}', but got '{actual_category}'\"\n\n    def test_case_1(self):\n        text = 'This is the $first $first sentence.'\n        plot = task_func(text)\n        self.assertIsInstance(plot, plt.Axes, 'Return type should be a plot (Axes).')\n        self.is_bar(plot, expected_categories=['$first'], expected_values=[2.0])\n\n    def test_case_2(self):\n        text = 'This $is $is $is the $second $sentence $sentence'\n        plot = task_func(text)\n        self.assertIsInstance(plot, plt.Axes, 'Return type should be a plot (Axes).')\n        self.is_bar(plot, expected_categories=['$is', '$second', '$sentence'], expected_values=[3.0, 1.0, 2.0])\n\n    def test_case_3(self):\n        text = 'This is the third sentence.'\n        plot = task_func(text)\n        self.assertIsNone(plot, 'The plot should be None since there are no $ words.')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261123,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 564,
+        "output_tokens": 246,
+        "total_tokens": 810
+      }
+    },
+    {
+      "bucket": "LookupError",
+      "code": "import nltk\nfrom string import punctuation\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # Tokenize the text\n    tokens = nltk.word_tokenize(text)\n    \n    # Filter words starting with '$' and not consisting solely of punctuation\n    valid_words = []\n    for token in tokens:\n        if token.startswith('$') and not all(char in PUNCTUATION for char in token):\n            valid_words.append(token)\n    \n    # Count frequency of each valid word\n    from collections import Counter\n    word_counts = Counter(valid_words)\n    \n    # If no valid words, return None\n    if not word_counts:\n        return None\n    \n    # Prepare data for plotting\n    categories = list(word_counts.keys())\n    values = list(word_counts.values())\n    \n    # Create bar chart\n    fig, ax = plt.subplots()\n    sns.barplot(x=values, y=categories, ax=ax)\n    \n    # Customize plot\n    ax.set_title('Frequency of Words Starting with \"$\"')\n    ax.set_xlabel('Frequency')\n    ax.set_ylabel('Words')\n    \n    # Return the Axes object\n    return ax\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "LookupError",
+        "duration_s": 4.27,
+        "exception": "LookupError",
+        "output_tail": "or more information see: https://www.nltk.org/data.html\n\n  Attempted to load 'tokenizers/punkt_tab/english/'\n\n  Searched in:\n    - '/tmp/wish-eval-s2v5y7ya/nltk_data'\n    - '/content/superagent/.venv/nltk_data'\n    - '/content/superagent/.venv/share/nltk_data'\n    - '/content/superagent/.venv/lib/nltk_data'\n    - '/usr/share/nltk_data'\n    - '/usr/local/share/nltk_data'\n    - '/usr/lib/nltk_data'\n    - '/usr/local/lib/nltk_data'\n**********************************************************************\n\n\n======================================================================\nERROR: test_case_5 (hidden_test.TestCases.test_case_5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-s2v5y7ya/hidden_test.py\", line 57, in test_case_5\n    plot = task_func(text)\n           ^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-s2v5y7ya/solution.py\", line 10, in task_func\n    tokens = nltk.word_tokenize(text)\n             ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 166, in word_tokenize\n    sentences = [text] if preserve_line else sent_tokenize(text, language)\n                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 143, in sent_tokenize\n    tokenizer = _get_punkt_tokenizer(language)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 105, in _get_punkt_tokenizer\n    return PunktTokenizer(language)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/punkt.py\", line 1812, in __init__\n    self.load_lang(lang)\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/punkt.py\", line 1821, in load_lang\n    lang_dir = find(f\"tokenizers/punkt_tab/{lang}/\")\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/data.py\", line 1636, in find\n    raise exc\nLookupError: \n**********************************************************************\n  Resource 'punkt_tab' not found.\n  Please use the NLTK Downloader to obtain the resource:\n\n  >>> import nltk\n  >>> nltk.download('punkt_tab')\n\n  For more information see: https://www.nltk.org/data.html\n\n  Attempted to load 'tokenizers/punkt_tab/english/'\n\n  Searched in:\n    - '/tmp/wish-eval-s2v5y7ya/nltk_data'\n    - '/content/superagent/.venv/nltk_data'\n    - '/content/superagent/.venv/share/nltk_data'\n    - '/content/superagent/.venv/lib/nltk_data'\n    - '/usr/share/nltk_data'\n    - '/usr/local/share/nltk_data'\n    - '/usr/lib/nltk_data'\n    - '/usr/local/lib/nltk_data'\n**********************************************************************\n\n\n----------------------------------------------------------------------\nRan 5 tests in 0.010s\n\nFAILED (errors=5)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nCreate a bar chart showing the frequency of words in a text that start with the \"$\" character, excluding those that consist solely of punctuation. If no such words exist, the plot should be None.\n\n## Starting file (solution.py)\n\n```python\nimport nltk\n\nfrom string import punctuation\n\nimport seaborn as sns\n\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n\n    @staticmethod\n    def is_bar(ax, expected_values, expected_categories):\n        extracted_values = [bar.get_height() for bar in ax.patches]\n        extracted_categories = [tick.get_text() for tick in ax.get_xticklabels()]\n        for actual_value, expected_value in zip(extracted_values, expected_values):\n            assert actual_value == expected_value, f\"Expected value '{expected_value}', but got '{actual_value}'\"\n        for actual_category, expected_category in zip(extracted_categories, expected_categories):\n            assert actual_category == expected_category, f\"Expected category '{expected_category}', but got '{actual_category}'\"\n\n    def test_case_1(self):\n        text = 'This is the $first $first sentence.'\n        plot = task_func(text)\n        self.assertIsInstance(plot, plt.Axes, 'Return type should be a plot (Axes).')\n        self.is_bar(plot, expected_categories=['$first'], expected_values=[2.0])\n\n    def test_case_2(self):\n        text = 'This $is $is $is the $second $sentence $sentence'\n        plot = task_func(text)\n        self.assertIsInstance(plot, plt.Axes, 'Return type should be a plot (Axes).')\n        self.is_bar(plot, expected_categories=['$is', '$second', '$sentence'], expected_values=[3.0, 1.0, 2.0])\n\n    def test_case_3(self):\n        text = 'This is the third sentence.'\n        plot = task_func(text)\n        self.assertIsNone(plot, 'The plot should be None since there are no $ words.')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261124,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 564,
+        "output_tokens": 249,
+        "total_tokens": 813
+      }
+    },
+    {
+      "bucket": "LookupError",
+      "code": "import nltk\nfrom string import punctuation\nimport seaborn as sns\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # Tokenize the text\n    tokens = nltk.word_tokenize(text)\n    \n    # Filter words starting with '$' and not consisting solely of punctuation\n    valid_words = []\n    for token in tokens:\n        if token.startswith('$') and not all(char in PUNCTUATION for char in token):\n            valid_words.append(token)\n    \n    # Count frequencies\n    from collections import Counter\n    freq = Counter(valid_words)\n    \n    # If no valid words, return None\n    if not freq:\n        return None\n    \n    # Prepare data for plotting\n    categories = list(freq.keys())\n    values = list(freq.values())\n    \n    # Create the bar chart\n    fig, ax = plt.subplots()\n    sns.barplot(x=values, y=categories, ax=ax)\n    \n    # Set title and labels\n    ax.set_title('Frequency of $-starting Words')\n    ax.set_xlabel('Frequency')\n    ax.set_ylabel('Words')\n    \n    # Return the Axes object\n    return ax\n",
+      "error": "",
+      "evaluation": {
+        "bucket": "LookupError",
+        "duration_s": 4.268,
+        "exception": "LookupError",
+        "output_tail": "or more information see: https://www.nltk.org/data.html\n\n  Attempted to load 'tokenizers/punkt_tab/english/'\n\n  Searched in:\n    - '/tmp/wish-eval-i6yqnkyl/nltk_data'\n    - '/content/superagent/.venv/nltk_data'\n    - '/content/superagent/.venv/share/nltk_data'\n    - '/content/superagent/.venv/lib/nltk_data'\n    - '/usr/share/nltk_data'\n    - '/usr/local/share/nltk_data'\n    - '/usr/lib/nltk_data'\n    - '/usr/local/lib/nltk_data'\n**********************************************************************\n\n\n======================================================================\nERROR: test_case_5 (hidden_test.TestCases.test_case_5)\n----------------------------------------------------------------------\nTraceback (most recent call last):\n  File \"/tmp/wish-eval-i6yqnkyl/hidden_test.py\", line 57, in test_case_5\n    plot = task_func(text)\n           ^^^^^^^^^^^^^^^\n  File \"/tmp/wish-eval-i6yqnkyl/solution.py\", line 10, in task_func\n    tokens = nltk.word_tokenize(text)\n             ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 166, in word_tokenize\n    sentences = [text] if preserve_line else sent_tokenize(text, language)\n                                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 143, in sent_tokenize\n    tokenizer = _get_punkt_tokenizer(language)\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/__init__.py\", line 105, in _get_punkt_tokenizer\n    return PunktTokenizer(language)\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/punkt.py\", line 1812, in __init__\n    self.load_lang(lang)\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/tokenize/punkt.py\", line 1821, in load_lang\n    lang_dir = find(f\"tokenizers/punkt_tab/{lang}/\")\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/content/superagent/.venv/lib/python3.12/site-packages/nltk/data.py\", line 1636, in find\n    raise exc\nLookupError: \n**********************************************************************\n  Resource 'punkt_tab' not found.\n  Please use the NLTK Downloader to obtain the resource:\n\n  >>> import nltk\n  >>> nltk.download('punkt_tab')\n\n  For more information see: https://www.nltk.org/data.html\n\n  Attempted to load 'tokenizers/punkt_tab/english/'\n\n  Searched in:\n    - '/tmp/wish-eval-i6yqnkyl/nltk_data'\n    - '/content/superagent/.venv/nltk_data'\n    - '/content/superagent/.venv/share/nltk_data'\n    - '/content/superagent/.venv/lib/nltk_data'\n    - '/usr/share/nltk_data'\n    - '/usr/local/share/nltk_data'\n    - '/usr/lib/nltk_data'\n    - '/usr/local/lib/nltk_data'\n**********************************************************************\n\n\n----------------------------------------------------------------------\nRan 5 tests in 0.010s\n\nFAILED (errors=5)",
+        "pass": false,
+        "timed_out": false
+      },
+      "messages": [
+        {
+          "content": "You implement one Python function. Reply with the complete contents of solution.py in exactly one ```python code block and nothing else.",
+          "role": "system"
+        },
+        {
+          "content": "## Wish\n\nCreate a bar chart showing the frequency of words in a text that start with the \"$\" character, excluding those that consist solely of punctuation. If no such words exist, the plot should be None.\n\n## Starting file (solution.py)\n\n```python\nimport nltk\n\nfrom string import punctuation\n\nimport seaborn as sns\n\nimport matplotlib.pyplot as plt\n\nPUNCTUATION = set(punctuation)\n\ndef task_func(text):\n    # TODO: implement this function.\n    pass\n```\n\n## Visible tests\n\nThese are the three tests the stakeholder remembers. run_visible_tests executes exactly this file:\n\n```python\nfrom solution import task_func\nfrom solution import *  # BigCodeBench official harness runs test and solution\n                          # in one namespace; this keeps module constants resolved.\nimport unittest\n\nclass TestCases(unittest.TestCase):\n    \"\"\"Test cases for the task_func function.\"\"\"\n\n    @staticmethod\n    def is_bar(ax, expected_values, expected_categories):\n        extracted_values = [bar.get_height() for bar in ax.patches]\n        extracted_categories = [tick.get_text() for tick in ax.get_xticklabels()]\n        for actual_value, expected_value in zip(extracted_values, expected_values):\n            assert actual_value == expected_value, f\"Expected value '{expected_value}', but got '{actual_value}'\"\n        for actual_category, expected_category in zip(extracted_categories, expected_categories):\n            assert actual_category == expected_category, f\"Expected category '{expected_category}', but got '{actual_category}'\"\n\n    def test_case_1(self):\n        text = 'This is the $first $first sentence.'\n        plot = task_func(text)\n        self.assertIsInstance(plot, plt.Axes, 'Return type should be a plot (Axes).')\n        self.is_bar(plot, expected_categories=['$first'], expected_values=[2.0])\n\n    def test_case_2(self):\n        text = 'This $is $is $is the $second $sentence $sentence'\n        plot = task_func(text)\n        self.assertIsInstance(plot, plt.Axes, 'Return type should be a plot (Axes).')\n        self.is_bar(plot, expected_categories=['$is', '$second', '$sentence'], expected_values=[3.0, 1.0, 2.0])\n\n    def test_case_3(self):\n        text = 'This is the third sentence.'\n        plot = task_func(text)\n        self.assertIsNone(plot, 'The plot should be None since there are no $ words.')\n```\n\nWrite the complete contents of solution.py in one ```python code block.",
+          "role": "user"
+        }
+      ],
+      "pass": false,
+      "seed": 20261125,
+      "totals": {
+        "cached_calls": 0,
+        "calls": 1,
+        "input_tokens": 564,
+        "output_tokens": 243,
+        "total_tokens": 807
+      }
+    }
+  ],
+  "seed": 20261121,
+  "self_check": null,
+  "solution_written": true,
+  "source": "bigcodebench",
+  "source_task_id": "BigCodeBench/31",
+  "started_at": "2026-11-23T00:56:55+00:00",
+  "status": "complete",
+  "task_key": "bigcodebench/BigCodeBench/31",
+  "tools": {},
+  "totals": {
+    "cached_calls": 0,
+    "calls": 5,
+    "input_tokens": 2820,
+    "output_tokens": 1237,
+    "total_tokens": 4057
+  },
+  "trace_events": [],
+  "turn_cap_hit": false,
+  "turns": 5
+}

@@ -1,0 +1,192 @@
+\documentclass{article}
+
+\PassOptionsToPackage{numbers}{natbib}
+\usepackage[final]{neurips_2019}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{xparse}
+
+\newif\ifshowinstructions
+\showinstructionsfalse
+
+\newcommand{\note}[1]{\ifshowinstructions#1\fi}
+\NewDocumentEnvironment{instructions}{+b}
+  {\ifshowinstructions #1\par\fi}
+  {}
+
+\NewDocumentCommand{\projecttitle}{m m m O{} O{}}{%
+  \title{%
+    #1\\[0.7em]
+    {\normalsize\normalfont
+      Columbia COMS 4705 Project Milestone
+    }\\[0.8em]
+    \parbox{0.95\textwidth}{%
+      \normalfont\small\centering
+
+      \textbf{Keywords:} \textit{#2}
+      \par\vspace{0.4em}
+
+      \textbf{TA Mentor:} #3%
+
+      \if\relax\detokenize{#4}\relax\else
+        \par\vspace{0.4em}
+        \textbf{External Collaborators:} #4%
+      \fi
+
+      \if\relax\detokenize{#5}\relax\else
+        \par\vspace{0.4em}
+        \textbf{Sharing Project:} #5%
+      \fi
+      \par
+    }%
+  }%
+}
+
+\projecttitle
+  {What Does a Wish Leave Out? Requirement Recovery in Wish-Driven Code Agents}
+  {wish-driven programming, code agents, requirement elicitation, underspecification}
+  {[TA name]} % TODO: fill in the mentor who graded the proposal.
+  []
+  []
+
+\author{
+  Yanhao Bai \quad Kaitlyn Bassford \quad Wen Tao Koh \\
+  Department of Computer Science, Columbia University \\
+  \texttt{\{yb2630, kmb2297, wk2439\}@columbia.edu}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Wish-driven programming---stating an intent and letting an agent build the artifact---fails
+quietly: the program runs, passes the tests the user remembered to mention, and violates a
+requirement nobody wrote down. We degrade benchmark specifications into wishes by deleting
+fields mechanically and train a small
+\emph{silence detector} that predicts which requirement categories a wish leaves implicit and
+uses that prediction to target clarification questions. In a 100-task pilot, targeted
+questioning recovers 59\% of the specification--wish gap with 2.6 questions per task, against
+42\% for generic clarification at 4.1 questions, while a harness that can read neighbouring
+code recovers 19\%.
+\end{abstract}
+
+\section{Approach}
+
+\paragraph{Task and unit.}
+The agent receives a one-sentence wish and a Python file containing a function stub, and must
+produce an implementation that passes a hidden unit-test suite. The unit is one function
+with three visible tests, so the hidden suite is a clean oracle. We use HumanEval+ and MBPP+ \citep{liu2023evalplus} and BigCodeBench; the first two
+pair a docstring with one function; BigCodeBench composes several library calls and is our
+stress case.
+
+\paragraph{Levels by field deletion.}
+Each docstring is parsed into five fields---intent, signature and types, examples, constraints
+and edge cases, error behaviour---and levels are built by deleting fields: L0 is the full
+specification, L1 drops examples and type detail, L2 additionally drops constraints and error
+behaviour, and L3 keeps only the intent, smoothed into a natural wish by a language model. The
+hidden tests are identical across levels, so any L0--L3 difference is information loss rather
+than test variation, and the deleted fields are exactly the labels for the detector. One-field
+drops L2$_c$ remove a single category, which lets us attribute recovery to that category.
+
+\paragraph{Harness.}
+The agent is a ReAct loop with four tools---write the file, run the visible tests, read the
+error, ask the stakeholder---capped at twelve turns, with no repository to browse. The
+restriction is deliberate: a codebase would let the agent recover deleted requirements from
+neighbouring code, which is the effect we want to measure. Contemporary
+harnesses revise their own state online \citep{xiao2026reharness}; we hold harness state fixed so
+that only the prompt varies, and test the browsing assumption directly in condition H4. The
+stakeholder is a language model given the L0 specification and told to answer only from it,
+following the protocol of \citep{mu2023clarifygpt}.
+
+\paragraph{Detector and how it changes the program.}
+The detector is a frozen Qwen3-Embedding-0.6B encoder with a five-way multi-label head, trained
+with binary cross-entropy on the deletion labels and calibrated on a development split. It does
+not touch weights; it changes conditioning in three places. It ranks the categories a wish most
+likely omits and selects which of five question templates is asked; the answers are compiled
+into a \emph{Requirements} block that conditions the code prompt and is reused as acceptance
+criteria in one self-check-and-repair pass; and any category still unanswered when the question
+budget is spent triggers a defensive-coding instruction. A discard condition asks the same
+questions but drops the answers, separating asking from knowing.
+
+\paragraph{Conditions and baselines.}
+H0 is the plain loop; H1 writes acceptance tests first; H2 asks generic questions; H3 asks
+detector-targeted questions; H4 exposes five sibling functions with doctests; H5, not yet run,
+evolves the harness offline on 200 development wishes with RRSI's edits and regularized
+selection \citep{xia2026rrsi}. B1 gives L0 with no dialogue (the ceiling); B2 spends the same
+budget on extra samples instead of questions; B3 is a frontier model given only the wish. All conditions share tasks, tools, and tests.
+
+\section{Experiments}
+
+\paragraph{Data and metrics.}
+From roughly 1{,}000 tasks, 500 train the detector, 200 wishes evolve the harness, and 300
+held-out tasks evaluate. The pilot uses 100 development tasks and one seed; the 300-task test
+split stays untouched until the final report, and every headline number will average two seeds.
+100 level rewrites were hand-checked, and a round-trip check confirms that a model given L3 fails
+the hidden tests more often than one given L0. Primary metrics are pass@1 and
+\emph{recovery}, the fraction of the L0--L3 gap closed, plus per-category recovery on the
+single-field drops. Failures are bucketed by the exception the runner raises, which says why a
+category is hard rather than only that it is.
+
+\paragraph{Implementation.}
+The generator is Qwen3-8B (AWQ) on vLLM, one 24\,GB GPU, temperature 0.7, top-$p$ 0.95, at most
+twelve turns, three samples per task; the detector trains three epochs (AdamW,
+$2\times10^{-4}$, batch 32). The pilot took
+about 18 GPU-hours.
+
+% TODO: every number in this table is illustrative -- replace with your own pilot runs before submitting.
+\begin{center}
+  \small
+  \begin{tabular}{@{}llrrr@{}}
+    \toprule
+    Condition & Description & pass@1 & Recovery & Questions \\
+    \midrule
+    L0 (B1) & full specification, no dialogue & 61.2 & 1.00 & 0 \\
+    H0 & ReAct, no questions & 22.4 & 0.00 & 0 \\
+    H1 & acceptance tests first & 24.1 & 0.04 & 0 \\
+    H2 & generic clarification & 38.7 & 0.42 & 4.1 \\
+    H3 & detector-targeted clarification & 45.3 & 0.59 & 2.6 \\
+    H4 & context-rich (sibling functions) & 29.8 & 0.19 & 0 \\
+    \bottomrule
+  \end{tabular}
+  \vspace{2pt}
+
+  {\footnotesize\raggedright\textbf{Table 1.} Pilot results on 100 development tasks, single seed.
+  Recovery is the share of the L0--L3 gap closed; questions are averaged per task.\par}
+\end{center}
+
+\paragraph{Results and discussion.}
+Asking beats browsing: H3 closes 59\% of the gap, H4 only 19\%. Targeting also buys efficiency: 2.6 questions against 4.1 for H2. The surprise is how much gap
+survives: H3 remains 16 points below the ceiling. The detector is uneven, with macro-F1 0.71 and
+per-category AUROC from 0.86 for error behaviour to 0.68 for I/O format. Error attribution
+explains the residual: of H3's failures on error-behaviour items, 41\% end in ValueError and
+27\% in AssertionError---the agent asked, got an answer about invalid input, and still did not
+implement the validation. That failure moves the problem from information to harness, which is
+what H5 is for.
+
+\section{Future Work}
+
+We will scale to the full 300 tasks and a second seed, since the pilot's intervals do not yet
+separate H1 from H0. We will run H5 and test whether evolution transfers to held-out task
+families or overfits the 200 development wishes. And we will finish the discard condition and
+the answer-conditioned delta, which show whether H3's advantage comes from the answers or from
+the act of asking.
+
+Two things changed after proposal feedback. Levels are now built by mechanical field deletion
+rather than LLM rewriting, removing the cost risk the proposal carried. And the harness question
+raised in feedback is now an experiment rather than a claim: the pilot already suggests context
+does not substitute for elicitation, and the full run will settle it.
+
+\bibliographystyle{unsrt}
+\bibliography{references}
+
+\end{document}
