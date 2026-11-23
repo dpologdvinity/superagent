@@ -67,7 +67,7 @@ sha256sum results/levels/tasks.jsonl    # e4cf7564b38e17c040b8a37837c4757a8b5d40
 
 `manifest.json` records the counts and `parsing.visible_tests = inputs_only`. Its
 `created_at`, git and timing fields are provenance from the committed build, so a clean
-rebuild reproduces the task hash and counts but not the manifest bytes.
+rebuild reproduces the task hash and counts but not the manifest or stats bytes.
 
 On macOS, use `shasum -a 256` instead of `sha256sum`. `make levels VISIBLE_TESTS=full`
 rebuilds the older full-mode visible tests; the committed levels are inputs-only.
