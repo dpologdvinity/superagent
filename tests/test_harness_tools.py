@@ -47,6 +47,18 @@ def test_write_file_passes_visible_tests_and_read_error_returns_traceback(tmp_pa
     assert tool.visible_runs[-1]["ok"] is False
 
 
+def test_run_visible_tests_returns_printed_results(tmp_path):
+    (tmp_path / "solution.py").write_text(SOLUTION, encoding="utf-8")
+    (tmp_path / "visible_test.py").write_text(
+        "from solution import add\nprint(add(1, 2))\nprint(add(-1, 1))\n",
+        encoding="utf-8",
+    )
+    tool = ToolSession(workspace=tmp_path)
+    message = tool.execute("run_visible_tests", {})
+    assert message.startswith("Visible tests passed. Printed output:")
+    assert "\n3\n0" in message
+
+
 def test_write_file_rejects_paths_outside_the_whitelist(tmp_path):
     tool = session(tmp_path)
     for path in ("../solution.py", "/tmp/solution.py", "hidden_test.py", "visible_test.py"):

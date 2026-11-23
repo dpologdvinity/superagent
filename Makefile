@@ -1,16 +1,18 @@
 UV ?= uv
 PYTHON ?= .venv/bin/python
 RUN_ID ?= r1-smoke
+VISIBLE_TESTS ?= full
 
 .PHONY: levels test detector smoke
 
 # Rebuild results/levels/ from the pinned datasets.  Downloads are cached in data/raw/,
 # canonical-solution checks are cached in data/cache/validation/, and hidden tests plus
-# canonical solutions are written to gitignored data/derived/levels/.
+# canonical solutions are written to gitignored data/derived/levels/.  VISIBLE_TESTS can
+# be `inputs_only` to print observed results instead of comparing expected values.
 levels:
 	$(UV) sync
 	$(UV) pip install --python .venv -r requirements-validation.txt
-	PYTHONPATH=src $(PYTHON) -m wishrec.build
+	PYTHONPATH=src $(PYTHON) -m wishrec.build --visible-tests "$(VISIBLE_TESTS)"
 
 # Fast checks: no network, no downloaded datasets, no BigCodeBench validation libraries.
 test:

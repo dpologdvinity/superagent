@@ -14,7 +14,7 @@ RESULTS_DIR = REPO_ROOT / "results"
 LEVELS_DIR = RESULTS_DIR / "levels"
 
 PIPELINE_VERSION = "0.1.0"
-PARSER_VERSION = "0.1.0"
+PARSER_VERSION = "0.2.0"
 VALIDATOR_VERSION = "0.1.0"
 
 #: Fixed seed for task selection and the stratified split (ticket requirement).
@@ -49,6 +49,13 @@ FIELD_LABELS = {
 }
 
 LEVELS = ("L0", "L1", "L2", "L3")
+
+#: How the parser renders the three visible tests.  ``full`` keeps the benchmark's
+#: expected results (the R0-R3 default, so committed artifacts stay reproducible);
+#: ``inputs_only`` calls the entry point on the same three inputs and prints the observed
+#: results, so the ``examples`` field is not silently restored by the visible tests.
+VISIBLE_TEST_MODES = ("full", "inputs_only")
+DEFAULT_VISIBLE_TESTS = "full"
 
 
 @dataclass(frozen=True)

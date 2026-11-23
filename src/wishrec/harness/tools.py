@@ -64,7 +64,8 @@ def tool_schemas(*, allow_acceptance: bool = False, allow_ask: bool = False) -> 
                 "name": "run_visible_tests",
                 "description": (
                     "Run the three visible tests against the current solution.py and return "
-                    "pass/fail. Call read_error for the traceback of the last failure."
+                    "pass/fail plus anything the tests print. Call read_error for the "
+                    "traceback of the last failure."
                 ),
                 "parameters": {"type": "object", "properties": {}, "additionalProperties": False},
             },
@@ -201,6 +202,12 @@ class ToolSession:
         self.visible_runs.append(record)
         if result.ok:
             self.last_error = ""
+            printed = result.stdout.strip()
+            if printed:
+                return (
+                    "Visible tests passed. Printed output:\n"
+                    f"{_truncate(printed, 2000)}"
+                )
             return "Visible tests passed."
         self.last_error = result.combined()
         return (
