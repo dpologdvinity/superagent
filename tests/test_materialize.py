@@ -38,6 +38,21 @@ def test_coverage_reports_missing_and_present(tmp_path: Path):
     assert mat.coverage([record], tmp_path) == []
 
 
+def test_materialize_threads_the_visible_tests_mode(monkeypatch, tmp_path: Path):
+    monkeypatch.setattr(mat, "load_raw_rows", lambda: {"humanevalplus": [{}]})
+    seen: list[dict] = []
+
+    def fake_parse(source, row, **kwargs):
+        seen.append(kwargs)
+        return _task()
+
+    monkeypatch.setattr(mat, "parse_task", fake_parse)
+    mat.materialize([], derived_dir=tmp_path)
+    mat.materialize([], derived_dir=tmp_path, visible_tests="inputs_only")
+
+    assert seen == [{"visible_tests": "full"}, {"visible_tests": "inputs_only"}]
+
+
 def test_materialize_writes_derived_files_and_verifies_hashes(monkeypatch, tmp_path: Path):
     task = _task()
     record = _record(
@@ -47,7 +62,7 @@ def test_materialize_writes_derived_files_and_verifies_hashes(monkeypatch, tmp_p
         stub_sha256=mat.sha256_text(task.stub),
     )
     monkeypatch.setattr(mat, "load_raw_rows", lambda: {"bigcodebench": [{}]})
-    monkeypatch.setattr(mat, "parse_task", lambda source, row: task)
+    monkeypatch.setattr(mat, "parse_task", lambda source, row, **kwargs: task)
 
     summary = mat.materialize([record], derived_dir=tmp_path)
 
@@ -64,7 +79,7 @@ def test_materialize_reports_a_hash_mismatch(monkeypatch, tmp_path: Path):
     task = _task()
     record = _record(hidden_test_sha256="0" * 64)
     monkeypatch.setattr(mat, "load_raw_rows", lambda: {"bigcodebench": [{}]})
-    monkeypatch.setattr(mat, "parse_task", lambda source, row: task)
+    monkeypatch.setattr(mat, "parse_task", lambda source, row, **kwargs: task)
 
     summary = mat.materialize([record], derived_dir=tmp_path)
 

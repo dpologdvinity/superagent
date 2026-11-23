@@ -1,5 +1,7 @@
 import ast
 import json
+import subprocess
+import sys
 
 import pytest
 
@@ -35,6 +37,47 @@ HUMANEVAL_ROW = {
         "        assertion(candidate(*inp), exp, 0)\n"
     ),
 }
+
+HUMANEVAL_104_ROW = {
+    "task_id": "HumanEval/104",
+    "entry_point": "unique_digits",
+    "prompt": (
+        "from typing import List\n"
+        "\n"
+        "\n"
+        "def unique_digits(x: List[int]) -> List[int]:\n"
+        '    """Given a list of positive integers x. return a sorted list of all '
+        "elements that has no even digit.\n"
+        "    >>> unique_digits([15, 33, 1422, 1])\n"
+        "    [1, 15, 33]\n"
+        "    >>> unique_digits([152, 323, 1422, 10])\n"
+        "    []\n"
+        '    """\n'
+    ),
+    "canonical_solution": (
+        "\n    return sorted(n for n in x if all(int(d) % 2 for d in str(n)))\n"
+    ),
+    "test": (
+        "def check(candidate):\n"
+        "    inputs = [[[15, 33, 1422, 1]], [[152, 323, 1422, 10]], [[111, 22, 33]]]\n"
+        "    results = [[1, 15, 33], [], [33, 111]]\n"
+        "    for i, (inp, exp) in enumerate(zip(inputs, results)):\n"
+        "        assert candidate(*inp) == exp\n"
+    ),
+}
+
+
+def _run_visible_test(tmp_path, task, solution: str):
+    (tmp_path / "solution.py").write_text(solution, encoding="utf-8")
+    (tmp_path / "visible_test.py").write_text(task.visible_test, encoding="utf-8")
+    return subprocess.run(
+        [sys.executable, "visible_test.py"],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+
 
 MBPP_ROW = {
     "task_id": 7,
@@ -118,9 +161,11 @@ def test_humaneval_parse():
     task = parse_task("humanevalplus", HUMANEVAL_ROW)
     assert task.key == "humanevalplus/HumanEval/0"
     assert task.entry_point == "add_one"
-    assert task.fields["intent"] == "Add one to x, returning the result."
+    assert task.fields["intent"] == (
+        "Add one to x, returning the result. Note: x may be negative."
+    )
     assert ">>> add_one(1)" in task.fields["examples"]
-    assert "x may be negative." in task.fields["constraints"]
+    assert task.fields["constraints"] == "- x may be negative."
     assert task.fields["signature_types"].startswith("from typing import List")
     assert "def add_one(x, )" not in task.fields["signature_untyped"]
     assert task.fields["signature_untyped"].startswith("def add_one(x)")
@@ -133,6 +178,138 @@ def test_humaneval_parse():
     assert "inputs = [[1], [2], [3]]" in task.visible_test
     assert "numpy" in task.requirements
     assert task.stub.startswith("from typing import List")
+
+
+def test_humaneval_intent_is_the_whole_prose_block():
+    task = parse_task("humanevalplus", HUMANEVAL_104_ROW)
+    assert task.fields["intent"] == (
+        "Given a list of positive integers x. return a sorted list of all elements "
+        "that has no even digit."
+    )
+    assert task.fields["constraints"] == ""
+    assert "return a sorted list" in task.fields["intent"]
+
+
+def test_humaneval_explicit_note_is_still_a_constraint():
+    task = parse_task("humanevalplus", HUMANEVAL_ROW)
+    assert task.fields["constraints"] == "- x may be negative."
+    assert task.fields["intent"].startswith("Add one to x, returning the result.")
+    assert "x may be negative." in task.fields["intent"]
+
+
+def test_humaneval_explicit_raises_label_is_error_behaviour():
+    row = dict(HUMANEVAL_104_ROW)
+    row["prompt"] = (
+        "from typing import List\n"
+        "\n"
+        "\n"
+        "def unique_digits(x: List[int]) -> List[int]:\n"
+        '    """Return the smallest number.\n'
+        "    Raises: ValueError if x is empty.\n"
+        "    >>> unique_digits([15, 33, 1422, 1])\n"
+        "    [1, 15, 33]\n"
+        '    """\n'
+    )
+    task = parse_task("humanevalplus", row)
+    assert task.fields["error_behaviour"] == "- ValueError if x is empty."
+    assert task.fields["constraints"] == ""
+
+
+def test_humaneval_short_intent_is_rejected():
+    row = dict(HUMANEVAL_104_ROW)
+    row["prompt"] = (
+        "from typing import List\n"
+        "\n"
+        "\n"
+        "def unique_digits(x: List[int]) -> List[int]:\n"
+        '    """Return x now.\n'
+        "    >>> unique_digits([15, 33, 1422, 1])\n"
+        "    [1, 15, 33]\n"
+        '    """\n'
+    )
+    with pytest.raises(ParseError, match="fewer than 5 tokens"):
+        parse_task("humanevalplus", row)
+
+
+def test_humaneval_verbless_intent_is_rejected():
+    row = dict(HUMANEVAL_104_ROW)
+    row["prompt"] = (
+        "from typing import List\n"
+        "\n"
+        "\n"
+        "def unique_digits(x: List[int]) -> List[int]:\n"
+        '    """You are given a string s.\n'
+        "    >>> unique_digits([15, 33, 1422, 1])\n"
+        "    [1, 15, 33]\n"
+        '    """\n'
+    )
+    with pytest.raises(ParseError, match="requirement verb"):
+        parse_task("humanevalplus", row)
+
+
+def test_humaneval_for_example_block_is_not_prose():
+    row = dict(HUMANEVAL_104_ROW)
+    row["entry_point"] = "smallest_change"
+    row["prompt"] = (
+        "from typing import List\n"
+        "\n"
+        "\n"
+        "def smallest_change(arr: List[int]) -> int:\n"
+        '    """Given an array arr of integers, find the minimum number of elements '
+        "that need to be changed to make the array palindromic.\n"
+        "    For example:\n"
+        "    smallest_change([1, 2, 3, 5, 4, 7, 9, 6]) == 4\n"
+        "    smallest_change([1, 2, 3, 4, 3, 2, 2]) == 1\n"
+        '    """\n'
+    )
+    row["test"] = (
+        "def check(candidate):\n"
+        "    inputs = [[[1, 2, 3, 5, 4, 7, 9, 6]], [[1, 2, 3, 4, 3, 2, 2]], [[1]]]\n"
+        "    results = [4, 1, 0]\n"
+        "    for i, (inp, exp) in enumerate(zip(inputs, results)):\n"
+        "        assert candidate(*inp) == exp\n"
+    )
+    task = parse_task("humanevalplus", row)
+    assert task.fields["intent"] == (
+        "Given an array arr of integers, find the minimum number of elements that need "
+        "to be changed to make the array palindromic."
+    )
+    assert task.fields["constraints"] == ""
+    assert "smallest_change([1, 2, 3, 5, 4, 7, 9, 6])" in task.fields["examples"]
+
+
+def test_humaneval_full_visible_test_is_unchanged():
+    default = parse_task("humanevalplus", HUMANEVAL_104_ROW)
+    full = parse_task("humanevalplus", HUMANEVAL_104_ROW, visible_tests="full")
+    assert default.visible_test == full.visible_test
+    assert default.visible_asserts == full.visible_asserts
+    assert "results = [[1, 15, 33], [], [33, 111]]" in full.visible_test
+    assert "assertion(unique_digits(*[[15, 33, 1422, 1]]), [1, 15, 33], 0)" in (
+        full.visible_asserts
+    )
+
+
+def test_humaneval_inputs_only_visible_test_has_no_expected_results(tmp_path):
+    task = parse_task("humanevalplus", HUMANEVAL_104_ROW, visible_tests="inputs_only")
+    assert task.visible_asserts_count == 3
+    assert task.meta["visible_tests"] == "inputs_only"
+    assert "results" not in task.visible_test
+    assert "assert" not in task.visible_test
+    assert "[1, 15, 33]" not in task.visible_asserts
+    assert "print(unique_digits(*inp))" in task.visible_asserts
+
+    solution = (
+        "def unique_digits(x):\n"
+        "    return sorted(n for n in x if all(int(d) % 2 for d in str(n)))\n"
+    )
+    completed = _run_visible_test(tmp_path, task, solution)
+    assert completed.returncode == 0, completed.stderr
+    assert completed.stdout.splitlines() == ["[1, 15, 33]", "[]", "[33, 111]"]
+
+
+def test_invalid_visible_tests_mode_is_rejected():
+    with pytest.raises(ValueError, match="visible_tests"):
+        parse_task("humanevalplus", HUMANEVAL_ROW, visible_tests="expected")
 
 
 def test_humaneval_ref_func_is_rejected():
@@ -156,6 +333,24 @@ def test_mbpp_parse():
     assert task.hidden_test.startswith("from solution import double\n")
     assert "candidate = double" in task.hidden_test
     assert task.stub.startswith("def double(x):")
+
+
+def test_mbpp_inputs_only_visible_test_has_no_expected_results(tmp_path):
+    task = parse_task("mbppplus", MBPP_ROW, visible_tests="inputs_only")
+    assert task.visible_test == (
+        "from solution import double\n"
+        "print(double(1))\n"
+        "print(double(2))\n"
+        "print(double(3))\n"
+    )
+    assert task.visible_asserts == (
+        "print(double(1))\nprint(double(2))\nprint(double(3))"
+    )
+    assert "== 2" not in task.visible_test
+
+    completed = _run_visible_test(tmp_path, task, "def double(x):\n    return x * 2\n")
+    assert completed.returncode == 0, completed.stderr
+    assert completed.stdout.splitlines() == ["2", "4", "6"]
 
 
 def test_mbpp_requires_three_tests():

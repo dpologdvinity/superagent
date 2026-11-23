@@ -21,7 +21,7 @@ import sys
 from pathlib import Path
 
 from .artifacts import _safe_task_id, sha256_text, write_derived_task
-from .config import DERIVED_DIR, LEVELS_DIR
+from .config import DEFAULT_VISIBLE_TESTS, DERIVED_DIR, LEVELS_DIR, VISIBLE_TEST_MODES
 from .datasets import download_sources, load_raw_rows
 from .parse import parse_task
 
@@ -64,6 +64,7 @@ def materialize(
     download: bool = False,
     clean: bool = False,
     derived_dir: Path | None = None,
+    visible_tests: str = DEFAULT_VISIBLE_TESTS,
 ) -> dict:
     """Write derived files from the pinned raw rows and verify them against the records."""
     if download:
@@ -74,7 +75,7 @@ def materialize(
     for source, source_rows in rows.items():
         for row in source_rows:
             try:
-                task = parse_task(source, row)
+                task = parse_task(source, row, visible_tests=visible_tests)
             except Exception as exc:  # noqa: BLE001 - record, do not abort the whole build
                 parse_failures.append({"source": source, "error": str(exc)})
                 continue
@@ -131,6 +132,15 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--download", action="store_true", help="download/verify pinned raw data first")
     parser.add_argument("--clean", action="store_true", help="remove the derived root before writing")
     parser.add_argument("--check-only", action="store_true", help="report coverage only")
+    parser.add_argument(
+        "--visible-tests",
+        choices=VISIBLE_TEST_MODES,
+        default=DEFAULT_VISIBLE_TESTS,
+        help=(
+            "how derived visible tests treat expected results; match the mode used "
+            "to build the records (default: full)"
+        ),
+    )
     args = parser.parse_args(argv)
 
     records = read_records(args.tasks)
@@ -140,7 +150,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0 if not missing else 1
 
     summary = materialize(
-        records, download=args.download, clean=args.clean, derived_dir=args.derived
+        records,
+        download=args.download,
+        clean=args.clean,
+        derived_dir=args.derived,
+        visible_tests=args.visible_tests,
     )
     print(json.dumps(summary, indent=2, sort_keys=True))
     ok = not summary["missing"] and not summary["mismatched"] and not summary["coverage_missing"]

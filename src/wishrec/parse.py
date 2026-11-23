@@ -19,7 +19,7 @@ import warnings
 from dataclasses import dataclass, field
 from typing import Any
 
-from .config import FIELD_KEYS
+from .config import DEFAULT_VISIBLE_TESTS, FIELD_KEYS, VISIBLE_TEST_MODES
 
 ERROR_CUE = re.compile(
     r"\b(raise|raises|raised|exception|exceptions|error|errors|invalid|illegal|None)\b",
@@ -31,11 +31,12 @@ ERROR_CUE = re.compile(
 warnings.filterwarnings("ignore", category=SyntaxWarning)
 SECTION_LABEL = re.compile(
     r"^\s*(Note|Notes|Constraints?|Preconditions?|Important|Hints?|Variables|Output|"
-    r"Args|Arguments|Returns?|Raises)\s*:\s*",
+    r"Args|Arguments|Returns?|Raises|Exceptions?)\s*:\s*",
     re.IGNORECASE,
 )
 EXAMPLE_LABEL = re.compile(
-    r"^\s*(Example\s+\d+|Examples?)\s*:?\s*", re.IGNORECASE
+    r"^\s*(?:(?:Example\s+\d+|Examples?)\s*:?\s*|For\s+example\s*:\s*)",
+    re.IGNORECASE,
 )
 
 _STDLIB = set(sys.stdlib_module_names)
@@ -208,15 +209,42 @@ def _strip_section_label(sentence: str) -> tuple[str, bool]:
     return sentence[match.end() :].strip(), True
 
 
+INTENT_VERBS = re.compile(
+    r"\b(?:return|create|write|compute|find|count|implement)\w*\b",
+    re.IGNORECASE,
+)
+MIN_INTENT_TOKENS = 5
+
+
+def _validate_intent(intent: str) -> None:
+    """Reject a wish that is too short or contains no requirement verb."""
+    if not intent:
+        raise ParseError("empty intent after docstring parsing")
+    if len(intent.split()) < MIN_INTENT_TOKENS:
+        raise ParseError(
+            f"intent has fewer than {MIN_INTENT_TOKENS} tokens: {intent!r}"
+        )
+    if not INTENT_VERBS.search(intent):
+        raise ParseError(f"intent has no requirement verb: {intent!r}")
+
+
 def _classify_prose(prose: str) -> tuple[str, str, str]:
-    """Return (intent, constraints, error_behaviour) from cleaned prose."""
+    """Return (intent, constraints, error_behaviour) from the prose block.
+
+    The intent is the whole prose block before the examples, with newlines collapsed to
+    spaces.  Later unlabelled sentences are part of that request, not hidden constraints;
+    constraints and error behaviour are extra classifications of sentences that carry an
+    explicit label or an error cue.  In particular, the first sentence is never allowed
+    to swallow a requirement that the following prose states.
+    """
     sentences = _split_sentences(prose)
     if not sentences:
         return "", "", ""
-    intent = re.sub(r"^\s*Task\s+", "", sentences[0]).strip()
+    intent = re.sub(r"\s+", " ", prose).strip()
+    intent = re.sub(r"^Task\s*:?\s*", "", intent, flags=re.IGNORECASE).strip()
     constraints: list[str] = []
     errors: list[str] = []
-    for raw in sentences[1:]:
+    for raw in sentences:
         sentence, from_label = _strip_section_label(raw)
         if not sentence:
             continue
@@ -226,8 +254,7 @@ def _classify_prose(prose: str) -> tuple[str, str, str]:
             constraints.append(sentence)
         elif ERROR_CUE.search(sentence):
             errors.append(sentence)
-        else:
-            constraints.append(sentence)
+        # Unlabelled prose is the request: it stays in the intent, not in constraints.
     return (
         intent,
         "\n".join(f"- {item}" for item in constraints),
@@ -238,9 +265,10 @@ def _classify_prose(prose: str) -> tuple[str, str, str]:
 def _extract_docstring_parts(docstring: str) -> tuple[str, str]:
     """Split a docstring into (prose, examples).
 
-    Handles ``>>>`` doctests and ``Examples:`` / ``Example N:`` sections.  The examples
-    field collects the example text verbatim (minus indentation); the prose is passed to
-    :func:`_classify_prose`.
+    Handles ``>>>`` doctests and ``Examples:`` / ``Example N:`` / ``For example:``
+    sections.  The examples field collects the example text verbatim (minus indentation);
+    the prose is passed to :func:`_classify_prose` with its section labels intact, so
+    explicit labels can still be recognised as constraints or error behaviour.
     """
     doc = textwrap.dedent(docstring).strip("\n")
     lines = doc.splitlines()
@@ -297,19 +325,30 @@ def _extract_docstring_parts(docstring: str) -> tuple[str, str]:
         prose.append(line)
         index += 1
     prose_text = "\n".join(prose)
-    prose_text = re.sub(
-        r"^\s*(Note|Notes|Constraints?|Preconditions?)\s*:\s*",
-        "",
-        prose_text,
-        flags=re.M,
-    )
     return prose_text.strip(), "\n".join(examples).strip("\n")
 
 
+def _validate_visible_tests(visible_tests: str) -> None:
+    if visible_tests not in VISIBLE_TEST_MODES:
+        raise ValueError(
+            f"visible_tests must be one of {VISIBLE_TEST_MODES}, got {visible_tests!r}"
+        )
+
+
 def _humaneval_visible_test(
-    test_source: str, entry_point: str, cases: int = 3
+    test_source: str,
+    entry_point: str,
+    cases: int = 3,
+    *,
+    visible_tests: str = DEFAULT_VISIBLE_TESTS,
 ) -> tuple[str, str, int]:
-    """Return (visible test source, visible assertion text, case count)."""
+    """Return (visible test source, visible assertion text, case count).
+
+    ``full`` keeps the benchmark's expected results in the visible file.  ``inputs_only``
+    calls the entry point on the same first ``cases`` inputs and prints each observed
+    result, so the agent never sees the expected values.
+    """
+    _validate_visible_tests(visible_tests)
     tree = ast.parse(test_source)
     check = None
     for node in tree.body:
@@ -339,6 +378,27 @@ def _humaneval_visible_test(
     if len(inputs) < cases or len(results) < cases:
         raise ParseError(f"HumanEval+ test has fewer than {cases} cases")
     truncated = copy.deepcopy(tree)
+    inputs_assign = None
+    if visible_tests == "inputs_only":
+        copied_check = next(
+            node
+            for node in truncated.body
+            if isinstance(node, ast.FunctionDef) and node.name == "check"
+        )
+        inputs_assign = next(
+            node
+            for node in copied_check.body
+            if isinstance(node, ast.Assign)
+            and len(node.targets) == 1
+            and isinstance(node.targets[0], ast.Name)
+            and node.targets[0].id == "inputs"
+        )
+        # Keep the literal inputs and imports, but drop the expected results and all
+        # comparisons that would reveal them.  The test only exercises the entry point.
+        copied_check.body = [
+            inputs_assign,
+            ast.parse("for inp in inputs:\n    print(candidate(*inp))").body[0],
+        ]
     truncated.body.append(
         ast.Expr(
             value=ast.Call(func=ast.Name(id="check", ctx=ast.Load()), args=[ast.Name(id=entry_point, ctx=ast.Load())], keywords=[])
@@ -347,10 +407,17 @@ def _humaneval_visible_test(
     ast.fix_missing_locations(truncated)
     visible_source = ast.unparse(truncated)
     visible = f"from solution import {entry_point}\n{visible_source}\n"
-    assertions = "\n".join(
-        f"assertion({entry_point}(*{ast.unparse(inp)}), {ast.unparse(res)}, 0)"
-        for inp, res in zip(inputs[:cases], results[:cases])
-    )
+    if visible_tests == "full":
+        assertions = "\n".join(
+            f"assertion({entry_point}(*{ast.unparse(inp)}), {ast.unparse(res)}, 0)"
+            for inp, res in zip(inputs[:cases], results[:cases])
+        )
+    else:
+        assert inputs_assign is not None
+        assertions = (
+            f"for inp in {ast.unparse(inputs_assign.value)}:\n"
+            f"    print({entry_point}(*inp))"
+        )
     return visible, assertions, cases
 
 
@@ -409,7 +476,8 @@ def _mbpp_entry_point(test_source: str, canonical_code: str) -> str:
 # --------------------------------------------------------------------------------------
 # HumanEval+
 # --------------------------------------------------------------------------------------
-def parse_humanevalplus(row: dict) -> ParsedTask:
+def parse_humanevalplus(row: dict, *, visible_tests: str = DEFAULT_VISIBLE_TESTS) -> ParsedTask:
+    _validate_visible_tests(visible_tests)
     source_task_id = str(row["task_id"])
     entry_point = str(row["entry_point"])
     prompt = str(row["prompt"])
@@ -426,8 +494,7 @@ def parse_humanevalplus(row: dict) -> ParsedTask:
     docstring = ast.get_docstring(fn, clean=True) or ""
     prose, examples = _extract_docstring_parts(docstring)
     intent, constraints, errors = _classify_prose(prose)
-    if not intent:
-        raise ParseError("empty intent after docstring parsing")
+    _validate_intent(intent)
 
     test_source = str(row["test"])
     if "ref_func" in test_source:
@@ -436,7 +503,9 @@ def parse_humanevalplus(row: dict) -> ParsedTask:
         raise ParseError(
             "hidden test embeds ref_func; visible tests would leak a reference implementation"
         )
-    visible, visible_asserts, count = _humaneval_visible_test(test_source, entry_point)
+    visible, visible_asserts, count = _humaneval_visible_test(
+        test_source, entry_point, visible_tests=visible_tests
+    )
     hidden = f"from solution import {entry_point}\n{test_source}\ncheck({entry_point})\n"
     canonical = (prompt.rstrip("\n") + "\n" + str(row["canonical_solution"])).strip("\n") + "\n"
     fields = {
@@ -462,6 +531,7 @@ def parse_humanevalplus(row: dict) -> ParsedTask:
         requirements=_requirements(prompt, canonical, test_source),
         meta={
             "visible_test_cases": f"check() on first {count} inputs",
+            "visible_tests": visible_tests,
             "docstring_chars": len(docstring),
         },
     )
@@ -470,7 +540,32 @@ def parse_humanevalplus(row: dict) -> ParsedTask:
 # --------------------------------------------------------------------------------------
 # MBPP+
 # --------------------------------------------------------------------------------------
-def parse_mbppplus(row: dict) -> ParsedTask:
+def _first_entry_call(tree: ast.AST, entry_point: str) -> ast.Call | None:
+    for node in ast.walk(tree):
+        if (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id == entry_point
+        ):
+            return node
+    return None
+
+
+def _mbpp_inputs_only_asserts(assertions: list[str], entry_point: str) -> str:
+    """Turn the first three MBPP+ assertions into ``print(entry(...))`` calls."""
+    lines = []
+    for assertion in assertions:
+        call = _first_entry_call(ast.parse(assertion), entry_point)
+        if call is None:
+            raise ParseError(
+                f"MBPP+ visible assertion does not call {entry_point!r}: {assertion!r}"
+            )
+        lines.append(f"print({ast.unparse(call)})")
+    return "\n".join(lines)
+
+
+def parse_mbppplus(row: dict, *, visible_tests: str = DEFAULT_VISIBLE_TESTS) -> ParsedTask:
+    _validate_visible_tests(visible_tests)
     source_task_id = str(row["task_id"])
     canonical = str(row["code"]).strip("\n") + "\n"
     prompt = str(row["prompt"]).strip()
@@ -498,7 +593,10 @@ def parse_mbppplus(row: dict) -> ParsedTask:
         raise ParseError("MBPP+ task has fewer than three test_list assertions")
     test_imports = [str(item).strip() for item in row.get("test_imports") or [] if str(item).strip()]
     examples = "\n".join(test_list)
-    visible_asserts = "\n".join(test_list[:3])
+    if visible_tests == "inputs_only":
+        visible_asserts = _mbpp_inputs_only_asserts(test_list[:3], entry_point)
+    else:
+        visible_asserts = "\n".join(test_list[:3])
     visible_imports = _mbpp_imports(test_imports, visible_asserts)
     visible_lines = [f"from solution import {entry_point}"]
     visible_lines.extend(visible_imports)
@@ -531,6 +629,7 @@ def parse_mbppplus(row: dict) -> ParsedTask:
             "prompt": prompt,
             "source_file": str(row.get("source_file", "")),
             "visible_test_cases": "test_list[0:3]",
+            "visible_tests": visible_tests,
             "test_list_size": len(test_list),
         },
     )
@@ -670,7 +769,14 @@ def _bcb_visible_test(test_source: str, entry_point: str) -> tuple[str, str, lis
     return visible, assertions, [node.name for node in selected], len(tests)
 
 
-def parse_bigcodebench(row: dict) -> ParsedTask:
+def parse_bigcodebench(row: dict, *, visible_tests: str = DEFAULT_VISIBLE_TESTS) -> ParsedTask:
+    """Parse one BigCodeBench task.
+
+    The ``visible_tests`` mode is recorded for provenance, but BigCodeBench's visible
+    suite is a selection of ``unittest`` methods whose expectations are assertions rather
+    than literal ``(inputs, results)`` pairs, so it is kept as-is in both modes.
+    """
+    _validate_visible_tests(visible_tests)
     source_task_id = str(row["task_id"])
     entry_point = str(row["entry_point"])
     complete_prompt = str(row["complete_prompt"])
@@ -734,6 +840,7 @@ def parse_bigcodebench(row: dict) -> ParsedTask:
         meta={
             "libs": [str(item) for item in libs] if isinstance(libs, list) else [],
             "visible_test_cases": method_names,
+            "visible_tests": visible_tests,
             "test_method_count": total_tests,
             "doc_raises_count": len(_bcb_field_text(doc.get("raises"))),
         },
@@ -743,13 +850,16 @@ def parse_bigcodebench(row: dict) -> ParsedTask:
 # --------------------------------------------------------------------------------------
 # Public entry point
 # --------------------------------------------------------------------------------------
-def parse_task(source: str, row: dict) -> ParsedTask:
+def parse_task(
+    source: str, row: dict, *, visible_tests: str = DEFAULT_VISIBLE_TESTS
+) -> ParsedTask:
+    _validate_visible_tests(visible_tests)
     if source == "humanevalplus":
-        return parse_humanevalplus(row)
+        return parse_humanevalplus(row, visible_tests=visible_tests)
     if source == "mbppplus":
-        return parse_mbppplus(row)
+        return parse_mbppplus(row, visible_tests=visible_tests)
     if source == "bigcodebench":
-        return parse_bigcodebench(row)
+        return parse_bigcodebench(row, visible_tests=visible_tests)
     raise ParseError(f"unknown source {source!r}")
 
 
