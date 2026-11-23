@@ -50,14 +50,16 @@ read the committed files under `results/`; they do not download datasets or call
 make levels
 ```
 
-`make levels` downloads the pinned HumanEval+ (`d32357cf`), MBPP+ (`b2d74c91`) and
-BigCodeBench (`b74c0d0b`) revisions, parses their specifications, validates every canonical
-solution against visible and hidden tests, and writes the committed level artifact. The
-default `inputs_only` visible-test mode is the corrected protocol used by the committed
+The pinned raw files and the materialized tasks are **committed under `data/`**, so
+`make levels` verifies them locally and needs no dataset network; it downloads only if a raw
+file is missing (see `data/README.md`). It parses the specifications, validates every
+canonical solution against visible and hidden tests, and writes the committed level artifact.
+The default `inputs_only` visible-test mode is the corrected protocol used by the committed
 levels. The run keeps 1,100 tasks of 1,682 source rows (1,651 parsed, 1,549 validated) in
 666 seconds on eight cores; the 133 exclusions are 31 parse, 86 visible-test and 16
-hidden-test failures. Downloads are cached in `data/raw/`, validation in
-`data/cache/validation/`, and derived tests in gitignored `data/derived/levels/`.
+hidden-test failures. The data lives in `data/raw/` (three pinned files),
+`data/derived/levels/` (4,400 files for 1,100 tasks) and `data/manifest.json`;
+`data/cache/validation/` and `data/raw/_hf-cache/` stay gitignored.
 
 Confirm the committed task artifact:
 

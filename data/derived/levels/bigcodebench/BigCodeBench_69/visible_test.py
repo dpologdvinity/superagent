@@ -1,0 +1,30 @@
+from solution import task_func
+from solution import *  # BigCodeBench official harness runs test and solution
+                          # in one namespace; this keeps module constants resolved.
+import unittest
+
+class TestCases(unittest.TestCase):
+
+    def test_case_1(self):
+        random.seed(42)
+        d = {'EMPXX': 10, 'MANXX': 5, 'DEVXX': 8, 'HRXX': 7}
+        ax = task_func(d)
+        self.assertEqual(ax.get_title(), 'Salary Distribution in EMPXX Department')
+        self.assertEqual(ax.get_xlabel(), 'Salary')
+        self.assertEqual(ax.get_ylabel(), 'Number of Employees')
+
+    def test_case_2(self):
+        random.seed(42)
+        d = {'EMPXX': 5, 'MANXX': 2, 'DEVXX': 3, 'HRXX': 4}
+        ax = task_func(d)
+        self.assertEqual(ax.get_title(), 'Salary Distribution in EMPXX Department')
+        self.assertEqual(ax.get_xlabel(), 'Salary')
+        self.assertEqual(ax.get_ylabel(), 'Number of Employees')
+
+    def test_case_3(self):
+        random.seed(42)
+        d = {'EMPXX': 3, 'MANXX': 1, 'DEVXX': 1, 'HRXX': 7}
+        ax = task_func(d)
+        self.assertEqual(ax.get_title(), 'Salary Distribution in EMPXX Department')
+        self.assertEqual(ax.get_xlabel(), 'Salary')
+        self.assertEqual(ax.get_ylabel(), 'Number of Employees')

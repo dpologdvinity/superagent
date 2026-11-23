@@ -1,0 +1,7 @@
+import pandas as pd
+
+import matplotlib.pyplot as plt
+
+def task_func(d, keys=['x', 'y', 'z']):
+    # TODO: implement this function.
+    pass

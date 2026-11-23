@@ -1,0 +1,9 @@
+import pandas as pd
+
+import matplotlib.pyplot as plt
+
+from scipy.stats import skew
+
+def task_func(data_matrix):
+    # TODO: implement this function.
+    pass

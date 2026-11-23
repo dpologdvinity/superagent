@@ -1,0 +1,51 @@
+import requests
+import json
+import pandas as pd
+import seaborn as sns
+
+# Constants
+HEADERS = {
+    'accept': 'application/json'
+}
+
+def task_func(url, parameters):
+    """
+    Retrieve data from a specific API endpoint with the provided parameters, 
+    convert the data into a pandas dataframe, and draw a heatmap to show 
+    the correlation between numerical characteristics. The heatmap is 
+    displayed and also returned for further use or testing.
+
+    Parameters:
+    url (str): The API endpoint URL.
+    parameters (dict): The parameters to be sent with the GET request.
+
+    Returns:
+    tuple: A tuple containing:
+        - DataFrame: The pandas DataFrame containing the data.
+        - Axes: The matplotlib Axes object of the heatmap.
+
+    Raises:
+    - Thif function will raise a general Expection if the url is invalid, empty data, invalid data, and url cannot be accessed.
+
+    Requirements:
+    - requests
+    - json
+    - pandas
+    - seaborn
+
+    Example:
+    >>> df, ax = task_func('https://api.example.com/data', {'param1': 'value1'})
+    >>> df.iloc[0]['data']
+    1
+    """
+    try:
+        response = requests.get(url, params=parameters, headers=HEADERS)
+        data = json.loads(response.text)
+
+        df = pd.DataFrame(data)
+        corr = df.corr()
+
+        ax = sns.heatmap(corr, annot=True, cmap='coolwarm')
+        return df, ax
+    except Exception as e:
+        raise(e)

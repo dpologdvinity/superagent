@@ -1,0 +1,48 @@
+import subprocess
+import os
+import time
+from datetime import datetime
+
+
+def task_func(script_dir, scripts, delay):
+    """
+    Execute a list of bash scripts with a specified delay between each script.
+
+    Parameters:
+    script_dir (str): Path to the directory containing the scripts.
+    scripts (list): List of script filenames to be executed. Must not be empty.
+                    If a script is not found, the function raises a FileNotFoundError.
+    delay (int): The delay in seconds between each script execution. Must at least 0.
+
+    Returns:
+    list: A list of timestamps indicating the start time of each script execution.
+
+    Raises:
+    - ValueError: If the delay is negative or no scripts are provided.
+    
+    Requirements:
+    - subprocess
+    - os
+    - time
+    - datetime.datetime
+
+    Example:
+    >>> task_func('/path/to/scripts/', ['script1.sh', 'script2.sh'], 5)
+    ['2023-09-09 10:10:10', '2023-09-09 10:10:15']
+    """
+    if delay < 0:
+        raise ValueError("delay cannot be negative.")
+    if not scripts:
+        raise ValueError("No scripts provided.")
+    start_times = []
+    for script in scripts:
+        script_path = os.path.join(script_dir, script)
+        start_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        start_times.append(start_time)
+
+        result = subprocess.call(script_path, shell=True)
+        if result != 0:
+            raise FileNotFoundError(f"Script not found: {script_path}")
+
+        time.sleep(delay)
+    return start_times

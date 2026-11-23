@@ -1,0 +1,9 @@
+import pandas as pd
+
+import matplotlib.pyplot as plt
+
+import seaborn as sns
+
+def task_func(df):
+    # TODO: implement this function.
+    pass

@@ -1,0 +1,48 @@
+import cv2
+import os
+from matplotlib import pyplot as plt
+
+def task_func(image_path='image.jpg', histogram_path='histogram.png'):
+    """
+    Read an image, create a histogram of the image pixel intensities, save the histogram as a PNG file, 
+    and return the histogram plot object. The function also displays the original image and its histogram.
+    The limit to the size of the image depends on the hardware capabilities of the system you are working on. 
+    A possible size of an image is 20x20. 
+
+    Parameters:
+    - image_path (str): Path to the image file. Defaults to 'image.jpg'.
+    - histogram_path (str): Path to save the histogram PNG file. Defaults to 'histogram.png'.
+
+    Returns:
+    - matplotlib.axes.Axes: The Axes object of the histogram plot.
+
+    Raises:
+    - FileNotFoundError: If the image file does not exist at the specified path.
+
+    Requirements:
+    - opencv
+    - os
+    - matplotlib.pyplot
+
+    Example:
+    >>> create_dummy_image('image.jpg')
+    >>> histogram_axes = task_func('image.jpg', 'histogram.png')
+    >>> os.remove('histogram.png')
+    >>> os.remove('image.jpg')
+    >>> histogram_axes.title.get_text()
+    'Grayscale Histogram'
+    """
+
+    if not os.path.exists(image_path):
+        raise FileNotFoundError(f"No image found at {image_path}")
+
+    img = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    hist = cv2.calcHist([img], [0], None, [256], [0, 256])
+
+    plt.figure()
+    plt.title("Grayscale Histogram")
+    plt.xlabel("Bins")
+    plt.ylabel("# of Pixels")
+    axes = plt.plot(hist)[0].axes
+    plt.savefig(histogram_path)
+    return axes

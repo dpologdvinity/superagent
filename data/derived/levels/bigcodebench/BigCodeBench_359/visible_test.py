@@ -1,0 +1,29 @@
+from solution import task_func
+from solution import *  # BigCodeBench official harness runs test and solution
+                          # in one namespace; this keeps module constants resolved.
+import unittest
+import numpy as np
+import doctest
+
+class TestCases(unittest.TestCase):
+
+    def test_case_1(self):
+        data_dict = {'X': [1, 2, 3, 4, 5], 'Y': [2, 3, 5, 7, 8]}
+        data_keys = ['X', 'Y']
+        correlation, plot = task_func(data_dict, data_keys)
+        self.assertAlmostEqual(correlation, 0.9923, places=4)
+        self.assertTrue(isinstance(plot, plt.Axes))
+
+    def test_case_2(self):
+        data_dict = {'A': [5, 4, 3, 2, 1], 'B': [1, 2, 3, 4, 5]}
+        data_keys = ['A', 'B']
+        correlation, plot = task_func(data_dict, data_keys)
+        self.assertAlmostEqual(correlation, -1.0, places=4)
+        self.assertTrue(isinstance(plot, plt.Axes))
+
+    def test_case_3(self):
+        data_dict = {'X': [1, 1, 1, 1, 1], 'Y': [1, 1, 1, 1, 1]}
+        data_keys = ['X', 'Y']
+        correlation, plot = task_func(data_dict, data_keys)
+        self.assertTrue(np.isnan(correlation))
+        self.assertTrue(isinstance(plot, plt.Axes))

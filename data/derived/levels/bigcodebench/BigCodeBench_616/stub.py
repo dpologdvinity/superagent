@@ -1,0 +1,13 @@
+from random import randint, seed
+
+import matplotlib.pyplot as plt
+
+import pandas as pd
+
+TEAMS = ['Team A', 'Team B', 'Team C', 'Team D', 'Team E']
+
+PENALTY_COST = 1000
+
+def task_func(goals, penalties, teams=TEAMS, penalty_cost=PENALTY_COST, rng_seed=None):
+    # TODO: implement this function.
+    pass

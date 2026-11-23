@@ -1,0 +1,67 @@
+import pandas as pd
+from datetime import datetime, timedelta
+import random
+
+
+def task_func(epoch_milliseconds, seed=0):
+    """
+    Generate user activity logs from a given epoch time to the current time.
+
+    This function iterates from the starting epoch time to the current system
+    time, incrementally increasing the time by a random number of seconds (an
+    integer in [1, 10]) between each log entry. Each log entry records a user
+    performing an activity at a specific time.
+
+    Parameters:
+    - epoch_milliseconds (int): Starting epoch time in milliseconds. Must be in
+                                the past compared to current system time.
+    - seed (int): random seed for reproducibility. Defaults to 0.
+
+    Returns:
+    - pd.DataFrame: A DataFrame containing logs of user activities, with columns:
+        - 'User':   User names, randomly chosen from a predefined list of users,
+                    ['user1', 'user2', 'user3', 'user4', 'user5'].
+        - 'Activity': Activities performed by the users, randomly chosen from a
+                      predefined list of activities, ['login', 'logout', 'browse',
+                      'search', 'purchase'].
+        - 'Time': The timestamp of when the activity occurred, incrementally
+                  increasing from the starting epoch time to the current time.
+
+    Raises:
+    - ValueError: If the start time is after the current system time.
+    
+    Requirements:
+    - pandas
+    - datetime.datetime.fromtimestamp
+    - datetime.timedelta
+    - random
+
+    Example:
+    >>> log = task_func(1615168051807)
+    >>> type(log)
+    <class 'pandas.core.frame.DataFrame'>
+    >>> log.iloc[0]
+    User                             user4
+    Activity                        search
+    Time        2021-03-08 12:47:31.807000
+    Name: 0, dtype: object
+    """
+    random.seed(seed)
+
+    USERS = ["user1", "user2", "user3", "user4", "user5"]
+    ACTIVITIES = ["login", "logout", "browse", "search", "purchase"]
+
+    start_time = datetime.fromtimestamp(epoch_milliseconds / 1000.0)
+    end_time = datetime.now()
+    if start_time >= end_time:
+        raise ValueError("Start time must be before current system time")
+
+    logs = []
+    current_time = start_time
+    while current_time <= end_time:
+        user = random.choice(USERS)
+        activity = random.choice(ACTIVITIES)
+        logs.append([user, activity, current_time])
+        current_time += timedelta(seconds=random.randint(1, 10))
+    log_df = pd.DataFrame(logs, columns=["User", "Activity", "Time"])
+    return log_df

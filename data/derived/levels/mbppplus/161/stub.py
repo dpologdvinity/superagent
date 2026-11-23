@@ -1,0 +1,3 @@
+def remove_elements(list1, list2):
+    # TODO: implement this function.
+    pass

@@ -1,0 +1,11 @@
+import collections
+
+import matplotlib.pyplot as plt
+
+import pandas as pd
+
+WORDS = ['the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'I']
+
+def task_func(sentences_dict, word_keys):
+    # TODO: implement this function.
+    pass

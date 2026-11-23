@@ -1,0 +1,43 @@
+import sqlite3
+import pandas as pd
+import seaborn as sns
+
+
+def task_func(db_name="test.db", table_name="People"):
+    """
+    Draw the age distribution of the persons in an SQLite3 table and returns the Axes object of the plot.
+    Raises a ValueError if the loaded data contains negative age values.
+
+    Parameters:
+    db_name (str, optional): The full path to the SQLite3 database file. Defaults to 'test.db'.
+    table_name (str, optional): The name of the table to plot from. Defaults to 'People'.
+
+    Returns:
+    matplotlib.axes._axes.Axes: Axes object representing the age distribution plot,
+                                           with x-axis showing 'age' and a default of bins of 30, and kde set to True.
+
+    Requirements:
+    - sqlite3
+    - pandas
+    - seaborn
+
+    Raises:
+    ValueError: If the data contains negative age values.
+    
+    Examples:
+    >>> ax = task_func('path/to/test.db', 'People')
+    >>> type(ax)
+    <class 'matplotlib.axes._axes.Axes'>
+    >>> ax = task_func()
+    >>> type(ax)
+    <class 'matplotlib.axes._axes.Axes'>
+    """
+    conn = sqlite3.connect(db_name)
+    df = pd.read_sql_query(f"SELECT age from {table_name}", conn)
+
+    if (df["age"] < 0).any():
+        raise ValueError("Data contains negative age values.")
+
+    ax = sns.histplot(data=df, x="age", bins=30, kde=True)
+    ax.set_xlabel("age")
+    return ax

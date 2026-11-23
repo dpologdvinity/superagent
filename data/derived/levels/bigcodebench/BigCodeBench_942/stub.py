@@ -1,0 +1,17 @@
+import pandas as pd
+
+import matplotlib.pyplot as plt
+
+import numpy as np
+
+START_DATE = '2016-01-01'
+
+PERIODS = 13
+
+FREQ = 'WOM-2FRI'
+
+CATEGORIES = ['Electronics', 'Fashion', 'Home & Kitchen', 'Automotive', 'Sports']
+
+def task_func(start_date=START_DATE, periods=PERIODS, freq=FREQ, categories=CATEGORIES):
+    # TODO: implement this function.
+    pass

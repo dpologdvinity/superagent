@@ -1,0 +1,54 @@
+from solution import task_func
+from solution import *  # BigCodeBench official harness runs test and solution
+                          # in one namespace; this keeps module constants resolved.
+import unittest
+import tempfile
+import pandas as pd
+import matplotlib.pyplot as plt
+import os
+
+def round_dict(d, digits):
+    return {k: {i: round(v, digits) for i, v in subdict.items()} for k, subdict in d.items()}
+
+class TestCases(unittest.TestCase):
+
+    def setUp(self):
+        self.test_dir = tempfile.TemporaryDirectory()
+        self.temp_files = {}
+        self.data_sets = {'int': pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6], 'C': [7, 8, 9]}), 'varied': pd.DataFrame({'IntColumn': [1, 2, 3], 'FloatColumn': [1.1, 2.2, 3.3], 'StringColumn': ['4', '5', '6']}), 'varied_invalid': pd.DataFrame({'IntColumn': [1, 2, 3], 'FloatColumn': [1.1, 2.2, 3.3], 'StringColumn': ['a', 'b', 'c']})}
+        for key, df in self.data_sets.items():
+            temp_file_path = os.path.join(self.test_dir.name, f'{key}.csv')
+            df.to_csv(temp_file_path, index=False, header=True)
+            self.temp_files[key] = temp_file_path
+
+    def tearDown(self):
+        self.test_dir.cleanup()
+        plt.close('all')
+
+    def test_case_1(self):
+        file_path = self.temp_files['int']
+        df, ax, croot = task_func(file_path=file_path, columns=['A', 'B', 'C'])
+        self.assertIsInstance(df, pd.DataFrame)
+        self.assertIsInstance(ax, plt.Axes)
+        self.assertEqual(df.columns.tolist(), ['A', 'B', 'C'])
+        self.assertTrue(df['A'].tolist() == [1, 2, 3])
+        self.assertTrue(df['B'].tolist() == [4, 5, 6])
+        self.assertTrue(df['C'].tolist() == [7, 8, 9])
+        rounded_croot = round_dict(croot.to_dict(), 6)
+        self.assertEqual(rounded_croot, {'A': {0: 1.0, 1: 1.259921, 2: 1.44225}, 'B': {0: 1.587401, 1: 1.709976, 2: 1.817121}, 'C': {0: 1.912931, 1: 2.0, 2: 2.080084}})
+
+    def test_case_2(self):
+        file_path = self.temp_files['int']
+        with self.assertRaises(KeyError):
+            task_func(file_path=file_path, columns=['A', 'B', 'Nonexistent'])
+
+    def test_case_3(self):
+        file_path = self.temp_files['varied']
+        df, ax, croot = task_func(file_path=file_path, columns=['IntColumn', 'FloatColumn', 'StringColumn'])
+        self.assertIsInstance(df, pd.DataFrame)
+        self.assertIsInstance(ax, plt.Axes)
+        self.assertTrue(df['IntColumn'].equals(pd.Series([1.0, 2.0, 3.0])))
+        self.assertTrue(df['FloatColumn'].equals(pd.Series([1.1, 2.2, 3.3])))
+        self.assertTrue(df['StringColumn'].equals(pd.Series([4.0, 5.0, 6.0])))
+        rounded_croot = round_dict(croot.to_dict(), 6)
+        self.assertEqual(rounded_croot, {'IntColumn': {0: 1.0, 1: 1.259921, 2: 1.44225}, 'FloatColumn': {0: 1.03228, 1: 1.300591, 2: 1.488806}, 'StringColumn': {0: 1.587401, 1: 1.709976, 2: 1.817121}})

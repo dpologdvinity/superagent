@@ -1,0 +1,9 @@
+import pandas as pd
+
+import seaborn as sns
+
+from sklearn.preprocessing import StandardScaler
+
+def task_func(df1, df2):
+    # TODO: implement this function.
+    pass

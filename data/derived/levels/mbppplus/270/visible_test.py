@@ -1,0 +1,4 @@
+from solution import sum_even_and_even_index
+print(sum_even_and_even_index([5, 6, 12, 1, 18, 8]))
+print(sum_even_and_even_index([3, 20, 17, 9, 2, 10, 18, 13, 6, 18]))
+print(sum_even_and_even_index([5, 6, 12, 1]))

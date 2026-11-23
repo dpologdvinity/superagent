@@ -1,0 +1,42 @@
+from solution import task_func
+from solution import *  # BigCodeBench official harness runs test and solution
+                          # in one namespace; this keeps module constants resolved.
+import unittest
+import matplotlib
+import matplotlib.pyplot as plt
+
+class TestCases(unittest.TestCase):
+
+    def test_case_1(self):
+        data = [{'apple': 10}, {'banana': 15, 'cherry': 12}]
+        ax = task_func(data)
+        self.assertTrue(isinstance(ax, plt.Axes))
+        self.assertTrue(isinstance(ax.lines[0], matplotlib.lines.Line2D))
+        self.assertEqual(ax.get_title(), 'Fruit Sales over Time')
+        self.assertEqual(ax.get_xlabel(), 'Time')
+        self.assertEqual(ax.get_ylabel(), 'Sales Quantity')
+
+    def test_case_2(self):
+        data = [{'apple': 11, 'banana': 15, 'cherry': 12, 'durian': 10}]
+        ax = task_func(data)
+        self.assertTrue(isinstance(ax, plt.Axes))
+        self.assertEqual(len(ax.lines), len(data[0]))
+        for i, (fruit_name, fruit_quantity) in enumerate(data[0].items()):
+            self.assertEqual(ax.lines[i]._label, fruit_name)
+            self.assertEqual(ax.lines[i]._y, fruit_quantity)
+            self.assertIsInstance(ax.lines[i], matplotlib.lines.Line2D)
+
+    def test_case_3(self):
+        data = [{'apple': 15}, {'apple': 2, 'banana': 11, 'cherry': 8}]
+        ax = task_func(data)
+        self.assertTrue(isinstance(ax, plt.Axes))
+        self.assertEqual(len(ax.lines), 3)
+        self.assertEqual(ax.lines[0]._label, 'apple')
+        self.assertEqual(ax.lines[0]._y.tolist(), [15, 2])
+        self.assertEqual(ax.lines[1]._label, 'banana')
+        self.assertEqual(ax.lines[1]._y.tolist(), [0, 11])
+        self.assertEqual(ax.lines[2]._label, 'cherry')
+        self.assertEqual(ax.lines[2]._y.tolist(), [0, 8])
+
+    def tearDown(self):
+        plt.close('all')

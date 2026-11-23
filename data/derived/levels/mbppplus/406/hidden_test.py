@@ -1,0 +1,30 @@
+from solution import find_Parity
+candidate = find_Parity
+import numpy as np
+from math import inf
+
+def is_floats(x) -> bool:
+    # check if it is float; List[float]; Tuple[float]
+    if isinstance(x, float):
+        return True
+    if isinstance(x, (list, tuple)):
+        return all(isinstance(i, float) for i in x)
+    if isinstance(x, np.ndarray):
+        return x.dtype == np.float64 or x.dtype == np.float32
+    return False
+
+
+def assertion(out, exp, atol):
+    if atol == 0 and is_floats(exp):
+        atol = 1e-6
+    if out != exp and atol != 0:
+        assert np.allclose(out, exp, rtol=1e-07, atol=atol)
+    else:
+        assert out == exp, f"out: {out}, exp: {exp}"
+
+
+inputs = [[12], [7], [10], [0], [-10], [2], [9], [9876543210], [100000000000000000000000000000000000000000], [99999999999999999999999999999999999999999999999999999999999998], [100000000000000000000000000000000000000001], [-9], [3], [True], [-42], [False], [99999999999999999999999999999999999999999999999999999999999997], [99999999999999999999999999999999999999999], [-8], [1], [99999999999999999999999999999999999999999999999999999999999996], [-1], [100000000000000000000000000000000000000002], [-48], [-2], [9876543211], [-11], [99999999999999999999999999999999999999999999999999999999999995], [100000000000000000000000000000000000000003], [11], [99999999999999999999999999999999999999999999999999999999999994], [13], [9876543212], [4], [-47], [8], [-7], [-41], [-61], [14], [-3], [-49], [100000000000000000000000000000000000000004], [-43], [99999999999999999999999999999999999999998], [15], [40], [-44], [99999999999999999999999999999999999999999999999999999999999999], [9876543213], [-60], [62], [100000000000000000000000000000000000000000000000000000000000000], [5], [17], [41], [63], [99999999999999999999999999999999999999997], [16], [42], [-59], [-46], [-45], [64], [-4], [-62], [6], [-58], [100000000000000000000000000000000000000005], [9876543214], [-12], [-63], [-40], [-50], [18], [-5], [-92], [-6], [-98], [-34], [-35], [61], [-14], [100000000000000000000000000000000000000006], [9876543215], [-38], [19], [-97], [-91], [100000000000000000000000000000000000000000000000000000000000001], [-93], [-15], [-64], [-36], [99999999999999999999999999999999999999996], [-33], [43], [20], [-95], [-30], [-37], [-13], [100000000000000000000000000000000000000007], [-16], [-99], [-32], [9876543216]]
+results = [False, True, False, False, False, False, True, False, False, False, True, True, True, True, False, False, True, True, False, True, False, True, False, False, False, True, True, True, True, True, False, True, False, False, True, False, True, True, True, False, True, True, False, True, False, True, False, False, True, True, False, False, False, True, True, True, True, True, False, False, True, False, True, False, False, False, False, False, True, False, False, True, False, False, False, True, False, False, False, False, True, True, False, False, True, False, True, True, True, True, True, True, False, False, False, True, True, False, True, False, True, True, True, False, True, False, False]
+for i, (inp, exp) in enumerate(zip(inputs, results)):
+    assertion(find_Parity(*inp), exp, 0)
+

@@ -1,0 +1,42 @@
+from solution import task_func
+from solution import *  # BigCodeBench official harness runs test and solution
+                          # in one namespace; this keeps module constants resolved.
+import unittest
+import numpy as np
+
+class TestCases(unittest.TestCase):
+    """Test cases for task_func"""
+
+    def test_basic_functionality(self):
+        """Test basic functionality."""
+        sample_data = {'Product': ['James', 'Olivia', 'Jamie', 'Angela', 'Jennifer'], 'Price_String': ['2,213.00', '6,083.00', '5,461.00', '884.00', '2,783.00']}
+        float_prices = [float(price.replace(',', '')) for price in sample_data['Price_String']]
+        expected_mean = np.mean(float_prices)
+        expected_median = np.median(float_prices)
+        expected_std_dev = np.std(float_prices, ddof=1)
+        result, _ = task_func(sample_data)
+        self.assertAlmostEqual(result['mean'], expected_mean)
+        self.assertAlmostEqual(result['median'], expected_median)
+        self.assertAlmostEqual(result['std_dev'], expected_std_dev)
+
+    def test_large_sample_size(self):
+        """Test large sample size."""
+        sample_data = {'Product': ['Adam', 'Lisa', 'Scott', 'Bianca', 'Ashlee', 'Shannon', 'Michelle', 'Robert', 'Joseph', 'Joshua', 'Traci', 'Jacob', 'Daniel', 'Timothy', 'Paul'], 'Price_String': ['1,691.00', '967.00', '5,789.00', '6,806.00', '3,301.00', '5,319.00', '7,619.00', '134.00', '7,883.00', '5,028.00', '3,330.00', '5,253.00', '8,551.00', '1,631.00', '7,637.00']}
+        float_prices = [float(price.replace(',', '')) for price in sample_data['Price_String']]
+        expected_mean = np.mean(float_prices)
+        expected_median = np.median(float_prices)
+        expected_std_dev = np.std(float_prices, ddof=1)
+        result, _ = task_func(sample_data)
+        self.assertAlmostEqual(result['mean'], expected_mean)
+        self.assertAlmostEqual(result['median'], expected_median)
+        self.assertAlmostEqual(result['std_dev'], expected_std_dev)
+
+    def test_invalid_input(self):
+        """Test invalid input."""
+        with self.assertRaises(Exception):
+            task_func({})
+        with self.assertRaises(Exception):
+            task_func({'Product': ['Apple'], 'Price_WrongKey': ['1,234.00']})
+
+    def tearDown(self):
+        plt.close()

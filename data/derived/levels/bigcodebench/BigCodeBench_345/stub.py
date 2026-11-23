@@ -1,0 +1,7 @@
+import pandas as pd
+
+import seaborn as sns
+
+def task_func(df, col1, col2):
+    # TODO: implement this function.
+    pass

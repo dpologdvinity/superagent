@@ -1,0 +1,30 @@
+from solution import armstrong_number
+candidate = armstrong_number
+import numpy as np
+from math import inf
+
+def is_floats(x) -> bool:
+    # check if it is float; List[float]; Tuple[float]
+    if isinstance(x, float):
+        return True
+    if isinstance(x, (list, tuple)):
+        return all(isinstance(i, float) for i in x)
+    if isinstance(x, np.ndarray):
+        return x.dtype == np.float64 or x.dtype == np.float32
+    return False
+
+
+def assertion(out, exp, atol):
+    if atol == 0 and is_floats(exp):
+        atol = 1e-6
+    if out != exp and atol != 0:
+        assert np.allclose(out, exp, rtol=1e-07, atol=atol)
+    else:
+        assert out == exp, f"out: {out}, exp: {exp}"
+
+
+inputs = [[153], [259], [4458], [12345678901234567890], [12345678901234567889], [12345678901234567891], [12345678901234567892], [12345678901234567888], [12345678901234567893], [12345678901234567887], [12345678901234567886], [12345678901234567894], [12345678901234567885], [3], [12345678901234567895], [72], [71], [2], [1], [12345678901234567896], [73], [12345678901234567884], [4], [74], [70], [68], [12345678901234567883], [21], [22], [12345678901234567882], [75], [67], [20], [12345678901234567881], [12345678901234567897], [44], [69], [12345678901234567880], [12345678901234567879], [64], [76], [12345678901234567878], [12345678901234567898], [66], [5], [12345678901234567899], [19], [65], [12345678901234567901], [45], [43], [83], [63], [42], [18], [23], [41], [12345678901234567900], [12345678901234567902], [62], [53], [17], [82], [84], [12345678901234567905], [52], [51], [46], [24], [50], [16], [6], [61], [12345678901234567903], [49], [85], [86], [7], [25], [87], [60], [54], [40], [47], [12345678901234567906], [8], [48], [89], [26], [9], [12345678901234567907], [77], [59], [55], [10], [78], [15], [88], [90], [12345678901234567904], [14], [56], [12345678901234567908], [11]]
+results = [True, False, False, False, False, False, False, False, False, False, False, False, False, True, False, False, False, True, True, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, True, False, False, False, False, False, True, False, False, False, False, False, False, False, True, False, False, False, True, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+for i, (inp, exp) in enumerate(zip(inputs, results)):
+    assertion(armstrong_number(*inp), exp, 0)
+

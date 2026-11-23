@@ -1,0 +1,7 @@
+import matplotlib.pyplot as plt
+
+import pandas as pd
+
+def task_func(temperatures):
+    # TODO: implement this function.
+    pass

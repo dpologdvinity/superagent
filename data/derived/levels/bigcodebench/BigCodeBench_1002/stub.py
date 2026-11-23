@@ -1,0 +1,7 @@
+import pandas as pd
+
+import matplotlib.pyplot as plt
+
+def task_func(data, column_name='target_column'):
+    # TODO: implement this function.
+    pass

@@ -1,0 +1,4 @@
+from solution import recursive_list_sum
+print(recursive_list_sum([1, 2, [3, 4], [5, 6]]))
+print(recursive_list_sum([7, 10, [15, 14], [19, 41]]))
+print(recursive_list_sum([10, 20, [30, 40], [50, 60]]))

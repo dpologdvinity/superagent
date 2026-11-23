@@ -1,0 +1,26 @@
+from solution import task_func
+from solution import *  # BigCodeBench official harness runs test and solution
+                          # in one namespace; this keeps module constants resolved.
+import unittest
+
+class TestCases(unittest.TestCase):
+    """Test cases for the task_func function."""
+
+    def test_case_1(self):
+        input_text = 'Name: John Doe, Email: john.doe@example.com, Age: 30, Country: USA\nName: Jane Doe, Email: jane.doe@example.com, Age: 25, Country: UK'
+        df = task_func(input_text)
+        self.assertEqual(df.shape, (2, 4))
+        self.assertListEqual(list(df.columns), ['Name', 'Email', 'Age', 'Country'])
+        self.assertListEqual(df.iloc[0].tolist(), ['John Doe', 'john.doe@example.com', 30, 'USA'])
+        self.assertListEqual(df.iloc[1].tolist(), ['Jane Doe', 'jane.doe@example.com', 25, 'UK'])
+
+    def test_case_2(self):
+        input_text = 'Name: Alex Smith, Email: alex.smith@example.com, Age: 35, Country: Canada'
+        df = task_func(input_text)
+        self.assertEqual(df.shape, (1, 4))
+        self.assertListEqual(df.iloc[0].tolist(), ['Alex Smith', 'alex.smith@example.com', 35, 'Canada'])
+
+    def test_case_3(self):
+        input_text = ''
+        df = task_func(input_text)
+        self.assertTrue(df.empty)
