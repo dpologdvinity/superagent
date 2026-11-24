@@ -194,4 +194,3 @@ def test_portable_detail_rewrites_local_paths():
     assert "<python>/lib/python3.12/re.py" in portable
     assert "~/nltk_data" in portable
     assert portable_detail("") == ""
-
