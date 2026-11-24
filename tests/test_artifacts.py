@@ -129,14 +129,15 @@ def test_checksums_and_counts_in_manifest():
     raw = (RESULTS / "tasks.jsonl").read_text(encoding="utf-8")
     assert hashlib.sha256(raw.encode("utf-8")).hexdigest() == manifest["artifacts"]["tasks_sha256"]
     stats_raw = (RESULTS / "stats.json").read_text(encoding="utf-8")
-    assert hashlib.sha256(stats_raw.encode("utf-8")).hexdigest() == manifest["artifacts"]["stats_sha256"]
+    assert (
+        hashlib.sha256(stats_raw.encode("utf-8")).hexdigest()
+        == manifest["artifacts"]["stats_sha256"]
+    )
     assert manifest["artifacts"]["task_count"] == len(tasks) == 1100
     assert manifest["counts"]["valid"] >= manifest["counts"]["kept"]
     kept_keys = {task["key"] for task in tasks}
     assert all(
-        key not in kept_keys
-        for keys in manifest["unused_task_keys"].values()
-        for key in keys
+        key not in kept_keys for keys in manifest["unused_task_keys"].values() for key in keys
     )
 
 
