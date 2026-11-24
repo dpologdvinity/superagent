@@ -20,8 +20,17 @@ All notable changes to this project are documented here. The format follows
 
 - Source, tests and scripts formatted with ruff; docstrings and type annotations added
   throughout `src/` and `scripts/`.
+- Harness source edits change `harness_source_hash` and therefore a run's `config_hash`:
+  resuming a run directory created before these changes needs `--force`.
+- Without `--detector`, the harness now uses `results/detector-smoothed/` (the final
+  detector) instead of the earlier R1 artifact in `results/detector/`.
 
 ### Fixed
+
+- The detector encoder is loaded at the pinned `ENCODER_REVISION` that the manifest,
+  embedding cache key and model record; previously the hub's moving `main` was loaded.
+- The detector report's limitation sentences are computed from `metrics.json` instead of
+  hard-coded numbers from an earlier run.
 
 - The README's milestone build recipe compiled `paper/main.tex` (8 pages) instead of
   `paper/milestone/main.tex` (3 pages), because `TEXINPUTS=..:` searched the parent directory
